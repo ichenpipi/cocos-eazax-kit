@@ -1,0 +1,105 @@
+// Eazax-CCC 镂空 1.0.1.20200604
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        size: { value: [500.0, 500.0], editor: { tooltip: '节点尺寸' } }
+        center: { value: [0.5, 0.5], editor: { tooltip: '中心点 (左上角为原点)' } }
+        width: { value: 0.5, editor: { tooltip: '宽 (目标宽度 / 节点宽度)' } }
+        height: { value: 0.5, editor: { tooltip: '高 (目标高度 / 节点宽度)' } }
+        round: { value: 0.1, editor: { tooltip: '圆角半径 (目标半径 / 节点宽度)' } }
+        feather: { value: 0.05, editor: { tooltip: '边缘虚化宽度' } }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+
+  in vec3 a_position;
+  in vec2 a_uv0;
+  in vec4 a_color;
+
+  out vec2 v_uv0;
+  out vec4 v_color;
+
+  void main () {
+    gl_Position = cc_matViewProj * vec4(a_position, 1);
+    v_uv0 = a_uv0;
+    v_color = a_color;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  in vec2 v_uv0;
+  in vec4 v_color;
+
+  uniform sampler2D texture;
+
+  uniform Properties {
+    vec2 center;
+    vec2 size;
+    float width;
+    float height;
+    float round;
+    float feather;
+  };
+
+  void main () {
+    vec4 color = v_color;
+    color *= texture(texture, v_uv0);
+    
+    // 边缘
+    float ratio = size.x / size.y;
+    float minX = center.x - (width / 2.0);
+    float maxX = center.x + (width / 2.0);
+    float minY = center.y - (height * ratio / 2.0);
+    float maxY = center.y + (height * ratio / 2.0);
+    if (v_uv0.x >= minX && v_uv0.x <= maxX && v_uv0.y >= minY && v_uv0.y <= maxY) {
+      if (round == 0.0) discard; // 没有圆角则直接丢弃
+      // 圆角处理
+      float roundY = round * ratio;
+      vec2 vertex;
+      if (v_uv0.x <= minX + round) {
+        if (v_uv0.y <= minY + roundY) {
+          vertex = vec2(minX + round, (minY + roundY) / ratio); // 左上角
+        } else if (v_uv0.y >= maxY - roundY) {
+          vertex = vec2(minX + round, (maxY - roundY) / ratio); // 左下角
+        } else {
+          vertex = vec2(minX + round, v_uv0.y / ratio); // 左中
+        }
+      } else if (v_uv0.x >= maxX - round) {
+        if (v_uv0.y <= minY + roundY){
+          vertex = vec2(maxX - round, (minY + roundY) / ratio); // 右上角
+        } else if (v_uv0.y >= maxY - roundY) {
+          vertex = vec2(maxX - round, (maxY - roundY) / ratio); // 右下角
+        } else {
+          vertex = vec2(maxX - round, v_uv0.y / ratio); // 右中
+        }
+      } else if (v_uv0.y <= minY + roundY) {
+        vertex = vec2(v_uv0.x, (minY + roundY) / ratio); // 上中
+      } else if (v_uv0.y >= maxY - roundY) {
+        vertex = vec2(v_uv0.x, (maxY - roundY) / ratio); // 下中
+      } else {
+        discard; // 中间
+      }
+      float dis = distance(vec2(v_uv0.x, v_uv0.y / ratio), vertex);
+      color.a = smoothstep(round - feather, round, dis) * color.a;
+    }
+    
+    color.a *= v_color.a;
+    gl_FragColor = color;
+  }
+}%

@@ -1,0 +1,50 @@
+// Eazax-CCC 剪影 1.0.0.20200424
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        color: { value: [0.0, 0.0, 0.0, 1], editor: { type: color } }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+
+  in vec3 a_position;
+  in vec2 a_uv0;
+
+  out vec2 v_uv0;
+
+  void main () {
+    gl_Position = cc_matViewProj * vec4(a_position, 1);
+    v_uv0 = a_uv0;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  in vec2 v_uv0;
+
+  uniform sampler2D texture;
+  
+  uniform Properties {
+    vec4 color;
+  };
+
+  void main () {
+    vec4 t_color = texture2D(texture, v_uv0);
+    gl_FragColor = vec4(color.r, color.g, color.b, t_color.a);
+  }
+}%

@@ -1,0 +1,62 @@
+// Eazax-CCC 头像（圆形） 1.0.0.2020522
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        feather: { value: 0.01, editor: { tooltip: '边缘虚化（百分比）' } }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+
+  in vec3 a_position;
+  in vec2 a_uv0;
+  in vec4 a_color;
+
+  out vec2 v_uv0;
+  out vec4 v_color;
+
+  void main () {
+    gl_Position = cc_matViewProj * vec4(a_position, 1);
+    v_uv0 = a_uv0;
+    v_color = a_color;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  in vec2 v_uv0;
+  in vec4 v_color;
+
+  uniform sampler2D texture;
+
+  uniform Properties {
+    float feather;
+  };
+
+  void main () {
+    vec4 color = v_color;
+    color *= texture(texture, v_uv0);
+
+    if (color.a == 0.0) discard;
+    
+    float dis = distance(vec2(v_uv0.x, v_uv0.y), vec2(0.5, 0.5));
+    color.a = smoothstep(0.5, 0.5 - feather, dis);
+
+    color.a *= v_color.a;
+    gl_FragColor = color;
+  }
+}%

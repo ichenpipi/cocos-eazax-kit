@@ -1,0 +1,94 @@
+// Eazax-CCC 高斯模糊（可调整） 1.0.1.2020604
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        size: { value: [500.0, 500.0], editor: { tooltip: '节点尺寸' } }
+        radius: { value: 20.0, editor: { tooltip: '模糊半径，最大值为 100（单位：像素）' } }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+
+  in vec3 a_position;
+  in vec2 a_uv0;
+  in vec4 a_color;
+ 
+  out vec2 v_uv0;
+  out vec4 v_color;
+ 
+  void main () {
+    gl_Position = cc_matViewProj * vec4(a_position, 1);
+    v_uv0 = a_uv0;
+    v_color = a_color;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  in vec2 v_uv0;
+  in vec4 v_color;
+
+  uniform sampler2D texture;
+
+  // 接收传入的 size 属性
+  uniform Properties {
+    vec2 size;
+    float radius;
+  };
+  
+  // 最大模糊直径
+  const float MAX_DIAMETER = 100.0;
+
+  // 获取模糊颜色
+  vec4 getBlurColor (vec2 uv, float radius) {
+    vec4 color = vec4(0); // 初始颜色
+    float sum = 0.0; // 总权重
+    // 卷积过程
+    float diameter = radius * 2.0; // 模糊直径
+    for (float r = 0.0; r <= MAX_DIAMETER; r++) { // 水平方向
+      if (r > diameter) break;
+      float _r = r - radius; // 向左偏移
+      float x = uv.x + _r / size.x;
+      if (x < 0.0 || x > 1.0 ) continue;
+      for (float c = 0.0; c <= MAX_DIAMETER; c++) { // 垂直方向
+        if (c > diameter) break;
+        float _c = c - radius; // 向左偏移
+        float y = uv.y + _c / size.y;
+        if (y < 0.0 || y > 1.0 ) continue;
+        vec2 target = vec2(x, y); // 目标纹理坐标
+        float weight = (radius - abs(_r)) * (radius - abs(_c)); // 计算权重
+        color += texture2D(texture, target) * weight; // 累加颜色
+        sum += weight; // 累加权重
+      }
+    }
+    color /= sum; // 求出平均值
+    return color;
+  }
+ 
+  void main () {
+    vec4 color = v_color;
+    color *= texture(texture, v_uv0);
+
+    if (radius > 0.0){
+      float _radius = radius > MAX_DIAMETER / 2.0 ? MAX_DIAMETER / 2.0 : radius;
+      color = getBlurColor(v_uv0, _radius); // 获取模糊后的颜色
+    }
+
+    color.a *= v_color.a; // 还原透明度
+    gl_FragColor = color;
+  }
+}%

@@ -1,0 +1,91 @@
+// Eazax-CCC 头像 1.0.0.0.2020522
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        round: { value: 0.1, editor: { tooltip: '圆角半径（百分比）' } }
+        feather: { value: 0.01, editor: { tooltip: '边缘虚化（百分比）' } }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+
+  in vec3 a_position;
+  in vec2 a_uv0;
+  in vec4 a_color;
+
+  out vec2 v_uv0;
+  out vec4 v_color;
+
+  void main () {
+    gl_Position = cc_matViewProj * vec4(a_position, 1);
+    v_uv0 = a_uv0;
+    v_color = a_color;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  in vec2 v_uv0;
+  in vec4 v_color;
+
+  uniform sampler2D texture;
+
+  uniform Properties {
+    float round;
+    float feather;
+  };
+
+  void main () {
+    vec4 color = v_color;
+    color *= texture(texture, v_uv0);
+
+    if (color.a == 0.0) discard;
+    
+    // 圆角处理
+    if(round > 0.0){
+      vec2 vertex;
+      if (v_uv0.x <= round) {
+        if (v_uv0.y <= round) {
+          vertex = vec2(round, round); // 左上角
+        } else if (v_uv0.y >= 1.0 - round) {
+          vertex = vec2(round, (1.0 - round)); // 左下角
+        } else {
+          vertex = vec2(round, v_uv0.y); // 左中
+        }
+      } else if (v_uv0.x >= 1.0 - round) {
+        if (v_uv0.y <= round){
+          vertex = vec2(1.0 - round, round); // 右上角
+        } else if (v_uv0.y >= 1.0 - round) {
+          vertex = vec2(1.0 - round, (1.0 - round)); // 右下角
+        } else {
+          vertex = vec2(1.0 - round, v_uv0.y); // 右中
+        }
+      } else if (v_uv0.y <= round) {
+        vertex = vec2(v_uv0.x, round); // 上中
+      } else if (v_uv0.y >= 1.0 - round) {
+        vertex = vec2(v_uv0.x, (1.0 - round)); // 下中
+      } else {
+        vertex = v_uv0; // 中间
+      }
+      float dis = distance(v_uv0, vertex);
+      color.a = smoothstep(round, round - feather, dis);
+    }
+    
+    color.a *= v_color.a;
+    gl_FragColor = color;
+  }
+}%

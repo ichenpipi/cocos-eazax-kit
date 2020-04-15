@@ -1,0 +1,68 @@
+// Eazax-CCC 头像(圆，可调整) 1.0.0.2020522
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        ratio: { value: 0.5625, editor: { tooltip: '节点宽高比 (节点宽度 / 节点高度)，如 720 x 1280 的节点宽高比为 0.5625' } }
+        center: { value: [0.5, 0.5], editor: { tooltip: '中心点 (左上角为原点)' } }
+        radius: { value: 0.5, editor: { tooltip: '半径 (目标宽度 / 节点宽度)' } }
+        feather: { value: 0.01, editor: { tooltip: '边缘虚化宽度' } }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+
+  in vec3 a_position;
+  in vec2 a_uv0;
+  in vec4 a_color;
+
+  out vec2 v_uv0;
+  out vec4 v_color;
+
+  void main () {
+    gl_Position = cc_matViewProj * vec4(a_position, 1);
+    v_uv0 = a_uv0;
+    v_color = a_color;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  in vec2 v_uv0;
+  in vec4 v_color;
+
+  uniform sampler2D texture;
+
+  uniform Properties {
+    vec2 center;
+    float ratio;
+    float radius;
+    float feather;
+  };
+
+  void main () {
+    vec4 color = v_color;
+    color *= texture(texture, v_uv0);
+
+    if (color.a == 0.0) discard;
+    
+    float dis = distance(vec2(v_uv0.x, v_uv0.y / ratio), vec2(center.x, center.y / ratio));
+    color.a = smoothstep(radius, radius - feather, dis);
+
+    color.a *= v_color.a;
+    gl_FragColor = color;
+  }
+}%

@@ -1,27 +1,28 @@
 /**
  * 微信的命名空间
+ * @see https://gitee.com/ifaswind/eazax-ccc/blob/develop/declaration/editor.d.ts
  */
 declare namespace wx {
 
     /**
      * 打开另一个小程序。
      */
-    export function navigateToMiniProgram(object: object): void;
+    export function navigateToMiniProgram(object: Object): void;
 
     /**
      * 提前向用户发起授权请求。调用后会立刻弹窗询问用户是否同意授权小程序使用某项功能或获取用户的某些数据，但不会实际调用对应接口。如果用户之前已经同意授权，则不会出现弹窗，直接返回成功。
      */
-    export function authorize(object: object): void;
+    export function authorize(object: Object): void;
 
     /**
      * 获取用户信息。
      */
-    export function getUserInfo(object: object): void;
+    export function getUserInfo(object: Object): void;
 
     /**
      * 向开放数据域发送消息。
      */
-    export function postMessage(object: object): void;
+    export function postMessage(object: Object): void;
 
     /**
      * 监听主域发送的消息。
@@ -31,17 +32,17 @@ declare namespace wx {
     /**
      * 对用户托管数据进行写数据操作。允许同时写多组 KV 数据。
      */
-    export function setUserCloudStorage(object: object): void;
+    export function setUserCloudStorage(object: Object): void;
 
     /**
      * 获取当前用户托管数据当中对应 key 的数据。该接口只可在开放数据域下使用。
      */
-    export function getUserCloudStorage(object: object): void;
+    export function getUserCloudStorage(object: Object): void;
 
     /**
      * 删除用户托管数据当中对应 key 的数据。
      */
-    export function removeUserCloudStorage(object: object): void;
+    export function removeUserCloudStorage(object: Object): void;
 
     /**
      * 监听成功修改好友的互动型托管数据事件，该接口在游戏主域使用。
@@ -51,37 +52,37 @@ declare namespace wx {
     /**
      * 修改好友的互动型托管数据，该接口只可在开放数据域下使用。
      */
-    export function modifyFriendInteractiveStorage(object: object): void;
+    export function modifyFriendInteractiveStorage(object: Object): void;
 
     /**
      * 获取当前用户互动型托管数据对应 key 的数据。
      */
-    export function getUserInteractiveStorage(object: object): void;
+    export function getUserInteractiveStorage(object: Object): void;
 
     /**
      * 获取可能对游戏感兴趣的未注册的好友名单。每次调用最多可获得 5 个好友，此接口只能在开放数据域中使用。
      */
-    export function getPotentialFriendList(object: object): void;
+    export function getPotentialFriendList(object: Object): void;
 
     /**
      * 获取群信息。小游戏通过群分享卡片打开的情况下才可以调用。该接口只可在开放数据域下使用。
      */
-    export function getGroupInfo(object: object): void;
+    export function getGroupInfo(object: Object): void;
 
     /**
      * 获取群同玩成员的游戏数据。小游戏通过群分享卡片打开的情况下才可以调用。该接口只可在开放数据域下使用。
      */
-    export function getGroupCloudStorage(object: object): void;
+    export function getGroupCloudStorage(object: Object): void;
 
     /**
      * 拉取当前用户所有同玩好友的托管数据。该接口只可在开放数据域下使用。
      */
-    export function getFriendCloudStorage(object: object): void;
+    export function getFriendCloudStorage(object: Object): void;
 
     /**
      * 给指定的好友分享游戏信息，该接口只可在开放数据域下使用。接收者打开之后，可以用 wx.modifyFriendInteractiveStorage 传入参数 quiet=true 发起一次无需弹框确认的好友互动。
      */
-    export function shareMessageToFriend(object: object): void;
+    export function shareMessageToFriend(object: Object): void;
 
     /**
      * 获取主域和开放数据域共享的 sharedCanvas。只有开放数据域能调用。

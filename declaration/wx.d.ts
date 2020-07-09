@@ -1,6 +1,7 @@
 /**
- * 微信的命名空间
- * @see https://gitee.com/ifaswind/eazax-ccc/blob/develop/declaration/editor.d.ts
+ * 微信小游戏命名空间
+ * @author 陈皮皮（ifaswind）
+ * @see https://gitee.com/ifaswind/eazax-ccc/blob/master/declaration/wx.d.ts
  */
 declare namespace wx {
 

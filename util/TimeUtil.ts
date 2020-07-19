@@ -23,4 +23,16 @@ export default class TimeUtil {
         return new Date().getTime();
     }
 
+    /**
+     * 将毫秒转为时分秒的格式（最小单位为秒，如：”00:01:59“）
+     * @param time 毫秒数
+     * @param separator 分隔符
+     */
+    public static msToHMS(time: number, separator: string = ':'): string {
+        let hours = Math.floor(time / 3600000);
+        let minutes = Math.floor((time - (hours * 3600000)) / 60000);
+        let seconds = Math.floor((time - (hours * 3600000) - (minutes * 60000)) / 1000);
+        return `${hours.toString().padStart(2, '0')}${separator}${minutes.toString().padStart(2, '0')}${separator}${seconds.toString().padStart(2, '0')}`;
+    }
+
 }

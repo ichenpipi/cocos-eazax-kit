@@ -1,10 +1,20 @@
 # Eazax-CCC
 
+觉得有用的小伙伴记得点个 Star 不迷路 [![star](https://gitee.com/ifaswind/eazax-ccc/badge/star.svg?theme=dark)](https://gitee.com/ifaswind/eazax-ccc/stargazers)
+
 
 
 ## 介绍
 
 Cocos Creator 游戏开发脚手架，持续维护中...
+
+
+
+## 使用方法
+
+**本项目（Eazax-CCC）不是独立的 Cocos Creator 项目，无法直接启动！**
+
+**下载该项目放在你的项目中即可使用内置的功能与模块。**
 
 
 
@@ -33,10 +43,11 @@ Cocos Creator 游戏开发脚手架，持续维护中...
 
 
 - declaration 声明文件
-  - cc.d.ts 扩展 cc 命名空间
-  - editor.d.ts 编辑器命名空间
-  - extension.d.ts 基础类型扩展声明
-  - wx.d.ts 微信命名空间
+  - cc.d.ts 扩展 cc 命名空间声明文件
+  - editor.d.ts 编辑器命名空间声明文件
+  - extension.d.ts 基础类型扩展声明声明文件
+  - jsb.d.ts jsb 命名空间声明文件
+  - wx.d.ts 微信命名空间声明文件
 
 
 - extension 扩展实现
@@ -79,7 +90,7 @@ Cocos Creator 游戏开发脚手架，持续维护中...
 
 ## 环境
 
-引擎：Cocos Creator 2.3.3
+引擎：Cocos Creator 2.0 +
 
 语言：TypeScript
 

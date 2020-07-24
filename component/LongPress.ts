@@ -39,13 +39,21 @@ export default class LongPress extends cc.Component {
      */
     private hasAccomplished: boolean = false;
 
-    protected onLoad() {
+    protected onEnable() {
+        this.registerNodeEvent();
+    }
+
+    protected onDisable() {
+        this.unregisterNodeEvent();
+    }
+
+    private registerNodeEvent() {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
         this.node.on(cc.Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
     }
 
-    protected onDestroy() {
+    private unregisterNodeEvent() {
         this.node.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
         this.node.off(cc.Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);

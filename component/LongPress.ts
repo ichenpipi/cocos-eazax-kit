@@ -17,6 +17,7 @@ export enum TriggerWay {
      * 触摸结束后触发
      */
     AfterLoosing
+
 }
 
 const { ccclass, property } = cc._decorator;
@@ -83,7 +84,7 @@ export default class LongPress extends cc.Component {
      * 触发已注册长按事件
      */
     private trigger() {
-        cc.Component.EventHandler.emitEvents(this.longPressEvents, event);
+        cc.Component.EventHandler.emitEvents(this.longPressEvents, this);
         this.node.emit(LONG_PRESS, this);
     }
 

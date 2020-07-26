@@ -14,7 +14,9 @@ Cocos Creator 游戏开发脚手架，持续维护中...
 
 **本项目（Eazax-CCC）不是独立的 Cocos Creator 项目，无法直接启动！**
 
-**下载该项目放在你的项目中即可使用内置的功能与模块。**
+- 下载该项目放在你的项目中即可使用内置的功能与模块。
+
+- 项目中的脚本基本都是开箱即用，可以任意（下载或复制）带走自己需要的脚本。
 
 
 
@@ -25,9 +27,11 @@ Cocos Creator 游戏开发脚手架，持续维护中...
   - GaussianBlur.ts 高斯模糊效果组件
   - Counter.ts 数值滚动组件
   - HollowOut.ts 镂空效果组件
+  - LongPress.ts 节点长按组件
   - Marquee.ts 文本跑马灯组件
   - RotateAround.ts 围绕旋转组件
   - ScreenAdapter.ts 屏幕适配组件
+  - Subtitle.ts 字幕组件
   - TouchBlocker.ts 点击屏蔽组件
 
 
@@ -79,6 +83,7 @@ Cocos Creator 游戏开发脚手架，持续维护中...
 
 - util 工具
   - ArrayUtil.ts 数组工具
+  - BrowserUtil.ts 浏览器工具
   - CalUtil.ts 计算工具
   - NodeUtil.ts 节点工具
   - ObjectUtil.ts 对象工具

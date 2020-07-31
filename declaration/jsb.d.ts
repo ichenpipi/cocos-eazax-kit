@@ -13,13 +13,14 @@ declare namespace jsb {
     /**
      * This class is used to auto update resources, such as pictures or scripts.
      */
-    class AssetsManager {
+    export class AssetsManager {
 
         constructor(manifestUrl: string, storagePath: string);
 
         constructor(manifestUrl: string, storagePath: string, handle: VersionCompareHandle);
 
         static readonly VERSION_ID: string;
+
         static readonly MANIFEST_ID: string;
 
         /**
@@ -161,7 +162,7 @@ declare namespace jsb {
 
     }
 
-    class Manifest {
+    export class Manifest {
 
         constructor(manifestUrl?: string);
 
@@ -233,21 +234,31 @@ declare namespace jsb {
 
     }
 
-    class EventAssetsManager {
+    export class EventAssetsManager {
 
         constructor(eventName: string, manager: jsb.AssetsManager, code: jsb.EventAssetsManager.EventCode, assetId?: string, message?: string, curle_code?: number, curlm_code?: number);
 
-        static readonly ERROR_NO_LOCAL_MANIFEST: number;
-        static readonly ERROR_DOWNLOAD_MANIFEST: number;
-        static readonly ERROR_PARSE_MANIFEST: number;
-        static readonly NEW_VERSION_FOUND: number;
-        static readonly ALREADY_UP_TO_DATE: number;
-        static readonly UPDATE_PROGRESSION: number;
-        static readonly ASSET_UPDATED: number;
-        static readonly ERROR_UPDATING: number;
-        static readonly UPDATE_FINISHED: number;
-        static readonly UPDATE_FAILED: number;
-        static readonly ERROR_DECOMPRESS: number;
+        static readonly ERROR_NO_LOCAL_MANIFEST: number; // 0
+
+        static readonly ERROR_DOWNLOAD_MANIFEST: number; // 1
+
+        static readonly ERROR_PARSE_MANIFEST: number; // 2
+
+        static readonly NEW_VERSION_FOUND: number; // 3
+
+        static readonly ALREADY_UP_TO_DATE: number; // 4
+
+        static readonly UPDATE_PROGRESSION: number; // 5
+
+        static readonly ASSET_UPDATED: number; // 6
+
+        static readonly ERROR_UPDATING: number; // 7
+
+        static readonly UPDATE_FINISHED: number; // 8
+
+        static readonly UPDATE_FAILED: number; // 9
+
+        static readonly ERROR_DECOMPRESS: number; // 10
 
         getEventCode(): jsb.EventAssetsManager.EventCode;
 
@@ -373,17 +384,29 @@ declare namespace jsb.EventAssetsManager {
      * Update events code
      */
     enum EventCode {
+
         ERROR_NO_LOCAL_MANIFEST = 0,
-        ERROR_DOWNLOAD_MANIFEST,
-        ERROR_PARSE_MANIFEST,
-        NEW_VERSION_FOUND,
-        ALREADY_UP_TO_DATE,
-        UPDATE_PROGRESSION,
-        ASSET_UPDATED,
-        ERROR_UPDATING,
-        UPDATE_FINISHED,
-        UPDATE_FAILED,
-        ERROR_DECOMPRESS
+
+        ERROR_DOWNLOAD_MANIFEST = 1,
+
+        ERROR_PARSE_MANIFEST = 2,
+
+        NEW_VERSION_FOUND = 3,
+
+        ALREADY_UP_TO_DATE = 4,
+
+        UPDATE_PROGRESSION = 5,
+
+        ASSET_UPDATED = 6,
+
+        ERROR_UPDATING = 7,
+
+        UPDATE_FINISHED = 8,
+
+        UPDATE_FAILED = 9,
+
+        ERROR_DECOMPRESS = 10
+
     }
 
 }

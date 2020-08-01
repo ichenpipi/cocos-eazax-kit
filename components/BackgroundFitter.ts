@@ -1,5 +1,5 @@
 import { GameEvent } from "../core/GameEvent";
-import { VIEW_RESIZE } from "../constant/Events";
+import { VIEW_RESIZE } from "../constants/Events";
 
 const { ccclass } = cc._decorator;
 

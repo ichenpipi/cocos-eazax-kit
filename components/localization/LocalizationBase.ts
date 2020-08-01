@@ -1,4 +1,4 @@
-import { GameEvent } from "../core/GameEvent";
+import { GameEvent } from "../../core/GameEvent";
 
 /**
  * 语言更改事件

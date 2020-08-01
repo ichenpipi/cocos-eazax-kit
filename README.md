@@ -23,14 +23,15 @@ Cocos Creator 游戏开发脚手架，持续维护中...
 ## 目录结构
 
 - components 常用组件
+  - effects Shader 配套组件
+    - GaussianBlur.ts 高斯模糊效果组件
+    - HollowOut.ts 镂空效果组件
   - localization 本地化组件
     - LocalizationBase.ts 多语言组件基类
     - LocalizationLabelString.ts 多语言文本组件
     - LocalizationSpriteFrame.ts 多语言精灵组件
   - BackgroundFitter.ts 背景适配组件
-  - GaussianBlur.ts 高斯模糊效果组件
   - Counter.ts 数值滚动组件
-  - HollowOut.ts 镂空效果组件
   - LongPress.ts 节点长按组件
   - Marquee.ts 文本跑马灯组件
   - RotateAround.ts 围绕旋转组件

@@ -22,7 +22,11 @@ Cocos Creator 游戏开发脚手架，持续维护中...
 
 ## 目录结构
 
-- component 常用组件
+- components 常用组件
+  - localization 本地化组件
+    - LocalizationBase.ts 多语言组件基类
+    - LocalizationLabelString.ts 多语言文本组件
+    - LocalizationSpriteFrame.ts 多语言精灵组件
   - BackgroundFitter.ts 背景适配组件
   - GaussianBlur.ts 高斯模糊效果组件
   - Counter.ts 数值滚动组件
@@ -35,8 +39,10 @@ Cocos Creator 游戏开发脚手架，持续维护中...
   - TouchBlocker.ts 点击屏蔽组件
 
 
-- constant 内置常量
+
+- constants 内置常量
   - Events.ts 事件常量
+
 
 
 - core 核心脚本
@@ -46,7 +52,8 @@ Cocos Creator 游戏开发脚手架，持续维护中...
   - Storage.ts 本地储存类
 
 
-- declaration 声明文件
+
+- declarations 声明文件
   - cc.d.ts 扩展 cc 命名空间声明文件
   - editor.d.ts 编辑器命名空间声明文件
   - extension.d.ts 基础类型扩展声明声明文件
@@ -54,19 +61,16 @@ Cocos Creator 游戏开发脚手架，持续维护中...
   - wx.d.ts 微信命名空间声明文件
 
 
-- extension 扩展实现
+
+- extensions 扩展实现
   - eazax.ts Eazax 封装
   - extension.ts 基础类型扩展实现
 
 
-- localization 本地化组件
-  - LocalizationBase.ts 多语言组件基类
-  - LocalizationLabelString.ts 多语言文本组件
-  - LocalizationSpriteFrame.ts 多语言精灵组件
-
 
 - misc 杂项
   - EditorAsset.ts 编辑器资源类
+
 
 
 - resources 资源文件
@@ -81,7 +85,8 @@ Cocos Creator 游戏开发脚手架，持续维护中...
     - eazax-silhouette.effect 剪影 Shader
 
 
-- util 工具
+
+- utils 工具
   - ArrayUtil.ts 数组工具
   - BrowserUtil.ts 浏览器工具
   - CalUtil.ts 计算工具

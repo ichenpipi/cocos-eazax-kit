@@ -1,4 +1,4 @@
-import EditorAsset from "../misc/EditorAsset";
+import EditorAsset from "../../misc/EditorAsset";
 
 const { ccclass, property, executeInEditMode, disallowMultiple, requireComponent, executionOrder } = cc._decorator;
 
@@ -27,6 +27,13 @@ export default class GaussianBlur extends cc.Component {
     private isIniting: boolean = false; // 是否正在初始化
 
     protected onLoad() {
+        // 使用自定义 Effect 需禁用目标贴图的 packable 属性，因为动态合图后无法正确计算纹理 uv
+        // 详情请看：https://docs.cocos.com/creator/manual/zh/asset-workflow/sprite.html#packable
+        let spriteFrame = this.getComponent(cc.Sprite).spriteFrame;
+        if (spriteFrame) spriteFrame.getTexture().packable = false;
+        // 或者全局禁用动态合图功能（不推荐！！！）
+        // cc.dynamicAtlasManager.enabled = false;
+
         this.init();
     }
 

@@ -6,7 +6,8 @@
  * 2. Manifest
  * 3. EventAssetsManager
  * @author 陈皮皮（ifaswind）
- * @see https://gitee.com/ifaswind/eazax-ccc/blob/master/declaration/jsb.d.ts
+ * @version 20200731
+ * @see https://gitee.com/ifaswind/eazax-ccc/blob/master/declarations/jsb.d.ts
  */
 declare namespace jsb {
 

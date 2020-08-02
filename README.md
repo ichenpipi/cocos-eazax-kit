@@ -1,22 +1,22 @@
 # Eazax-CCC
 
-觉得有用的小伙伴记得点个 Star 不迷路 [![star](https://gitee.com/ifaswind/eazax-ccc/badge/star.svg?theme=dark)](https://gitee.com/ifaswind/eazax-ccc/stargazers)
-
-
-
 ## 介绍
 
-Cocos Creator 游戏开发脚手架，持续维护中...
+一个 Cocos Creator 游戏开发脚手架，目前持续更新维护中...
+
+如果此项目对你有帮助，请不要忘记 [![star](https://gitee.com/ifaswind/eazax-ccc/badge/star.svg?theme=dark)](https://gitee.com/ifaswind/eazax-ccc/stargazers)
+
+如有使用上的问题，可以在 gitee 上提 issue 或者添加我的微信 `im_chenpipi` 并留言。
 
 
 
-## 使用方法
+## 使用说明
 
 **本项目（Eazax-CCC）不是独立的 Cocos Creator 项目，无法直接启动！**
 
 - 下载该项目放在你的项目中即可使用内置的功能与模块。
 
-- 项目中的脚本基本都是开箱即用，可以任意（下载或复制）带走自己需要的脚本。
+- 项目中的脚本基本都是开箱即用，可以任意带走（下载或复制）自己需要的脚本。
 
 
 
@@ -107,7 +107,11 @@ Cocos Creator 游戏开发脚手架，持续维护中...
 
 
 
-## 菜鸟小栈
+---
+
+
+
+# 菜鸟小栈
 
 我是陈皮皮，这是我的个人公众号，专注但不仅限于游戏开发、前端和后端技术记录与分享。
 
@@ -124,4 +128,3 @@ Cocos Creator 游戏开发脚手架，持续维护中...
 皮皮创建了一个游戏开发交流群，供大家交流经验、问题求助等。
 
 感兴趣的小伙伴可以添加我微信 `im_chenpipi` 并留言 `加群`。
-

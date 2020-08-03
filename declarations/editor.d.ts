@@ -1,7 +1,7 @@
 /**
  * Cocos Creator 编辑器命名空间
  * @author 陈皮皮（ifaswind）
- * @version 20200727
+ * @version 20200803
  * @see https://gitee.com/ifaswind/eazax-ccc/blob/master/declarations/editor.d.ts
  */
 declare namespace Editor {
@@ -48,6 +48,16 @@ declare namespace Editor {
      * @param encode 
      */
     export function url(url: string, encode?: string): string;
+
+}
+
+declare namespace Editor {
+
+    export const versions: { CocosCreator: string, 'editor-framework': string, 'asset-db': string, cocos2d: string };
+
+}
+
+declare namespace Editor {
 
     namespace RendererProcess {
 
@@ -671,6 +681,12 @@ interface AssetInfo {
     id?: string;
     name?: string;
     subAssetTypes?: string;
+}
+
+declare module Editor.App {
+
+    export const version: string;
+
 }
 
 declare module Editor.Project {

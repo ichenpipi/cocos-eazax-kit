@@ -39,4 +39,5 @@ namespace eazax {
 
 }
 
-window['eazax'] = eazax;
+// window['eazax'] = eazax;
+window.eazax = eazax;

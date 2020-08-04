@@ -1,8 +1,8 @@
 export default class EditorAsset {
 
     /**
-     * 在编辑器中动态加载资源
-     * @param url 相对路径，根目录为 ’asssts/‘，带文件后缀
+     * 在编辑器环境中加载 assets 目录下的资源
+     * @param url 相对路径，根目录为 ’asssts/‘，注意带上文件后缀
      * @param type 资源类型
      * @param callback 完成回调
      * @example 
@@ -10,18 +10,34 @@ export default class EditorAsset {
      *      this.effect = result;
      *  });
      */
-    static load<T>(url: string, type: string, callback: (err: any, result: T) => void): void {
+    static load<T>(url: string, type: string, callback: (err: Error, result: T) => void): void {
         if (!CC_EDITOR) return;
-        Editor.assetdb.queryAssets('db://assets/' + url, type, (err: any, results: any[]) => {
-            if (err) return callback('[EditorAsset] Unknow error!', null);
-            if (results.length === 0) return callback('[EditorAsset] No asset found!', null);
-            // cc.AssetLibrary.loadAsset(results[0].uuid, (_err: any, _result: any) => {
-            //     callback(_err, _result);
-            // });
-            cc.loader.load({ uuid: results[0].uuid, type: type }, (_err: any, _result: T) => {
-                callback(_err, _result);
-            });
+        Editor.assetdb.queryAssets(`db://assets/${url}`, type, (err: Error, results: AssetInfo[]) => {
+            if (err) return callback(new Error('[EditorAsset] Unknow error!'), null);
+            if (results.length === 0) return callback(new Error('[EditorAsset] No asset found!'), null);
+
+            if (cc.assetManager) {
+                cc.assetManager.loadAny({ uuid: results[0].uuid, type: type }, (_err: Error, _result: T) => {
+                    Editor.log(JSON.stringify(results[0]))
+                    callback(_err, _result);
+                });
+            } else {
+                cc.loader.load({ uuid: results[0].uuid, type: type }, (_err: Error, _result: T) => {
+                    callback(_err, _result);
+                });
+            }
         });
     }
 
+}
+
+interface AssetInfo {
+    destPath: string;
+    hidden: boolean;
+    isSubAsset: boolean;
+    path: string;
+    readonly: boolean;
+    type: string;
+    url: string;
+    uuid: string;
 }

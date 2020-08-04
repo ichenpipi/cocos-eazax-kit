@@ -1,7 +1,7 @@
 /**
  * Cocos Creator 编辑器命名空间
  * @author 陈皮皮（ifaswind）
- * @version 20200803
+ * @version 20200804
  * @see https://gitee.com/ifaswind/eazax-ccc/blob/master/declarations/editor.d.ts
  */
 declare namespace Editor {
@@ -489,7 +489,7 @@ declare namespace Editor {
              * @param assetTypes The asset type(s).
              * @param cb The callback function.
              */
-            queryAssets(pattern: string, assetTypes: string[], cb?: (err: Error, results: any[]) => void): void;
+            queryAssets(pattern: string, assetTypes: string | string[], cb?: (err: Error, results: any[]) => void): void;
 
             /**
              * queryMetas

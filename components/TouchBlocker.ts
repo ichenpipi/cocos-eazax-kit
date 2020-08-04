@@ -23,18 +23,18 @@ export default class TouchBlocker extends cc.Component {
     }
 
     /**
-     * touchend 回调
+     * touchstart 回调
      * @param event 事件
      */
     private onTouchStart(event: cc.Event.EventTouch) {
         if (this.isPassAll) return;
         if (this.isBlockAll || !this.target) {
             event.stopPropagationImmediate();
-        } else {
-            let targetRect = this.target.getBoundingBoxToWorld();
-            let isContains = targetRect.contains(event.getLocation());
-            if (!isContains) event.stopPropagationImmediate();
+            return;
         }
+        let targetRect = this.target.getBoundingBoxToWorld();
+        let isContains = targetRect.contains(event.getLocation());
+        if (!isContains) event.stopPropagationImmediate();
     }
 
     /**
@@ -68,7 +68,7 @@ export default class TouchBlocker extends cc.Component {
      * @param swallow 状态
      */
     public setSwallowTouches(swallow: boolean) {
-        this.node['_touchListener'].setSwallowTouches(swallow);
+        this.node._touchListener.setSwallowTouches(swallow);
     }
 
 }

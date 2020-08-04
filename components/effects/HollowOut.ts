@@ -82,7 +82,7 @@ export default class HollowOut extends cc.Component {
         // 依赖于 EditorAsset 模块，没有模块请将此代码块以及顶部导入语句注释
         if (CC_EDITOR && !this.effect) {
             await new Promise(res => {
-                EditorAsset.load('eazax-ccc/resources/effects/eazax-hollowout.effect', 'effect', (err: any, result: cc.EffectAsset) => {
+                EditorAsset.load('eazax-ccc/resources/effects/eazax-hollowout.effect', 'effect', (err: Error, result: cc.EffectAsset) => {
                     if (err) cc.warn('请手动指定 HollowOut 组件的 Effect 文件！');
                     else this.effect = result;
                     res();

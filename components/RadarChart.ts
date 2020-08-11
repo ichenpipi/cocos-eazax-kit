@@ -4,68 +4,125 @@ const { ccclass, property, executeInEditMode } = cc._decorator;
 @executeInEditMode
 export default class RadarChart extends cc.Component {
 
-    @property({ type: cc.Node, tooltip: CC_DEV && '目标' })
+    @property({ type: cc.Node, tooltip: CC_DEV && '绘制目标节点' })
     private target: cc.Node = null;
 
-    @property({ tooltip: CC_DEV && '轴长度' })
-    private axleLength: number = 200;
+    @property({ tooltip: CC_DEV && '轴长' })
+    private axisLength: number = 200;
 
-    @property({ tooltip: CC_DEV && '轴数' })
+    @property({ tooltip: CC_DEV && '轴数（至少 3 条）' })
     private axes: number = 6;
 
-    @property({ tooltip: CC_DEV && '线和轴的宽度' })
-    private lineWidth: number = 5;
+    @property({ tooltip: CC_DEV && '是否绘制轴' })
+    private drawAxes: boolean = true;
+
+    @property({ tooltip: CC_DEV && '轴上节点数（至少 1 个，不包括圆心）' })
+    private nodesPerAxle: number = 3;
+
+    @property({ tooltip: CC_DEV && '轴和外线的宽度' })
+    private baseLineWidth: number = 3;
 
     @property({ tooltip: CC_DEV && '内线宽度' })
     private innerLineWidth: number = 3;
 
-    @property({ tooltip: CC_DEV && '背景线颜色' })
-    private baseLineColor: cc.Color = cc.Color.WHITE;
+    @property({ tooltip: CC_DEV && '基本线颜色' })
+    private baseLineColor: cc.Color = cc.Color.GRAY;
 
-    @property({ tooltip: CC_DEV && '背景线颜色' })
-    private dataLineColor: cc.Color = cc.Color.GRAY;
+    @property({ tooltip: CC_DEV && '基本填充颜色' })
+    private baseFillColor: cc.Color = cc.color(120, 180, 120, 100);
 
-    @property({ tooltip: CC_DEV && '背景颜色' })
-    private dataContentColor: cc.Color = cc.Color.RED;
+    @property({ type: [cc.String], tooltip: CC_DEV && '数据数值字符串（使用英文逗号分隔，数值单位：%）' })
+    private valuesStrings: string[] = ['0.8,0.5,0.6,0.5,0.8,0.6', '0.5,0.9,0.5,0.8,0.5,0.9'];
 
-    @property({ tooltip: CC_DEV && '每根轴上的点数（不包括圆心）' })
-    private pointsPerAxle: number = 3;
+    @property({ type: [cc.Integer], tooltip: CC_DEV && '数据线宽度' })
+    private dataLineWidths: number[] = [4, 4];
+
+    @property({ type: [cc.Color], tooltip: CC_DEV && '数据线颜色' })
+    private dataLineColors: cc.Color[] = [cc.Color.BLUE, cc.Color.RED];
+
+    @property({ type: [cc.Color], tooltip: CC_DEV && '数据填充颜色' })
+    private dataFillColors: cc.Color[] = [cc.color(120, 120, 180, 200), cc.color(180, 120, 120, 200)];
+
+    @property({ tooltip: CC_DEV && '是否绘制数据节点' })
+    private drawDataJoinPoint: boolean = true;
+
+    @property({ tooltip: '每帧更新' })
+    private keepUpdating: boolean = false;
 
     private graphics: cc.Graphics = null;
 
-    private angels: number[] = null;
+    private angles: number[] = null;
+
+    private datas: RadarChartData[] = [];
 
     protected onLoad() {
-        if (!this.target) this.target = this.node;
-        this.graphics = this.target.getComponent(cc.Graphics);
-        if (!this.graphics) this.target.addComponent(cc.Graphics);
+        this.init();
     }
 
     protected start() {
-        this.graphics.clear();
-        this.drawBase();
-        this.draw();
+        if (this.valuesStrings.length === 0) return;
+        let datas: RadarChartData[] = [];
+        for (let i = 0; i < this.valuesStrings.length; i++) {
+            datas.push({
+                values: this.processValuesString(this.valuesStrings[i]),
+                lineWidth: this.dataLineWidths[i] || this.dataLineWidths[0] || 3,
+                lineColor: this.dataLineColors[i] || this.dataLineColors[0] || cc.Color.BLUE,
+                fillColor: this.dataFillColors[i] || this.dataFillColors[0] || cc.color(120, 120, 180, 200)
+            });
+        }
+        this.draw(datas);
+
+        // to 使用实例
+        // this.to([{
+        //     values: [1, 1, 1, 1, 1, 1],
+        //     lineWidth: 3,
+        //     lineColor: cc.Color.RED,
+        //     fillColor: cc.color(120, 120, 180, 200)
+        // },
+        // {
+        //     values: [0, 0, 0, 0, 0, 0],
+        //     lineWidth: 3,
+        //     lineColor: cc.Color.BLUE,
+        //     fillColor: cc.color(180, 120, 120, 200)
+        // }], 5);
+    }
+
+    protected update() {
+        if (!this.keepUpdating || this.datas.length === 0) return;
+        this.draw(this.datas);
+    }
+
+    private init() {
+        if (!this.target) this.target = this.node;
+        this.graphics = this.target.getComponent(cc.Graphics);
+        if (!this.graphics) this.target.addComponent(cc.Graphics);
+
+        this.graphics.lineJoin = cc.Graphics.LineJoin.ROUND;
+        this.graphics.lineCap = cc.Graphics.LineCap.ROUND;
     }
 
     /**
      * 画基本线框
      */
     private drawBase() {
+        // 填充染料
+        this.graphics.lineWidth = this.baseLineWidth;
         this.graphics.strokeColor = this.baseLineColor;
-        this.graphics.lineWidth = this.lineWidth;
+        this.graphics.fillColor = this.baseFillColor;
 
         // 计算角度
-        this.angels = [];
+        this.angles = [];
         const gap = 360 / this.axes;
-        for (let i = 0; i < this.axes; i++) this.angels.push(gap * i);
+        for (let i = 0; i < this.axes; i++) this.angles.push(gap * i);
 
-        // 计算点坐标
+        // 计算节点坐标
         let pointSet = [];
-        for (let i = 0; i < this.pointsPerAxle; i++) {
+        if (this.nodesPerAxle <= 1) this.nodesPerAxle = 1;
+        for (let i = 0; i < this.nodesPerAxle; i++) {
             let points = [];
-            const length = this.axleLength - (this.axleLength / this.pointsPerAxle * i);
-            for (let j = 0; j < this.angels.length; j++) {
-                const radian = (Math.PI / 180) * this.angels[j];
+            const length = this.axisLength - (this.axisLength / this.nodesPerAxle * i);
+            for (let j = 0; j < this.angles.length; j++) {
+                const radian = (Math.PI / 180) * this.angles[j];
                 let pos = cc.v2(length * Math.cos(radian), length * Math.sin(radian))
                 points.push(pos);
             }
@@ -73,51 +130,134 @@ export default class RadarChart extends cc.Component {
         }
 
         // 画轴
-        for (let i = 0; i < pointSet[0].length; i++) {
-            this.graphics.moveTo(0, 0);
+        if (this.drawAxes) {
+            for (let i = 0; i < pointSet[0].length; i++) {
+                this.graphics.moveTo(0, 0);
+                this.graphics.lineTo(pointSet[0][i].x, pointSet[0][i].y);
+            }
+        }
+        // 画外线并闭合
+        this.graphics.moveTo(pointSet[0][0].x, pointSet[0][0].y);
+        for (let i = 1; i < pointSet[0].length; i++) {
             this.graphics.lineTo(pointSet[0][i].x, pointSet[0][i].y);
-            this.graphics.stroke();
         }
-
-        // 闭合
-        for (let i = 0; i < pointSet.length; i++) {
-            this.graphics.lineWidth = (i === 0) ? this.lineWidth : this.innerLineWidth;
-            this.graphics.moveTo(pointSet[i][0].x, pointSet[i][0].y);
-            for (let j = 1; j < pointSet[i].length; j++) {
-                this.graphics.lineTo(pointSet[i][j].x, pointSet[i][j].y);
-            }
-            this.graphics.lineTo(pointSet[i][0].x, pointSet[i][0].y);
-            this.graphics.stroke();
-        }
-        this.graphics.lineWidth = this.lineWidth;
-    }
-
-    private draw() {
-        this.graphics.strokeColor = this.dataLineColor;
-        this.graphics.lineWidth = this.innerLineWidth;
-
-        let data = [80, 50, 60, 30, 70, 40];
-
-        // 计算点坐标
-        let points = [];
-        for (let i = 0; i < this.axes; i++) {
-            const length = (data[i] || 0) / 100 * this.axleLength;
-            for (let j = 0; j < this.angels.length; j++) {
-                let radian = (Math.PI / 180) * this.angels[j];
-                let pos = cc.v2(length * Math.cos(radian), length * Math.sin(radian))
-                points.push(pos);
-            }
-        }
-
-        // 画线闭合
-        this.graphics.moveTo(points[0].x, points[0].y);
-        for (let i = 1; i < points.length; i++) {
-            this.graphics.lineTo(points[i].x, points[i].y);
-        }
-        this.graphics.lineTo(points[0].x, points[0].y);
-        this.graphics.stroke();
-        this.graphics.fillColor = this.dataContentColor;
+        this.graphics.close();
+        // 填充颜色
         this.graphics.fill();
+        // 绘制线段
+        this.graphics.stroke();
+
+        // 画内线并闭合
+        if (pointSet.length > 1) {
+            this.graphics.lineWidth = this.innerLineWidth;
+            for (let i = 1; i < pointSet.length; i++) {
+                this.graphics.moveTo(pointSet[i][0].x, pointSet[i][0].y);
+                for (let j = 1; j < pointSet[i].length; j++) {
+                    this.graphics.lineTo(pointSet[i][j].x, pointSet[i][j].y);
+                }
+                this.graphics.close();
+            }
+            // 绘制内线
+            this.graphics.stroke();
+        }
     }
 
+    public draw(datas: RadarChartData | RadarChartData[]) {
+        // 处理单条数据
+        if (!Array.isArray(datas)) datas = [datas];
+
+        // 清除旧图像
+        this.graphics.clear();
+
+        // 少于 3 条轴无法绘制
+        if (this.axes < 3) return;
+        // 画基础表
+        this.drawBase();
+
+        // 开始绘制数据
+        this.datas = datas;
+        for (let i = 0; i < datas.length; i++) {
+            this.graphics.strokeColor = datas[i].lineColor;
+            this.graphics.fillColor = datas[i].fillColor;
+            this.graphics.lineWidth = datas[i].lineWidth;
+            // 计算节点坐标
+            let points = [];
+            for (let j = 0; j < this.axes; j++) {
+                const length = datas[i].values[j] * this.axisLength;
+                const radian = (Math.PI / 180) * this.angles[j];
+                points.push(cc.v2(length * Math.cos(radian), length * Math.sin(radian)));
+            }
+            // 画线并闭合
+            this.graphics.moveTo(points[0].x, points[0].y);
+            for (let j = 1; j < points.length; j++) {
+                this.graphics.lineTo(points[j].x, points[j].y);
+            }
+            this.graphics.close();
+            // 填充颜色
+            this.graphics.fill();
+            // 绘制线段
+            this.graphics.stroke();
+
+            // 绘制节点
+            if (this.drawDataJoinPoint) {
+                for (let j = 1; j < points.length; j++) {
+                    // 大圆
+                    this.graphics.strokeColor = datas[i].lineColor;
+                    this.graphics.circle(points[j].x, points[j].y, 2);
+                    this.graphics.stroke();
+                    // 小圆
+                    this.graphics.strokeColor = cc.Color.WHITE;
+                    this.graphics.circle(points[j].x, points[j].y, 0.75);
+                    this.graphics.stroke();
+                }
+            }
+        }
+    }
+
+    public to(datas: RadarChartData | RadarChartData[], duration: number): Promise<void> {
+        return new Promise(res => {
+            // 处理单条数据
+            if (!Array.isArray(datas)) datas = [datas];
+
+            this.keepUpdating = true;
+            for (let i = 0; i < datas.length; i++) {
+                if (!this.datas[i]) continue;
+                for (let j = 0; j < this.datas[i].values.length; j++) {
+                    cc.tween(this.datas[i].values)
+                        .to(duration, {
+                            [j]: datas[i].values[j]
+                        })
+                        .start();
+                }
+                cc.tween(this.datas[i])
+                    .to(duration, {
+                        lineWidth: datas[i].lineWidth,
+                        lineColor: datas[i].lineColor,
+                        fillColor: datas[i].fillColor,
+                    })
+                    .start();
+            }
+            setTimeout(() => {
+                this.keepUpdating = false;
+                res();
+            }, duration);
+        });
+    }
+
+    private processValuesString(dataString: string): number[] {
+        const strings: string[] = dataString.split(',');
+        let numbers: number[] = [];
+        for (let j = 0; j < strings.length; j++) {
+            numbers.push(parseFloat(strings[j]));
+        }
+        return numbers;
+    }
+
+}
+
+export interface RadarChartData {
+    values: number[];
+    lineColor: cc.Color;
+    lineWidth: number;
+    fillColor: cc.Color;
 }

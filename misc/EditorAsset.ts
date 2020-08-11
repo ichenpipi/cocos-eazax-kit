@@ -18,7 +18,6 @@ export default class EditorAsset {
 
             if (cc.assetManager) {
                 cc.assetManager.loadAny({ uuid: results[0].uuid, type: type }, (_err: Error, _result: T) => {
-                    Editor.log(JSON.stringify(results[0]))
                     callback(_err, _result);
                 });
             } else {

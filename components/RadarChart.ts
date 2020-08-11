@@ -10,50 +10,50 @@ export default class RadarChart extends cc.Component {
     @property({ tooltip: CC_DEV && '轴长' })
     public axisLength: number = 200;
 
+    @property private _axes: number = 6;
     @property({ tooltip: CC_DEV && '轴数（至少 3 条）' })
-    public set axes(value: number) { this._axes = value >= 3 ? value : 3; }
     public get axes() { return this._axes; }
-    private _axes: number = 6;
+    public set axes(value: number) { this._axes = value >= 3 ? value : 3; }
 
     @property({ tooltip: CC_DEV && '是否绘制轴' })
     public drawAxes: boolean = true;
 
+    @property private _nodesPerAxle: number = 3;
     @property({ tooltip: CC_DEV && '轴上节点数（至少 1 个，不包括圆心）' })
-    public set nodesPerAxle(value: number) { this._nodesPerAxle = value >= 1 ? value : 1; }
     public get nodesPerAxle() { return this._nodesPerAxle; }
-    private _nodesPerAxle: number = 3;
+    public set nodesPerAxle(value: number) { this._nodesPerAxle = value >= 1 ? value : 1; }
 
     @property({ tooltip: CC_DEV && '轴和外线的宽度' })
-    public baseLineWidth: number = 3;
+    public baseLineWidth: number = 4;
 
     @property({ tooltip: CC_DEV && '内线宽度' })
-    public innerLineWidth: number = 3;
+    public innerLineWidth: number = 4;
 
     @property({ tooltip: CC_DEV && '基本线颜色' })
     public baseLineColor: cc.Color = cc.Color.GRAY;
 
     @property({ tooltip: CC_DEV && '基本填充颜色' })
-    public baseFillColor: cc.Color = cc.color(120, 180, 120, 100);
+    public baseFillColor: cc.Color = cc.color(100, 120, 100, 100);
 
+    @property private _valuesStrings: string[] = ['0.8,0.5,0.6,0.5,0.8,0.6', '0.5,0.9,0.5,0.8,0.5,0.9'];
     @property({ type: [cc.String], tooltip: CC_DEV && '数据数值字符串（使用英文逗号分隔，数值单位：%）' })
-    public set valuesStrings(value: string[]) { this._valuesStrings = value; this.drawWithProperties(); }
     public get valuesStrings() { return this._valuesStrings; }
-    private _valuesStrings: string[] = ['0.8,0.5,0.6,0.5,0.8,0.6', '0.5,0.9,0.5,0.8,0.5,0.9'];
+    public set valuesStrings(value: string[]) { this._valuesStrings = value; this.drawWithProperties(); }
 
+    @property private _dataLineWidths: number[] = [4, 4];
     @property({ type: [cc.Integer], tooltip: CC_DEV && '数据线宽度' })
-    public set dataLineWidths(value: number[]) { this._dataLineWidths = value; this.drawWithProperties(); }
     public get dataLineWidths() { return this._dataLineWidths; }
-    private _dataLineWidths: number[] = [4, 4];
+    public set dataLineWidths(value: number[]) { this._dataLineWidths = value; this.drawWithProperties(); }
 
+    @property private _dataLineColors: cc.Color[] = [cc.Color.BLUE, cc.Color.RED];
     @property({ type: [cc.Color], tooltip: CC_DEV && '数据线颜色' })
-    public set dataLineColors(value: cc.Color[]) { this._dataLineColors = value; this.drawWithProperties(); }
     public get dataLineColors() { return this._dataLineColors; }
-    private _dataLineColors: cc.Color[] = [cc.Color.BLUE, cc.Color.RED];
+    public set dataLineColors(value: cc.Color[]) { this._dataLineColors = value; this.drawWithProperties(); }
 
+    @property private _dataFillColors: cc.Color[] = [cc.color(120, 120, 180, 100), cc.color(180, 120, 120, 100)];
     @property({ type: [cc.Color], tooltip: CC_DEV && '数据填充颜色' })
-    public set dataFillColors(value: cc.Color[]) { this._dataFillColors = value; this.drawWithProperties(); }
     public get dataFillColors() { return this._dataFillColors; }
-    private _dataFillColors: cc.Color[] = [cc.color(120, 120, 180, 100), cc.color(180, 120, 120, 100)];
+    public set dataFillColors(value: cc.Color[]) { this._dataFillColors = value; this.drawWithProperties(); }
 
     @property({ tooltip: CC_DEV && '是否绘制数据节点' })
     public drawDataJoin: boolean = true;
@@ -67,28 +67,35 @@ export default class RadarChart extends cc.Component {
 
     private curDatas: RadarChartData[] = [];
 
+    private resolve: Function = null;
+
     protected onLoad() {
         this.init();
     }
 
     protected start() {
         this.drawWithProperties();
-
-        // to 使用实例
-        // this.to([{
-        //     values: [1, 1, 1, 1, 1, 1],
-        //     lineWidth: 3,
-        //     lineColor: cc.Color.RED,
-        //     fillColor: cc.color(120, 120, 180, 200)
-        // },
-        // {
-        //     values: [0, 0, 0, 0, 0, 0],
-        //     lineWidth: 3,
-        //     lineColor: cc.Color.BLUE,
-        //     fillColor: cc.color(180, 120, 120, 200)
-        // }], 5);
     }
 
+    protected update() {
+        if (!this.keepUpdating || this.curDatas.length === 0) return;
+        this.draw(this.curDatas);
+    }
+
+    /**
+     * 初始化
+     */
+    private init() {
+        if (!this.target) this.target = this.node;
+        this.graphics = this.target.getComponent(cc.Graphics) || this.target.addComponent(cc.Graphics);
+
+        this.graphics.lineJoin = cc.Graphics.LineJoin.ROUND;
+        this.graphics.lineCap = cc.Graphics.LineCap.ROUND;
+    }
+
+    /**
+     * 使用当前属性绘制
+     */
     private drawWithProperties() {
         let datas: RadarChartData[] = [];
         for (let i = 0; i < this.valuesStrings.length; i++) {
@@ -102,17 +109,17 @@ export default class RadarChart extends cc.Component {
         this.draw(datas);
     }
 
-    protected update() {
-        if (!this.keepUpdating || this.curDatas.length === 0) return;
-        this.draw(this.curDatas);
-    }
-
-    private init() {
-        if (!this.target) this.target = this.node;
-        this.graphics = this.target.getComponent(cc.Graphics) || this.target.addComponent(cc.Graphics);
-
-        this.graphics.lineJoin = cc.Graphics.LineJoin.ROUND;
-        this.graphics.lineCap = cc.Graphics.LineCap.ROUND;
+    /**
+     * 处理字符串数据
+     * @param dataString 
+     */
+    private processValuesString(dataString: string): number[] {
+        const strings = dataString.split(',');
+        let numbers: number[] = [];
+        for (let j = 0; j < strings.length; j++) {
+            numbers.push(parseFloat(strings[j]));
+        }
+        return numbers;
     }
 
     /**
@@ -174,9 +181,13 @@ export default class RadarChart extends cc.Component {
         }
     }
 
-    public draw(datas: RadarChartData | RadarChartData[]) {
+    /**
+     * 绘制数据
+     * @param data 数据
+     */
+    public draw(data: RadarChartData | RadarChartData[]) {
         // 处理单条数据
-        if (!Array.isArray(datas)) datas = [datas];
+        const datas = Array.isArray(data) ? data : [data];
 
         // 清除旧图像
         this.graphics.clear();
@@ -224,12 +235,23 @@ export default class RadarChart extends cc.Component {
         }
     }
 
-    public to(datas: RadarChartData | RadarChartData[], duration: number): Promise<void> {
+    /**
+     * 动态绘制
+     * @param data 目标数据
+     * @param duration 动作时长
+     */
+    public to(data: RadarChartData | RadarChartData[], duration: number): Promise<void> {
         return new Promise(res => {
+            // 处理上一个 Promise
+            this.unscheduleAllCallbacks();
+            this.resolve && this.resolve();
+            this.resolve = res;
+
             // 处理单条数据
-            if (!Array.isArray(datas)) datas = [datas];
+            const datas = Array.isArray(data) ? data : [data];
 
             this.keepUpdating = true;
+
             for (let i = 0; i < datas.length; i++) {
                 if (!this.curDatas[i]) continue;
                 for (let j = 0; j < this.curDatas[i].values.length; j++) {
@@ -247,27 +269,31 @@ export default class RadarChart extends cc.Component {
                     })
                     .start();
             }
-            setTimeout(() => {
+
+            this.scheduleOnce(() => {
                 this.keepUpdating = false;
-                res();
+                this.resolve();
+                this.resolve = null;
             }, duration);
         });
     }
 
-    private processValuesString(dataString: string): number[] {
-        const strings: string[] = dataString.split(',');
-        let numbers: number[] = [];
-        for (let j = 0; j < strings.length; j++) {
-            numbers.push(parseFloat(strings[j]));
-        }
-        return numbers;
-    }
-
 }
 
+/**
+ * 雷达图数据
+ */
 export interface RadarChartData {
+
+    /** 数值 */
     values: number[];
-    lineColor: cc.Color;
+
+    /** 线宽 */
     lineWidth: number;
+
+    /** 线颜色 */
+    lineColor: cc.Color;
+
+    /** 填充颜色 */
     fillColor: cc.Color;
 }

@@ -4,9 +4,15 @@
 
 一个 Cocos Creator 游戏开发脚手架，目前持续更新维护中...
 
+- 使用示例在线预览：[https://ifaswind.gitee.io/eazax-cases](https://ifaswind.gitee.io/eazax-cases)
+
 如果此项目对你有帮助，请不要忘记 [![star](https://gitee.com/ifaswind/eazax-ccc/badge/star.svg?theme=dark)](https://gitee.com/ifaswind/eazax-ccc/stargazers)
 
-如有使用上的问题，可以在 gitee 上提 issue 或者添加我的微信 `im_chenpipi` 并留言。
+> 如有使用上的问题，可以在 gitee 上提 issue 或者添加我的微信 `im_chenpipi` 并留言。
+
+
+
+---
 
 
 
@@ -20,24 +26,29 @@
 
 
 
+---
+
+
+
 ## 目录结构
 
 - components 常用组件
   - effects Shader 配套组件
-    - GaussianBlur.ts 高斯模糊效果组件
-    - HollowOut.ts 镂空效果组件
+    - GaussianBlur.ts 高斯模糊效果
+    - HollowOut.ts 镂空效果
   - localization 本地化组件
-    - LocalizationBase.ts 多语言组件基类
-    - LocalizationLabelString.ts 多语言文本组件
-    - LocalizationSpriteFrame.ts 多语言精灵组件
-  - BackgroundFitter.ts 背景适配组件
-  - Counter.ts 数值滚动组件
-  - LongPress.ts 节点长按组件
-  - Marquee.ts 文本跑马灯组件
-  - RotateAround.ts 围绕旋转组件
-  - ScreenAdapter.ts 屏幕适配组件
-  - Subtitle.ts 字幕组件
-  - TouchBlocker.ts 点击屏蔽组件
+    - LocalizationBase.ts 多语言基类
+    - LocalizationLabelString.ts 多语言文本
+    - LocalizationSpriteFrame.ts 多语言精灵
+  - BackgroundFitter.ts 背景适配
+  - Counter.ts 数值滚动
+  - LongPress.ts 节点长按
+  - Marquee.ts 文本跑马灯
+  - RadarChart.ts 雷达图
+  - RotateAround.ts 围绕旋转
+  - ScreenAdapter.ts 屏幕适配
+  - Subtitle.ts 字幕
+  - TouchBlocker.ts 点击控制
 
 
 
@@ -99,6 +110,10 @@
 
 
 
+---
+
+
+
 ## 环境
 
 引擎：Cocos Creator 2.0 +
@@ -120,6 +135,10 @@
 > Input and output.
 
 ![](https://gitee.com/ifaswind/image-storage/raw/master/weixin/official-account.png)
+
+
+
+---
 
 
 

@@ -1,4 +1,22 @@
+/**
+ * 浏览器工具
+ */
 export default class BrowserUtil {
+
+    /**
+     * 获取当前 URL 参数
+     * @param key 键
+     */
+    public static getUrlParam(key: string) {
+        const query = window.location.search.replace('?', '');
+        if (query === '') return null;
+        const keyValues = query.split('&');
+        for (let i = 0; i < keyValues.length; i++) {
+            const strings = keyValues[i].split('=');
+            if (decodeURIComponent(strings[0]) === key) return decodeURIComponent(strings[1]);
+        }
+        return null;
+    }
 
     /**
      * 复制文本至设备剪贴板
@@ -23,22 +41,26 @@ export default class BrowserUtil {
         let result = document.execCommand('copy');
         element.remove();
         return result;
-        // return new Promise<boolean>(res => {
-        //     if (document.location.protocol === 'https:' || document.location.hostname === 'localhost' || document.location.hostname === '127.0.0.1') {
-        //         // navigator.clipboard API 只适用于安全连接
-        //         console.log('Copy via navigator.clipboard');
-        //         navigator.clipboard.writeText(value)
-        //             .then(() => {
-        //                 console.log('Clipboard write success!');
-        //                 res(true);
-        //             })
-        //             .catch(err => {
-        //                 console.error('Clipboard write failed:', err);
-        //                 res(false);
-        //             });
-        //     } else {
-        //         console.log('Copy via document.execCommand');
-        //     }
-        // });
     }
+
+    // public static copyViaNavigator(value: string) {
+    //     return new Promise<boolean>(res => {
+    //         if (document.location.protocol === 'https:' || document.location.hostname === 'localhost' || document.location.hostname === '127.0.0.1') {
+    //             // navigator.clipboard API 只适用于安全连接
+    //             console.log('Copy via navigator.clipboard');
+    //             navigator.clipboard.writeText(value)
+    //                 .then(() => {
+    //                     console.log('Clipboard write success!');
+    //                     res(true);
+    //                 })
+    //                 .catch(err => {
+    //                     console.error('Clipboard write failed:', err);
+    //                     res(false);
+    //                 });
+    //         } else {
+    //             console.log('Copy via document.execCommand');
+    //         }
+    //     });
+    // }
+
 }

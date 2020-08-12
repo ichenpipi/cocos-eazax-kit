@@ -216,7 +216,8 @@ export default class RadarChart extends cc.Component {
             // 计算节点坐标
             let points = [];
             for (let j = 0; j < this.axes; j++) {
-                const length = datas[i].values[j] * this.axisLength;
+                const value = datas[i].values[j] > 1 ? 1 : datas[i].values[j];
+                const length = value * this.axisLength;
                 const radian = (Math.PI / 180) * this.angles[j];
                 points.push(cc.v2(length * Math.cos(radian), length * Math.sin(radian)));
             }
@@ -264,17 +265,17 @@ export default class RadarChart extends cc.Component {
             // 开启每帧更新
             this.keepUpdating = true;
 
+            // 动起来！
             for (let i = 0; i < datas.length; i++) {
                 if (!this._curDatas[i]) continue;
-                // 数据
+                // 数据动！
                 for (let j = 0; j < this._curDatas[i].values.length; j++) {
+                    const value = datas[i].values[j] > 1 ? 1 : datas[i].values[j];
                     cc.tween(this._curDatas[i].values)
-                        .to(duration, {
-                            [j]: datas[i].values[j]
-                        })
+                        .to(duration, { [j]: value })
                         .start();
                 }
-                // 样式
+                // 样式动！
                 cc.tween(this._curDatas[i])
                     .to(duration, {
                         lineWidth: datas[i].lineWidth,

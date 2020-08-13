@@ -72,6 +72,11 @@ export default class RadarChart extends cc.Component {
     public get dataFillColors() { return this._dataFillColors; }
     public set dataFillColors(value: cc.Color[]) { this._dataFillColors = value; this.drawWithProperties(); }
 
+    @property private _dataJoinColors: cc.Color[] = [];
+    @property({ type: [cc.Color], tooltip: CC_DEV && '数据节点颜色' })
+    public get dataJoinColors() { return this._dataJoinColors; }
+    public set dataJoinColors(value: cc.Color[]) { this._dataJoinColors = value; this.drawWithProperties(); }
+
     private keepUpdating: boolean = false;
 
     private graphics: cc.Graphics = null;
@@ -113,25 +118,28 @@ export default class RadarChart extends cc.Component {
         for (let i = 0; i < this.dataValuesStrings.length; i++) {
             datas.push({
                 values: this.processValuesString(this.dataValuesStrings[i]),
-                lineWidth: this.dataLineWidths[i] || this.dataLineWidths[0] || 3,
-                lineColor: this.dataLineColors[i] || this.dataLineColors[0] || cc.Color.BLUE,
-                fillColor: this.dataFillColors[i] || this.dataFillColors[0] || cc.color(120, 120, 180, 200)
+                lineWidth: this._dataLineWidths[i] || 3,
+                lineColor: this._dataLineColors[i] || cc.Color.BLUE,
+                fillColor: this._dataFillColors[i] || cc.color(120, 120, 180, 200),
+                joinColor: this._dataJoinColors[i] || cc.Color.BLUE
             });
         }
+        // 绘制
         this.draw(datas);
     }
 
     /**
-     * 处理字符串数据
-     * @param dataString 
+     * 将数值字符串转为数值数组
+     * @param valuesString 数值字符串
      */
-    private processValuesString(dataString: string): number[] {
-        const strings = dataString.split(',');
-        let numbers: number[] = [];
+    private processValuesString(valuesString: string): number[] {
+        const strings = valuesString.split(',');
+        let values: number[] = [];
         for (let j = 0; j < strings.length; j++) {
-            numbers.push(parseFloat(strings[j]));
+            const value = parseFloat(strings[j]);
+            values.push(isNaN(value) ? 0 : value);
         }
-        return numbers;
+        return values;
     }
 
     /**
@@ -206,6 +214,9 @@ export default class RadarChart extends cc.Component {
         const datas = Array.isArray(data) ? data : [data];
         this._curDatas = datas;
 
+        // 数值不足需补 0
+        this.resizeCurDatasValues(0);
+
         // 开始绘制数据
         for (let i = 0; i < datas.length; i++) {
             // 填充染料
@@ -239,8 +250,8 @@ export default class RadarChart extends cc.Component {
                     this.graphics.circle(points[j].x, points[j].y, 2);
                     this.graphics.stroke();
                     // 小圆
-                    this.graphics.strokeColor = cc.Color.WHITE;
-                    this.graphics.circle(points[j].x, points[j].y, 0.75);
+                    this.graphics.strokeColor = datas[i].joinColor || cc.Color.WHITE;
+                    this.graphics.circle(points[j].x, points[j].y, .65);
                     this.graphics.stroke();
                 }
             }
@@ -278,9 +289,10 @@ export default class RadarChart extends cc.Component {
                 // 样式动！
                 cc.tween(this._curDatas[i])
                     .to(duration, {
-                        lineWidth: datas[i].lineWidth,
-                        lineColor: datas[i].lineColor,
-                        fillColor: datas[i].fillColor,
+                        lineWidth: datas[i].lineWidth || this._curDatas[i].lineWidth,
+                        lineColor: datas[i].lineColor || this._curDatas[i].lineColor,
+                        fillColor: datas[i].fillColor || this._curDatas[i].fillColor,
+                        joinColor: datas[i].joinColor || this._curDatas[i].joinColor
                     })
                     .start();
             }
@@ -291,6 +303,20 @@ export default class RadarChart extends cc.Component {
                 this.toResolve = null;
             }, duration);
         });
+    }
+
+    /**
+     * 检查并调整数据中的数值数量
+     * @param fill 填充数值
+     */
+    private resizeCurDatasValues(fill: number = 0) {
+        for (let i = 0; i < this._curDatas.length; i++) {
+            // 数值数量少于轴数时才进行调整
+            if (this._curDatas[i].values.length < this._axes) {
+                const diff = this._axes - this._curDatas[i].values.length;
+                for (let j = 0; j < diff; j++) this._curDatas[i].values.push(fill);
+            }
+        }
     }
 
 }
@@ -304,12 +330,15 @@ export interface RadarChartData {
     values: number[];
 
     /** 线宽 */
-    lineWidth: number;
+    lineWidth?: number;
 
     /** 线颜色 */
-    lineColor: cc.Color;
+    lineColor?: cc.Color;
 
     /** 填充颜色 */
-    fillColor: cc.Color;
+    fillColor?: cc.Color;
+
+    /** 节点颜色 */
+    joinColor?: cc.Color;
 
 }

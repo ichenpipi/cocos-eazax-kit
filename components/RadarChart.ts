@@ -1,7 +1,8 @@
-const { ccclass, property, executeInEditMode } = cc._decorator;
+const { ccclass, property, executeInEditMode, executionOrder } = cc._decorator;
 
 @ccclass
 @executeInEditMode
+@executionOrder(-10)
 export default class RadarChart extends cc.Component {
 
     @property({ type: cc.Node, tooltip: CC_DEV && '绘制目标节点' })
@@ -47,7 +48,7 @@ export default class RadarChart extends cc.Component {
     public get baseLineColor() { return this._baseLineColor; }
     public set baseLineColor(value: cc.Color) { this._baseLineColor = value; this.draw(this.curDatas); }
 
-    @property private _baseFillColor: cc.Color = cc.color(100, 120, 100, 100);
+    @property private _baseFillColor: cc.Color = cc.color(100, 100, 100, 100);
     @property({ tooltip: CC_DEV && '基本填充颜色' })
     public get baseFillColor() { return this._baseFillColor; }
     public set baseFillColor(value: cc.Color) { this._baseFillColor = value; this.draw(this.curDatas); }
@@ -77,19 +78,20 @@ export default class RadarChart extends cc.Component {
     public get dataJoinColors() { return this._dataJoinColors; }
     public set dataJoinColors(value: cc.Color[]) { this._dataJoinColors = value; this.drawWithProperties(); }
 
-    private keepUpdating: boolean = false;
-
     private graphics: cc.Graphics = null;
+
+    private keepUpdating: boolean = false;
 
     private angles: number[] = null;
 
     private _curDatas: RadarChartData[] = [];
     public get curDatas() { return this._curDatas; }
 
-    private toResolve: Function = null;
+    private toRes: () => void = null;
 
     protected onLoad() {
         this.init();
+        this.drawWithProperties();
     }
 
     protected update() {
@@ -101,27 +103,27 @@ export default class RadarChart extends cc.Component {
      * 初始化
      */
     private init() {
+        // 获取组件
         if (!this.target) this.target = this.node;
         this.graphics = this.target.getComponent(cc.Graphics) || this.target.addComponent(cc.Graphics);
-
+        // 设置端点和拐角样式
         this.graphics.lineJoin = cc.Graphics.LineJoin.ROUND;
         this.graphics.lineCap = cc.Graphics.LineCap.ROUND;
-
-        this.drawWithProperties();
     }
 
     /**
      * 使用当前属性绘制
      */
     private drawWithProperties() {
+        // 获取属性面板配置
         let datas: RadarChartData[] = [];
         for (let i = 0; i < this.dataValuesStrings.length; i++) {
             datas.push({
                 values: this.processValuesString(this.dataValuesStrings[i]),
-                lineWidth: this._dataLineWidths[i] || 5,
-                lineColor: this._dataLineColors[i] || cc.Color.BLUE,
-                fillColor: this._dataFillColors[i] || cc.color(120, 120, 180, 100),
-                joinColor: this._dataJoinColors[i] || cc.Color.WHITE
+                lineWidth: this._dataLineWidths[i] || defaultConfig.lineWidth,
+                lineColor: this._dataLineColors[i] || defaultConfig.lineColor,
+                fillColor: this._dataFillColors[i] || defaultConfig.fillColor,
+                joinColor: this._dataJoinColors[i] || defaultConfig.joinColor
             });
         }
         // 绘制
@@ -220,9 +222,9 @@ export default class RadarChart extends cc.Component {
         // 开始绘制数据
         for (let i = 0; i < datas.length; i++) {
             // 填充染料
-            this.graphics.strokeColor = datas[i].lineColor;
-            this.graphics.fillColor = datas[i].fillColor;
-            this.graphics.lineWidth = datas[i].lineWidth;
+            this.graphics.strokeColor = datas[i].lineColor || defaultConfig.lineColor;
+            this.graphics.fillColor = datas[i].fillColor || defaultConfig.fillColor;
+            this.graphics.lineWidth = datas[i].lineWidth || defaultConfig.lineWidth;
 
             // 计算节点坐标
             let points = [];
@@ -246,11 +248,11 @@ export default class RadarChart extends cc.Component {
             if (this._drawDataJoin) {
                 for (let j = 0; j < points.length; j++) {
                     // 大圆
-                    this.graphics.strokeColor = datas[i].lineColor;
+                    this.graphics.strokeColor = datas[i].lineColor || defaultConfig.lineColor;
                     this.graphics.circle(points[j].x, points[j].y, 2);
                     this.graphics.stroke();
                     // 小圆
-                    this.graphics.strokeColor = datas[i].joinColor || cc.Color.WHITE;
+                    this.graphics.strokeColor = datas[i].joinColor || defaultConfig.joinColor;
                     this.graphics.circle(points[j].x, points[j].y, .65);
                     this.graphics.stroke();
                 }
@@ -267,8 +269,8 @@ export default class RadarChart extends cc.Component {
         return new Promise(res => {
             // 处理上一个 Promise
             this.unscheduleAllCallbacks();
-            this.toResolve && this.toResolve();
-            this.toResolve = res;
+            this.toRes && this.toRes();
+            this.toRes = res;
 
             // 处理单条数据
             const datas = Array.isArray(data) ? data : [data];
@@ -299,8 +301,8 @@ export default class RadarChart extends cc.Component {
 
             this.scheduleOnce(() => {
                 this.keepUpdating = false;
-                this.toResolve();
-                this.toResolve = null;
+                this.toRes();
+                this.toRes = null;
             }, duration);
         });
     }
@@ -341,4 +343,14 @@ export interface RadarChartData {
     /** 节点颜色 */
     joinColor?: cc.Color;
 
+}
+
+/**
+ * 不指定时使用的样式配置
+ */
+const defaultConfig = {
+    lineWidth: 5,
+    lineColor: cc.Color.BLUE,
+    fillColor: cc.color(120, 120, 180, 100),
+    joinColor: cc.Color.WHITE,
 }

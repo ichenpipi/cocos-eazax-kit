@@ -5,53 +5,48 @@ const { ccclass, property, executeInEditMode, executionOrder } = cc._decorator;
 @executionOrder(-10)
 export default class RadarChart extends cc.Component {
 
-    @property({ type: cc.Node, tooltip: CC_DEV && '绘制目标节点' })
+    @property({ type: cc.Node, tooltip: CC_DEV && '绘制节点' })
     private target: cc.Node = null;
 
     @property private _axisLength: number = 200;
-    @property({ tooltip: CC_DEV && '轴长' })
+    @property({ tooltip: CC_DEV && '轴线长度' })
     public get axisLength() { return this._axisLength; }
     public set axisLength(value: number) { this._axisLength = value; this.draw(this.curDatas); }
 
     @property private _axes: number = 6;
-    @property({ tooltip: CC_DEV && '轴数（至少 3 条）' })
+    @property({ tooltip: CC_DEV && '轴线数量（至少 3 条）' })
     public get axes() { return this._axes; }
     public set axes(value: number) { this._axes = Math.floor(value >= 3 ? value : 3); this.draw(this.curDatas); }
 
+    @property private _axisScales: number = 3;
+    @property({ tooltip: CC_DEV && '轴线上的刻度数（至少 1 个）' })
+    public get axisScales() { return this._axisScales; }
+    public set axisScales(value: number) { this._axisScales = Math.floor(value >= 1 ? value : 1); this.draw(this.curDatas); }
+
     @property private _drawAxes: boolean = true;
-    @property({ tooltip: CC_DEV && '是否绘制轴' })
+    @property({ tooltip: CC_DEV && '是否绘制轴线' })
     public get drawAxes() { return this._drawAxes; }
     public set drawAxes(value: boolean) { this._drawAxes = value; this.draw(this.curDatas); }
 
-    @property private _drawDataJoin: boolean = true;
-    @property({ tooltip: CC_DEV && '是否绘制数据节点' })
-    public get drawDataJoin() { return this._drawDataJoin; }
-    public set drawDataJoin(value: boolean) { this._drawDataJoin = value; this.draw(this.curDatas); }
+    @property private _gridLineWidth: number = 4;
+    @property({ tooltip: CC_DEV && '轴线和外网格线的宽度' })
+    public get gridLineWidth() { return this._gridLineWidth; }
+    public set gridLineWidth(value: number) { this._gridLineWidth = value; this.draw(this.curDatas); }
 
-    @property private _nodesPerAxle: number = 3;
-    @property({ tooltip: CC_DEV && '轴上节点数（至少 1 个，不包括圆心）' })
-    public get nodesPerAxle() { return this._nodesPerAxle; }
-    public set nodesPerAxle(value: number) { this._nodesPerAxle = Math.floor(value >= 1 ? value : 1); this.draw(this.curDatas); }
+    @property private _innerGridLineWidth: number = 4;
+    @property({ tooltip: CC_DEV && '内网格线宽度' })
+    public get innerGridLineWidth() { return this._innerGridLineWidth; }
+    public set innerGridLineWidth(value: number) { this._innerGridLineWidth = value; this.draw(this.curDatas); }
 
-    @property private _baseLineWidth: number = 4;
-    @property({ tooltip: CC_DEV && '轴和外线的宽度' })
-    public get baseLineWidth() { return this._baseLineWidth; }
-    public set baseLineWidth(value: number) { this._baseLineWidth = value; this.draw(this.curDatas); }
+    @property private _gridLineColor: cc.Color = cc.Color.GRAY;
+    @property({ tooltip: CC_DEV && '轴线和网格线的颜色' })
+    public get gridLineColor() { return this._gridLineColor; }
+    public set gridLineColor(value: cc.Color) { this._gridLineColor = value; this.draw(this.curDatas); }
 
-    @property private _baseInnerLineWidth: number = 4;
-    @property({ tooltip: CC_DEV && '内线宽度' })
-    public get baseInnerLineWidth() { return this._baseInnerLineWidth; }
-    public set baseInnerLineWidth(value: number) { this._baseInnerLineWidth = value; this.draw(this.curDatas); }
-
-    @property private _baseLineColor: cc.Color = cc.Color.GRAY;
-    @property({ tooltip: CC_DEV && '基本线颜色' })
-    public get baseLineColor() { return this._baseLineColor; }
-    public set baseLineColor(value: cc.Color) { this._baseLineColor = value; this.draw(this.curDatas); }
-
-    @property private _baseFillColor: cc.Color = cc.color(100, 100, 100, 100);
-    @property({ tooltip: CC_DEV && '基本填充颜色' })
-    public get baseFillColor() { return this._baseFillColor; }
-    public set baseFillColor(value: cc.Color) { this._baseFillColor = value; this.draw(this.curDatas); }
+    @property private _gridFillColor: cc.Color = cc.color(100, 100, 100, 100);
+    @property({ tooltip: CC_DEV && '网格内部填充的颜色' })
+    public get gridFillColor() { return this._gridFillColor; }
+    public set gridFillColor(value: cc.Color) { this._gridFillColor = value; this.draw(this.curDatas); }
 
     @property private _dataValuesStrings: string[] = ['0.8,0.5,0.6,0.5,0.8,0.6', '0.5,0.9,0.5,0.8,0.5,0.9'];
     @property({ type: [cc.String], tooltip: CC_DEV && '数据数值（字符串形式，使用英文逗号分隔）' })
@@ -77,6 +72,11 @@ export default class RadarChart extends cc.Component {
     @property({ type: [cc.Color], tooltip: CC_DEV && '数据节点颜色' })
     public get dataJoinColors() { return this._dataJoinColors; }
     public set dataJoinColors(value: cc.Color[]) { this._dataJoinColors = value; this.drawWithProperties(); }
+
+    @property private _drawDataJoin: boolean = true;
+    @property({ tooltip: CC_DEV && '是否绘制数据节点' })
+    public get drawDataJoin() { return this._drawDataJoin; }
+    public set drawDataJoin(value: boolean) { this._drawDataJoin = value; this.draw(this.curDatas); }
 
     private graphics: cc.Graphics = null;
 
@@ -149,20 +149,20 @@ export default class RadarChart extends cc.Component {
      */
     private drawBase() {
         // 填充染料
-        this.graphics.lineWidth = this._baseLineWidth;
-        this.graphics.strokeColor = this._baseLineColor;
-        this.graphics.fillColor = this._baseFillColor;
+        this.graphics.lineWidth = this._gridLineWidth;
+        this.graphics.strokeColor = this._gridLineColor;
+        this.graphics.fillColor = this._gridFillColor;
 
-        // 计算夹角
+        // 计算轴线角度
         this.angles = [];
-        const iAngle = 360 / this.axes;
+        const iAngle = 360 / this.axes; // 轴间夹角
         for (let i = 0; i < this.axes; i++) this.angles.push(iAngle * i);
 
-        // 计算节点坐标
+        // 计算刻度坐标
         let pointSet = [];
-        for (let i = 0; i < this._nodesPerAxle; i++) {
+        for (let i = 0; i < this._axisScales; i++) {
             let points = [];
-            const length = this._axisLength - (this._axisLength / this._nodesPerAxle * i);
+            const length = this._axisLength - (this._axisLength / this._axisScales * i);
             for (let j = 0; j < this.angles.length; j++) {
                 const radian = (Math.PI / 180) * this.angles[j];
                 points.push(cc.v2(length * Math.cos(radian), length * Math.sin(radian)));
@@ -170,7 +170,7 @@ export default class RadarChart extends cc.Component {
             pointSet.push(points);
         }
 
-        // 画轴
+        // 创建轴线
         if (this._drawAxes) {
             for (let i = 0; i < pointSet[0].length; i++) {
                 this.graphics.moveTo(0, 0);
@@ -178,24 +178,27 @@ export default class RadarChart extends cc.Component {
             }
         }
 
-        // 画外线
+        // 创建外网格线
         this.graphics.moveTo(pointSet[0][0].x, pointSet[0][0].y);
         for (let i = 1; i < pointSet[0].length; i++) {
             this.graphics.lineTo(pointSet[0][i].x, pointSet[0][i].y);
         }
-        this.graphics.close(); // 闭合
-        this.graphics.fill(); // 填充颜色
-        this.graphics.stroke(); // 绘制
+        this.graphics.close(); // 闭合外网格线
 
-        // 画内线
+        // 填充网格
+        this.graphics.fill();
+        // 绘制轴线和网格线
+        this.graphics.stroke();
+
+        // 画内网格线
         if (pointSet.length > 1) {
-            this.graphics.lineWidth = this._baseInnerLineWidth;
+            this.graphics.lineWidth = this._innerGridLineWidth;
             for (let i = 1; i < pointSet.length; i++) {
                 this.graphics.moveTo(pointSet[i][0].x, pointSet[i][0].y);
                 for (let j = 1; j < pointSet[i].length; j++) {
                     this.graphics.lineTo(pointSet[i][j].x, pointSet[i][j].y);
                 }
-                this.graphics.close(); // 闭合
+                this.graphics.close(); // 闭合内网格线
             }
             this.graphics.stroke(); // 绘制
         }
@@ -206,10 +209,10 @@ export default class RadarChart extends cc.Component {
      * @param data 数据
      */
     public draw(data: RadarChartData | RadarChartData[]) {
-        // 清除旧图像
+        // 擦除旧图像
         this.graphics.clear();
 
-        // 画基础表
+        // 画轴线和网格线
         this.drawBase();
 
         // 处理数据
@@ -226,7 +229,7 @@ export default class RadarChart extends cc.Component {
             this.graphics.fillColor = datas[i].fillColor || defaultConfig.fillColor;
             this.graphics.lineWidth = datas[i].lineWidth || defaultConfig.lineWidth;
 
-            // 计算节点坐标
+            // 计算数据节点坐标
             let points = [];
             for (let j = 0; j < this.axes; j++) {
                 const value = datas[i].values[j] > 1 ? 1 : datas[i].values[j];
@@ -235,16 +238,16 @@ export default class RadarChart extends cc.Component {
                 points.push(cc.v2(length * Math.cos(radian), length * Math.sin(radian)));
             }
 
-            // 画线
+            // 画数据线
             this.graphics.moveTo(points[0].x, points[0].y);
             for (let j = 1; j < points.length; j++) {
                 this.graphics.lineTo(points[j].x, points[j].y);
             }
             this.graphics.close(); // 闭合
-            this.graphics.fill(); // 填充颜色
-            this.graphics.stroke(); // 绘制线段
+            this.graphics.fill(); // 填充
+            this.graphics.stroke(); // 绘制
 
-            // 绘制节点
+            // 绘制数据节点
             if (this._drawDataJoin) {
                 for (let j = 0; j < points.length; j++) {
                     // 大圆
@@ -263,7 +266,7 @@ export default class RadarChart extends cc.Component {
     /**
      * 动态绘制
      * @param data 目标数据
-     * @param duration 动作时长
+     * @param duration 动画时长
      */
     public to(data: RadarChartData | RadarChartData[], duration: number): Promise<void> {
         return new Promise(res => {

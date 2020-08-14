@@ -159,29 +159,32 @@ export default class RadarChart extends cc.Component {
         for (let i = 0; i < this.axes; i++) this.angles.push(iAngle * i);
 
         // 计算刻度坐标
-        let pointSet = [];
+        let scalesSet: cc.Vec2[][] = [];
         for (let i = 0; i < this._axisScales; i++) {
-            let points = [];
+            let scales = [];
+            // 计算刻度在轴上的位置
             const length = this._axisLength - (this._axisLength / this._axisScales * i);
             for (let j = 0; j < this.angles.length; j++) {
+                // 将角度转为弧度
                 const radian = (Math.PI / 180) * this.angles[j];
-                points.push(cc.v2(length * Math.cos(radian), length * Math.sin(radian)));
+                // 根据三角公式计算刻度相对于中心点（0, 0）的坐标
+                scales.push(cc.v2(length * Math.cos(radian), length * Math.sin(radian)));
             }
-            pointSet.push(points);
+            scalesSet.push(scales);
         }
 
         // 创建轴线
         if (this._drawAxes) {
-            for (let i = 0; i < pointSet[0].length; i++) {
+            for (let i = 0; i < scalesSet[0].length; i++) {
                 this.graphics.moveTo(0, 0);
-                this.graphics.lineTo(pointSet[0][i].x, pointSet[0][i].y);
+                this.graphics.lineTo(scalesSet[0][i].x, scalesSet[0][i].y);
             }
         }
 
         // 创建外网格线
-        this.graphics.moveTo(pointSet[0][0].x, pointSet[0][0].y);
-        for (let i = 1; i < pointSet[0].length; i++) {
-            this.graphics.lineTo(pointSet[0][i].x, pointSet[0][i].y);
+        this.graphics.moveTo(scalesSet[0][0].x, scalesSet[0][0].y);
+        for (let i = 1; i < scalesSet[0].length; i++) {
+            this.graphics.lineTo(scalesSet[0][i].x, scalesSet[0][i].y);
         }
         this.graphics.close(); // 闭合外网格线
 
@@ -191,12 +194,12 @@ export default class RadarChart extends cc.Component {
         this.graphics.stroke();
 
         // 画内网格线
-        if (pointSet.length > 1) {
+        if (scalesSet.length > 1) {
             this.graphics.lineWidth = this._innerGridLineWidth;
-            for (let i = 1; i < pointSet.length; i++) {
-                this.graphics.moveTo(pointSet[i][0].x, pointSet[i][0].y);
-                for (let j = 1; j < pointSet[i].length; j++) {
-                    this.graphics.lineTo(pointSet[i][j].x, pointSet[i][j].y);
+            for (let i = 1; i < scalesSet.length; i++) {
+                this.graphics.moveTo(scalesSet[i][0].x, scalesSet[i][0].y);
+                for (let j = 1; j < scalesSet[i].length; j++) {
+                    this.graphics.lineTo(scalesSet[i][j].x, scalesSet[i][j].y);
                 }
                 this.graphics.close(); // 闭合内网格线
             }
@@ -284,14 +287,14 @@ export default class RadarChart extends cc.Component {
             // 动起来！
             for (let i = 0; i < datas.length; i++) {
                 if (!this._curDatas[i]) continue;
-                // 数据动！
+                // 数据动起来！
                 for (let j = 0; j < this._curDatas[i].values.length; j++) {
                     const value = datas[i].values[j] > 1 ? 1 : datas[i].values[j];
                     cc.tween(this._curDatas[i].values)
                         .to(duration, { [j]: value })
                         .start();
                 }
-                // 样式动！
+                // 样式动起来！
                 cc.tween(this._curDatas[i])
                     .to(duration, {
                         lineWidth: datas[i].lineWidth || this._curDatas[i].lineWidth,

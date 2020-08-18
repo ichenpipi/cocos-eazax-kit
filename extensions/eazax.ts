@@ -24,10 +24,20 @@ namespace eazax {
     }
 
     /**
-     * 显示左下角的 FPS 面板
+     * 显示左下角的统计面板
      */
     export function showStats(): void {
         cc.debug.setDisplayStats(true);
+    }
+
+    /**
+     * 更改统计面板的文本颜色
+     * @param color 文本颜色
+     */
+    export function setStatsColor(color: cc.Color) {
+        const profilerNode = cc.director.getScene().getChildByName('PROFILER-NODE');
+        if (!profilerNode) return;
+        profilerNode.children.forEach(node => node.color = color);
     }
 
     /**
@@ -39,5 +49,4 @@ namespace eazax {
 
 }
 
-// window['eazax'] = eazax;
 window.eazax = eazax;

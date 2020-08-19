@@ -1,5 +1,3 @@
-import CalUtil from "../utils/CalUtil";
-
 export enum Axis {
     PositiveX,  // 正 X 轴
     PositiveY,  // 正 Y 轴
@@ -93,8 +91,8 @@ export default class RotateAround extends cc.Component {
         if (faceAxis) this.faceAxis = faceAxis;
         if (!this.target) return cc.log('No target!');
         // 计算初始角度和半径
-        this.angle = CalUtil.getAngle(this.target.getPosition(), this.node.getPosition());
-        this.radius = CalUtil.getDistance(this.target.getPosition(), this.node.getPosition());
+        this.angle = this.getAngle(this.target.getPosition(), this.node.getPosition());
+        this.radius = this.getDistance(this.target.getPosition(), this.node.getPosition());
         // 开始
         this.isRotating = true;
     }
@@ -104,6 +102,26 @@ export default class RotateAround extends cc.Component {
      */
     public stop() {
         this.isRotating = false;
+    }
+
+
+
+    /**
+     * 获取两点间的角度
+     * @param p1 点1
+     * @param p2 点2
+     */
+    public getAngle(p1: cc.Vec2, p2: cc.Vec2): number {
+        return Math.atan((p2.y - p1.y) / (p2.x - p1.x));
+    }
+
+    /**
+     * 获取两点间的距离
+     * @param p1 点1
+     * @param p2 点2
+     */
+    public getDistance(p1: cc.Vec2, p2: cc.Vec2): number {
+        return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
     }
 
 }

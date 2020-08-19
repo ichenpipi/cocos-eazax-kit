@@ -104,12 +104,11 @@ export default class RotateAround extends cc.Component {
         this.isRotating = false;
     }
 
-
-
     /**
      * 获取两点间的角度
      * @param p1 点1
      * @param p2 点2
+     * @see https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/MathUtil.ts
      */
     public getAngle(p1: cc.Vec2, p2: cc.Vec2): number {
         return Math.atan((p2.y - p1.y) / (p2.x - p1.x));
@@ -119,6 +118,7 @@ export default class RotateAround extends cc.Component {
      * 获取两点间的距离
      * @param p1 点1
      * @param p2 点2
+     * @see https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/MathUtil.ts
      */
     public getDistance(p1: cc.Vec2, p2: cc.Vec2): number {
         return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));

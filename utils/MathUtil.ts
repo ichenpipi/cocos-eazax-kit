@@ -1,7 +1,7 @@
 /**
- * 计算工具
+ * 数学工具
  */
-export default class CalUtil {
+export default class MathUtil {
 
     /**
     * 获取随机数

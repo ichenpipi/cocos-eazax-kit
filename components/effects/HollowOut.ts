@@ -21,29 +21,40 @@ export default class HollowOut extends cc.Component {
     })
     private effect: cc.EffectAsset = null;
 
+    @property private _shape: Shape = Shape.Rect;
     @property({ type: cc.Enum(Shape), tooltip: CC_DEV && '镂空形状' })
-    public shape: Shape = Shape.Rect;
+    public get shape() { return this._shape; }
+    public set shape(value: Shape) { this._shape = value; this.render(); }
 
+    @property private _center: cc.Vec2 = cc.v2();
     @property({ tooltip: CC_DEV && '中心坐标' })
-    public center: cc.Vec2 = cc.v2();
+    public get center() { return this._center; }
+    public set center(value: cc.Vec2) { this._center = value; this.render(); }
 
+    @property private _width: number = 300;
     @property({ tooltip: CC_DEV && '宽', visible() { return this.shape === Shape.Rect; } })
-    public width: number = 300;
+    public get width() { return this._width; }
+    public set width(value: number) { this._width = value; this.render(); }
 
+    @property private _height: number = 300;
     @property({ tooltip: CC_DEV && '高', visible() { return this.shape === Shape.Rect; } })
-    public height: number = 300;
+    public get height() { return this._height; }
+    public set height(value: number) { this._height = value; this.render(); }
 
+    @property private _round: number = 1;
     @property({ tooltip: CC_DEV && '圆角半径', visible() { return this.shape === Shape.Rect; } })
-    public round: number = 1;
+    public get round() { return this._round; }
+    public set round(value: number) { this._round = value; this.render(); }
 
+    @property private _radius: number = 200;
     @property({ tooltip: CC_DEV && '半径', visible() { return this.shape === Shape.Circle; } })
-    public radius: number = 200;
+    public get radius() { return this._radius; }
+    public set radius(value: number) { this._radius = value; this.render(); }
 
+    @property private _feather: number = 0.5;
     @property({ tooltip: CC_DEV && '边缘虚化宽度', visible() { return this.shape === Shape.Circle || this.round > 0; } })
-    public feather: number = 0.5;
-
-    @property({ tooltip: CC_DEV && '每帧自动更新' })
-    public keepUpdating: boolean = true;
+    public get feather() { return this._feather; }
+    public set feather(value: number) { this._feather = value; this.render(); }
 
     private material: cc.Material = null; // 材质
 
@@ -54,7 +65,7 @@ export default class HollowOut extends cc.Component {
     protected onLoad() {
         // 使用自定义 Effect 需禁用目标贴图的 packable 属性，因为动态合图后无法正确计算纹理 uv
         // 详情请看：https://docs.cocos.com/creator/manual/zh/asset-workflow/sprite.html#packable
-        let spriteFrame = this.getComponent(cc.Sprite).spriteFrame;
+        const spriteFrame = this.getComponent(cc.Sprite).spriteFrame;
         if (spriteFrame) spriteFrame.getTexture().packable = false;
         // 或者全局禁用动态合图功能（不推荐！！！）
         // cc.dynamicAtlasManager.enabled = false;
@@ -64,11 +75,6 @@ export default class HollowOut extends cc.Component {
 
     protected resetInEditor() {
         this.init();
-    }
-
-    protected update() {
-        if (!this.material || !this.keepUpdating) return;
-        this.render(true);
     }
 
     /**
@@ -93,7 +99,7 @@ export default class HollowOut extends cc.Component {
         if (this.effect) {
             this.material = cc.Material.create(this.effect);
             this.node.getComponent(cc.Sprite).setMaterial(0, this.material);
-            this.render(this.keepUpdating);
+            this.render();
         }
 
         this.isIniting = false;
@@ -101,15 +107,14 @@ export default class HollowOut extends cc.Component {
 
     /**
      * 渲染
-     * @param keepUpdating 是否每帧自动更新
      */
-    private render(keepUpdating: boolean) {
-        switch (this.shape) {
+    private render() {
+        switch (this._shape) {
             case Shape.Rect:
-                this.rect(this.center, this.width, this.height, this.round, this.feather, keepUpdating);
+                this.rect(this._center, this._width, this._height, this._round, this._feather);
                 break;
             case Shape.Circle:
-                this.circle(this.center, this.radius, this.feather, keepUpdating);
+                this.circle(this._center, this._radius, this._feather);
                 break;
         }
     }
@@ -121,31 +126,29 @@ export default class HollowOut extends cc.Component {
      * @param height 高
      * @param round 圆角半径
      * @param feather 边缘虚化宽度
-     * @param keepUpdating 是否每帧自动更新
      */
-    public rect(center?: cc.Vec2, width?: number, height?: number, round?: number, feather?: number, keepUpdating: boolean = false) {
-        this.shape = Shape.Rect;
-        if (center !== null) this.center = center;
-        if (width !== null) this.width = width;
-        if (height !== null) this.height = height;
+    public rect(center?: cc.Vec2, width?: number, height?: number, round?: number, feather?: number) {
+        if (this._shape !== Shape.Rect) this._shape = Shape.Rect;
+
+        if (center !== null) this._center = center;
+        if (width !== null) this._width = width;
+        if (height !== null) this._height = height;
         if (round !== null) {
-            this.round = round >= 0 ? round : 0;
-            let min = Math.min(this.width / 2, this.height / 2);
-            this.round = this.round <= min ? this.round : min;
+            this._round = round >= 0 ? round : 0;
+            const min = Math.min(this._width / 2, this._height / 2);
+            this._round = this._round <= min ? this._round : min;
         }
         if (feather !== null) {
-            this.feather = feather >= 0 ? feather : 0;
-            this.feather = this.feather <= this.round ? this.feather : this.round;
+            this._feather = feather >= 0 ? feather : 0;
+            this._feather = this._feather <= this._round ? this._feather : this._round;
         }
 
         this.material.setProperty('size', this.getNodeSize());
-        this.material.setProperty('center', this.getCenter(this.center));
-        this.material.setProperty('width', this.getWidth(this.width));
-        this.material.setProperty('height', this.getHeight(this.height));
-        this.material.setProperty('round', this.getRound(this.round));
-        this.material.setProperty('feather', this.getFeather(this.feather));
-
-        this.keepUpdating = keepUpdating;
+        this.material.setProperty('center', this.getCenter(this._center));
+        this.material.setProperty('width', this.getWidth(this._width));
+        this.material.setProperty('height', this.getHeight(this._height));
+        this.material.setProperty('round', this.getRound(this._round));
+        this.material.setProperty('feather', this.getFeather(this._feather));
     }
 
     /**
@@ -153,22 +156,20 @@ export default class HollowOut extends cc.Component {
      * @param center 中心坐标
      * @param radius 半径
      * @param feather 边缘虚化宽度
-     * @param keepUpdating 是否每帧自动更新
      */
-    public circle(center?: cc.Vec2, radius?: number, feather?: number, keepUpdating: boolean = false) {
-        this.shape = Shape.Circle;
-        if (center !== null) this.center = center;
-        if (radius !== null) this.radius = radius;
-        if (feather !== null) this.feather = feather >= 0 ? feather : 0;
+    public circle(center?: cc.Vec2, radius?: number, feather?: number) {
+        if (this._shape !== Shape.Circle) this._shape = Shape.Circle;
+
+        if (center !== null) this._center = center;
+        if (radius !== null) this._radius = radius;
+        if (feather !== null) this._feather = feather >= 0 ? feather : 0;
 
         this.material.setProperty('size', this.getNodeSize());
-        this.material.setProperty('center', this.getCenter(this.center));
-        this.material.setProperty('width', this.getWidth(this.radius * 2));
-        this.material.setProperty('height', this.getHeight(this.radius * 2));
-        this.material.setProperty('round', this.getRound(this.radius));
-        this.material.setProperty('feather', this.getFeather(this.feather));
-
-        this.keepUpdating = keepUpdating;
+        this.material.setProperty('center', this.getCenter(this._center));
+        this.material.setProperty('width', this.getWidth(this._radius * 2));
+        this.material.setProperty('height', this.getHeight(this._radius * 2));
+        this.material.setProperty('round', this.getRound(this._radius));
+        this.material.setProperty('feather', this.getFeather(this._feather));
     }
 
     /**
@@ -183,6 +184,7 @@ export default class HollowOut extends cc.Component {
     public rectTo(time: number, center: cc.Vec2, width: number, height: number, round: number = 0, feather: number = 0): Promise<void> {
         return new Promise(res => {
             cc.Tween.stopAllByTarget(this);
+            this.unscheduleAllCallbacks();
 
             this.tweenRes && this.tweenRes();
             this.tweenRes = res;
@@ -190,10 +192,10 @@ export default class HollowOut extends cc.Component {
             if (round > width / 2) round = width / 2;
             if (round > height / 2) round = height / 2;
             if (feather > round) feather = round;
-            this.shape = Shape.Rect;
+
+            this._shape = Shape.Rect;
 
             cc.tween<HollowOut>(this)
-                .call(() => this.keepUpdating = true)
                 .to(time, {
                     center: center,
                     width: width,
@@ -203,9 +205,10 @@ export default class HollowOut extends cc.Component {
                 })
                 .call(() => {
                     this.scheduleOnce(() => {
-                        this.keepUpdating = false;
-                        this.tweenRes();
-                        this.tweenRes = null;
+                        if (this.tweenRes) {
+                            this.tweenRes();
+                            this.tweenRes = null;
+                        }
                     });
                 })
                 .start();
@@ -222,14 +225,14 @@ export default class HollowOut extends cc.Component {
     public circleTo(time: number, center: cc.Vec2, radius: number, feather: number = 0): Promise<void> {
         return new Promise(res => {
             cc.Tween.stopAllByTarget(this);
+            this.unscheduleAllCallbacks();
 
             this.tweenRes && this.tweenRes();
             this.tweenRes = res;
 
-            this.shape = Shape.Circle;
+            this._shape = Shape.Circle;
 
             cc.tween<HollowOut>(this)
-                .call(() => this.keepUpdating = true)
                 .to(time, {
                     center: center,
                     radius: radius,
@@ -237,9 +240,10 @@ export default class HollowOut extends cc.Component {
                 })
                 .call(() => {
                     this.scheduleOnce(() => {
-                        this.keepUpdating = false;
-                        this.tweenRes();
-                        this.tweenRes = null;
+                        if (this.tweenRes) {
+                            this.tweenRes();
+                            this.tweenRes = null;
+                        }
                     });
                 })
                 .start();
@@ -257,8 +261,8 @@ export default class HollowOut extends cc.Component {
      * 挖孔设为节点大小（就整个都挖没了）
      */
     public nodeSize() {
+        this._radius = Math.sqrt(this.node.width * this.node.width + this.node.height * this.node.height) / 2;
         this.rect(this.node.getPosition(), this.node.width, this.node.height, 0, 0);
-        this.radius = Math.sqrt(this.node.width * this.node.width + this.node.height * this.node.height) / 2;
     }
 
     /**

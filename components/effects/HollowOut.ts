@@ -2,9 +2,15 @@ import EditorAsset from "../../misc/EditorAsset";
 
 const { ccclass, property, executeInEditMode, disallowMultiple, requireComponent, executionOrder } = cc._decorator;
 
+/** 镂空形状 */
 export enum Shape {
+
+    /** 矩形 */
     Rect = 1,
+
+    /** 圆形 */
     Circle
+
 }
 
 @ccclass
@@ -56,11 +62,11 @@ export default class HollowOut extends cc.Component {
     public get feather() { return this._feather; }
     public set feather(value: number) { this._feather = value; this.render(); }
 
-    private material: cc.Material = null; // 材质
+    private material: cc.Material = null;
 
-    private tweenRes: Function = null; // tween 的 Promise 回调
+    private tweenRes: () => void = null;
 
-    private isIniting: boolean = false; // 是否正在初始化
+    private isIniting: boolean = false;
 
     protected onLoad() {
         // 使用自定义 Effect 需禁用目标贴图的 packable 属性，因为动态合图后无法正确计算纹理 uv
@@ -128,7 +134,7 @@ export default class HollowOut extends cc.Component {
      * @param feather 边缘虚化宽度
      */
     public rect(center?: cc.Vec2, width?: number, height?: number, round?: number, feather?: number) {
-        if (this._shape !== Shape.Rect) this._shape = Shape.Rect;
+        this._shape = Shape.Rect;
 
         if (center !== null) this._center = center;
         if (width !== null) this._width = width;
@@ -158,7 +164,7 @@ export default class HollowOut extends cc.Component {
      * @param feather 边缘虚化宽度
      */
     public circle(center?: cc.Vec2, radius?: number, feather?: number) {
-        if (this._shape !== Shape.Circle) this._shape = Shape.Circle;
+        this._shape = Shape.Circle;
 
         if (center !== null) this._center = center;
         if (radius !== null) this._radius = radius;

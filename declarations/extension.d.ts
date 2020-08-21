@@ -3,7 +3,7 @@ interface String {
     /**
      * 翻译
      */
-    translate(): string;
+    // translate(): string;
 
     /**
      * 截断字符串，未超出限制则不作处理
@@ -12,15 +12,5 @@ interface String {
      * @param suffix 截断后缀
      */
     clamp(start: number, threshold: number, suffix?: string): string;
-
-}
-
-interface Array<T> {
-
-    /**
-     * 数组中是否包含目标
-     * @param item item
-     */
-    include(item: T): boolean;
 
 }

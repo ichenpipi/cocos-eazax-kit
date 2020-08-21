@@ -1,7 +1,7 @@
-String.prototype.translate = function () {
-    // TODO
-    return this;
-};
+// String.prototype.translate = function () {
+//     // TODO
+//     return this;
+// };
 
 String.prototype.clamp = function (start, threshold, suffix = '...') {
     if (this.replace(/[^\x00-\xff]/g, 'xx').length <= threshold) return this;
@@ -13,11 +13,4 @@ String.prototype.clamp = function (start, threshold, suffix = '...') {
         result += this[i];
     }
     return result;
-};
-
-Array.prototype.include = function (item: any): boolean {
-    for (let i = 0; i < this.length; i++) {
-        if (this[i] === item) return true;
-    }
-    return false;
 };

@@ -4,7 +4,7 @@
 export default class ImageUtil {
 
     /**
-     * 将图像转为 Base64 字符串（仅 png、jpg 或 jpeg 格式资源）
+     * 将图像转为 Base64 字符（仅 png、jpg 或 jpeg 格式资源）
      * @param url 图像地址
      * @param callback 完成回调
      */
@@ -36,15 +36,31 @@ export default class ImageUtil {
 
     /**
      * 将 Base64 字符转为 cc.Texture2D 资源
-     * @param dataURL base64 字符
+     * @param base64 Base64 字符
      */
-    public static base64ToTexture(dataURL: string): cc.Texture2D {
+    public static base64ToTexture(base64: string): cc.Texture2D {
         let image = document.createElement('img');
-        image.src = dataURL;
+        image.src = base64;
         const texture = new cc.Texture2D();
         texture.initWithElement(image);
         image = null;
         return texture;
+    }
+
+    /**
+     * 将 Base64 字符转为二进制数据
+     * @param base64 Base64 字符
+     */
+    public static base64ToBlob(base64: string): Blob {
+        const strings = base64.split(',');
+        const type = /image\/\w+|;/.exec(strings[0])[0];
+        const data = window.atob(strings[1]);
+        const arrayBuffer = new ArrayBuffer(data.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < data.length; i++) {
+            uint8Array[i] = data.charCodeAt(i) & 0xff;
+        }
+        return new Blob([uint8Array], { type: type });
     }
 
 }

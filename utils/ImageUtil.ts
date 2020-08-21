@@ -4,14 +4,14 @@
 export default class ImageUtil {
 
     /**
-     * 将图像转为 Base64 字符串（仅 png 和 jpg 资源）
+     * 将图像转为 Base64 字符串（仅 png、jpg 或 jpeg 格式资源）
      * @param url 图像地址
      * @param callback 完成回调
      */
     public static imageToBase64(url: string, callback?: (dataURL: string) => void): Promise<string> {
         return new Promise(res => {
-            const extname = /\.png|\.jpg/.exec(url)?.[0];
-            if (['.png', '.jpg'].includes(extname)) {
+            let extname = /\.png|\.jpg/.exec(url)?.[0];
+            if (['.png', '.jpg', '.jpeg'].includes(extname)) {
                 let canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 const image = new Image();
@@ -20,6 +20,7 @@ export default class ImageUtil {
                     canvas.height = image.height;
                     canvas.width = image.width;
                     ctx.drawImage(image, 0, 0);
+                    extname = extname === '.jpg' ? 'jpeg' : extname.replace('.', '');
                     const dataURL = canvas.toDataURL(`image/${extname}`);
                     callback && callback(dataURL);
                     res(dataURL);

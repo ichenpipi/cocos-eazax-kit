@@ -1,0 +1,76 @@
+// Eazax-CCC 波浪 1.0.0.20200824
+// see https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-wave.effect
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        amplitude: { value: 0.05, range: [0.0, 0.5], editor: { tooltip: '振幅' } }
+        frequency: { value: 10.0, editor: { tooltip: '频率' } }
+        angularVelocity: { value: 10.0, editor: { tooltip: '角速度' } }
+        height: { value: 0.5, range: [0.0, 1.0], editor: { tooltip: '顶端高度' } }
+        toRight: { value: false, editor: { type: boolean, tooltip: '向右（方向）' } }
+        time: { value: 0.0, editor: { tooltip: '运行时间' } }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+
+  in vec3 a_position;
+  in vec2 a_uv0;
+  in vec4 a_color;
+
+  out vec2 v_uv0;
+  out vec4 v_color;
+
+  void main () {
+    gl_Position = cc_matViewProj * vec4(a_position, 1);
+    v_uv0 = a_uv0;
+    v_color = a_color;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  in vec4 v_color;
+  in vec2 v_uv0;
+
+  uniform sampler2D texture;
+
+  uniform Properties {
+    float amplitude;
+    float frequency;
+    float angularVelocity;
+    float height;
+    bool toRight;
+    float time;
+  };
+
+  void main () {
+    vec4 color = v_color;
+    // 读取纹理颜色
+    color *= texture(texture, v_uv0);
+    // 丢弃透明部分
+    if(color.a == 0.0) discard;
+    // 计算正弦 y 值
+    float y = amplitude * sin(toRight ? angularVelocity * v_uv0.x - (frequency * time) : angularVelocity * v_uv0.x + (frequency * time));
+    // 转换顶端高度
+    float r_height = 1.0 - height;
+    // 丢弃 y 值以上部分
+    if(v_uv0.y < r_height + y + amplitude) discard;
+    // 输出
+    gl_FragColor = color;
+  }
+}%

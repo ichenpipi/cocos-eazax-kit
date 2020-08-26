@@ -17,7 +17,6 @@ CCEffect %{
         angularVelocity: { value: 10.0, editor: { tooltip: '角速度' } }
         height: { value: 0.5, range: [0.0, 1.0], editor: { tooltip: '顶端高度' } }
         toRight: { value: false, editor: { type: boolean, tooltip: '向右（方向）' } }
-        time: { value: 0.0, editor: { tooltip: '运行时间' } }
 }%
 
 
@@ -44,6 +43,8 @@ CCProgram vs %{
 CCProgram fs %{
   precision highp float;
 
+  #include <cc-global>
+
   in vec4 v_color;
   in vec2 v_uv0;
 
@@ -55,7 +56,6 @@ CCProgram fs %{
     float angularVelocity;
     float height;
     bool toRight;
-    float time;
   };
 
   void main () {
@@ -65,7 +65,7 @@ CCProgram fs %{
     // 丢弃透明部分
     if(color.a == 0.0) discard;
     // 计算正弦 y 值
-    float y = amplitude * sin(toRight ? angularVelocity * v_uv0.x - (frequency * time) : angularVelocity * v_uv0.x + (frequency * time));
+    float y = amplitude * sin(toRight ? angularVelocity * v_uv0.x - (frequency * cc_time.x) : angularVelocity * v_uv0.x + (frequency * cc_time.x));
     // 转换顶端高度
     float r_height = 1.0 - height;
     // 丢弃 y 值以上部分

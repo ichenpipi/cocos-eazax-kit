@@ -48,9 +48,6 @@ export default class Wave extends cc.Component {
     /** 材质 */
     private material: cc.Material = null;
 
-    /** 运行时间 */
-    private time: number = 0;
-
     protected onLoad() {
         // 使用自定义 Effect 需禁用目标贴图的 packable 属性，因为动态合图后无法正确计算纹理 uv
         // 详情请看：https://docs.cocos.com/creator/manual/zh/asset-workflow/sprite.html#packable
@@ -65,28 +62,11 @@ export default class Wave extends cc.Component {
         this.updateProperties();
     }
 
-    protected update(dt: number) {
-        if (!this.material) return;
-        // 累加运行时间
-        this.time += dt;
-        // 限制一下以免遭遇不测
-        if (this.time >= 1000000) this.time = 0;
-        // 渲染
-        this.render();
-    }
-
     /**
      * 初始化
      */
     public init() {
         this.material = this.getComponent(cc.Sprite).getMaterial(0);
-    }
-
-    /**
-     * 渲染
-     */
-    public render() {
-        this.material.setProperty('time', this.time);
     }
 
     /**

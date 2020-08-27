@@ -10,7 +10,7 @@ export default class ImageUtil {
      */
     public static imageToBase64(url: string, callback?: (dataURL: string) => void): Promise<string> {
         return new Promise(res => {
-            let extname = /\.png|\.jpg/.exec(url)?.[0];
+            let extname = /\.png|\.jpg|\.jpeg/.exec(url)?.[0];
             if (['.png', '.jpg', '.jpeg'].includes(extname)) {
                 let canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -27,7 +27,7 @@ export default class ImageUtil {
                     canvas = null;
                 }
             } else {
-                console.warn('Not a jpg or png resource!');
+                console.warn('Not a jpg/jpeg or png resource!');
                 callback && callback(null);
                 res(null);
             }

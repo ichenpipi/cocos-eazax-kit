@@ -4,21 +4,21 @@
 export default class MathUtil {
 
     /**
-    * 获取随机数
+    * 获取一个 min 到 max 范围内的随机整数
     * @param min 最小值
     * @param max 最大值
     */
-    public static getRandomNumber(min: number = 0, max: number = 1): number {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+    public static getRandomInt(min: number = 0, max: number = 1): number {
+        return Math.floor(Math.random() * (max - min) + min);
     }
 
     /**
-     * 获取一个伪随机数
+     * 获取一个伪随机整数
      * @param seed 随机种子
      * @param key key
      */
-    public static getRandomWithSeed(seed: number, key: number) {
-        return Math.ceil((((seed * 9301 + 49297) % 233280) / (233280.0)) * key);
+    public static getPseudoRandomInt(seed: number, key: number): number {
+        return Math.ceil((((seed * 9301 + 49297) % 233280) / 233280) * key);
     }
 
     /**

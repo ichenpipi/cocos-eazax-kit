@@ -1,0 +1,95 @@
+// Eazax-CCC 正弦波浪 1.0.0.20200906
+// https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-sine-wave.effect
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        amplitude: { value: 0.05, range: [0.0, 0.5], editor: { tooltip: '振幅' } }
+        angularVelocity: { value: 10.0, editor: { tooltip: '角速度' } }
+        frequency: { value: 10.0, editor: { tooltip: '频率' } }
+        offset: { value: 0.5, range: [0.0, 1.0], editor: { tooltip: '偏距' } }
+        toLeft: { value: true, editor: { type: boolean, tooltip: '向左（方向）' } }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+
+  in vec3 a_position;
+  in vec2 a_uv0;
+  in vec4 a_color;
+
+  out vec2 v_uv0;
+  out vec4 v_color;
+
+  void main () {
+    // 使用内置矩阵转换坐标
+    gl_Position = cc_matViewProj * vec4(a_position, 1);
+
+    // 传递 UV 坐标
+    v_uv0 = a_uv0;
+
+    // 传递顶点颜色
+    v_color = a_color;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  // 引入 Cocos Creator 内置的全部变量
+  #include <cc-global>
+
+  in vec4 v_color;  // 顶点颜色
+  in vec2 v_uv0;    // UV 坐标
+
+  uniform sampler2D texture;  // 纹理
+
+  // 自定义属性
+  uniform Properties {
+    float amplitude;	    	// 振幅
+    float angularVelocity;	// 角速度
+    float frequency;  		  // 频率
+    float offset;		      	// 偏距
+    bool toLeft;		      	// 是否向左
+  };
+
+  void main () {
+    // 保存顶点颜色
+    vec4 color = v_color;
+
+    // 叠加纹理颜色
+    color *= texture(texture, v_uv0);
+
+    // 直接丢弃原本就透明的像素
+    if(color.a == 0.0) discard;
+    
+    // 初相位（正值表现为向左移动，负值则表现为向右移动）
+    // cc.time 是 Cocos Creator 引擎提供的运行时间全局变量（类型：vec4）
+    // float initiaPhase = frequency * cc_time.x;
+
+    // 方向（左正右负）
+    // float direction = toLeft ? 1 : -1;
+
+    // 代入正弦曲线公式计算 y 值
+    // y = Asin(ωx ± φt) + k
+    float y = amplitude * sin((angularVelocity * v_uv0.x) + ((frequency * cc_time.x) * (toLeft ? 1. : -1.))) + offset;
+
+    // 丢弃 y 值以上的像素（左上角为原点 [0.0, 0.0]）
+    if(v_uv0.y < y) discard;
+
+    // 输出颜色
+    gl_FragColor = color;
+  }
+}%

@@ -1,4 +1,5 @@
-// Eazax-CCC 镂空(矩形，可调整) 1.0.1.20200604
+// Eazax-CCC 镂空(矩形) 1.0.1.20200604
+// https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-hollowout-rect.effect
 
 CCEffect %{
   techniques:

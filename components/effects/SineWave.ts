@@ -52,6 +52,8 @@ export default class SineWave extends cc.Component {
     public get direction() { return this._direction; }
     public set direction(value: SineWaveDirection) { this._direction = value; this.updateProperties(); }
 
+    private sprite: cc.Sprite = null;
+
     private material: cc.Material = null;
 
     protected onLoad() {
@@ -68,7 +70,7 @@ export default class SineWave extends cc.Component {
     public async init() {
         /**
          * 编辑器环境下自动绑定 Effect 资源
-         * 依赖于 EditorAsset 模块，没有模块请将此代码块以及顶部导入语句注释
+         * 依赖于 EditorAsset 模块，没有该模块请将此代码块以及顶部导入语句去除
          * @see EditorAsset.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/misc/EditorAsset.ts
          */
         if (CC_EDITOR && !this._effect) {
@@ -80,15 +82,26 @@ export default class SineWave extends cc.Component {
                 });
             });
         }
-        // 设置
         if (!this._effect) return;
-        // 使用自定义 Effect 需禁用目标贴图的 packable 属性，因为动态合图后无法正确计算纹理 uv
+
+        // 使用自定义 Shader 需禁用目标贴图的 packable 属性
         // 详情请看：https://docs.cocos.com/creator/manual/zh/asset-workflow/sprite.html#packable
-        const sprite = this.node.getComponent(cc.Sprite);
-        if (sprite) sprite.spriteFrame.getTexture().packable = false;
+        this.sprite = this.node.getComponent(cc.Sprite);
+        if (this.sprite.spriteFrame) this.sprite.spriteFrame.getTexture().packable = false;
         // 生成并应用材质
         this.material = cc.Material.create(this._effect);
-        sprite.setMaterial(0, this.material);
+        this.sprite.setMaterial(0, this.material);
+        // 更新 Shader 属性
+        this.updateProperties();
+    }
+
+    /**
+     * 设置图像
+     * @param spriteFrame 精灵
+     */
+    public setSpriteFrame(spriteFrame: cc.SpriteFrame) {
+        this.sprite.spriteFrame = spriteFrame;
+        this.sprite.spriteFrame.getTexture().packable = false;
         // 更新 Shader 属性
         this.updateProperties();
     }
@@ -101,7 +114,7 @@ export default class SineWave extends cc.Component {
         this.material.setProperty('amplitude', this._amplitude);
         this.material.setProperty('angularVelocity', this._angularVelocity);
         this.material.setProperty('frequency', this._frequency);
-        this.material.setProperty('offset', ((1 - this._height) + this._amplitude));
+        this.material.setProperty('offset', ((1.0 - this._height) + this._amplitude));
         this.material.setProperty('toLeft', (this._direction === SineWaveDirection.Left));
     }
 

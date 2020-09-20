@@ -84,14 +84,14 @@ export default class SineWave extends cc.Component {
         }
         if (!this._effect) return;
 
-        // 使用自定义 Shader 需禁用目标贴图的 packable 属性
+        // 使用自定义 Effect 需禁用纹理的 packable 属性（因为动态合图之后无法正确获取纹理 UV 坐标）
         // 详情请看：https://docs.cocos.com/creator/manual/zh/asset-workflow/sprite.html#packable
         this.sprite = this.node.getComponent(cc.Sprite);
         if (this.sprite.spriteFrame) this.sprite.spriteFrame.getTexture().packable = false;
         // 生成并应用材质
         this.material = cc.Material.create(this._effect);
         this.sprite.setMaterial(0, this.material);
-        // 更新 Shader 属性
+        // 更新材质属性
         this.updateProperties();
     }
 
@@ -102,12 +102,12 @@ export default class SineWave extends cc.Component {
     public setSpriteFrame(spriteFrame: cc.SpriteFrame) {
         this.sprite.spriteFrame = spriteFrame;
         this.sprite.spriteFrame.getTexture().packable = false;
-        // 更新 Shader 属性
+        // 更新材质属性
         this.updateProperties();
     }
 
     /**
-     * 更新 Shader 属性
+     * 更新材质属性
      */
     public updateProperties() {
         if (!this.effect) return cc.warn('[SineWave]', '请指定 Effect 资源！');

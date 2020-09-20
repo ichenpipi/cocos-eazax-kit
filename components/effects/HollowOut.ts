@@ -62,6 +62,8 @@ export default class HollowOut extends cc.Component {
     public get feather() { return this._feather; }
     public set feather(value: number) { this._feather = value; this.updateProperties(); }
 
+    private sprite: cc.Sprite = null;
+
     private material: cc.Material = null;
 
     private tweenRes: () => void = null;
@@ -80,33 +82,33 @@ export default class HollowOut extends cc.Component {
     private async init() {
         /**
          * 编辑器环境下自动绑定 Effect 资源
-         * 依赖于 EditorAsset 模块，没有模块请将此代码块以及顶部导入语句注释
+         * 依赖于 EditorAsset 模块，没有该模块请将此代码块以及顶部导入语句去除
          * @see EditorAsset.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/misc/EditorAsset.ts
          */
         if (CC_EDITOR && !this._effect) {
             await new Promise(res => {
-                EditorAsset.load('eazax-ccc/resources/effects/hollowout.effect', 'effect', (err: Error, result: cc.EffectAsset) => {
-                    if (err) cc.warn('[HollowOut]', '请手动指定组件的 Effect 资源！');
+                EditorAsset.load('eazax-ccc/resources/effects/eazax-hollowout.effect', 'effect', (err: Error, result: cc.EffectAsset) => {
+                    if (err) cc.warn('[SineWave]', '请手动指定组件的 Effect 资源！');
                     else this._effect = result;
                     res();
                 });
             });
         }
-        // 设置
         if (!this._effect) return;
-        // 使用自定义 Effect 需禁用目标贴图的 packable 属性，因为动态合图后无法正确计算纹理 uv
+
+        // 使用自定义 Effect 需禁用纹理的 packable 属性（因为动态合图之后无法正确获取纹理 UV 坐标）
         // 详情请看：https://docs.cocos.com/creator/manual/zh/asset-workflow/sprite.html#packable
-        const sprite = this.node.getComponent(cc.Sprite);
-        if (sprite) sprite.spriteFrame.getTexture().packable = false;
+        this.sprite = this.node.getComponent(cc.Sprite);
+        if (this.sprite.spriteFrame) this.sprite.spriteFrame.getTexture().packable = false;
         // 生成并应用材质
         this.material = cc.Material.create(this._effect);
-        sprite.setMaterial(0, this.material);
-        // 更新 Shader 属性
+        this.sprite.setMaterial(0, this.material);
+        // 更新材质属性
         this.updateProperties();
     }
 
     /**
-     * 更新 Shader 属性
+     * 更新材质属性
      */
     private updateProperties() {
         switch (this._shape) {

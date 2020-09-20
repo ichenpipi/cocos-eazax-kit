@@ -20,7 +20,8 @@ export default class LocalizationSpriteFrame extends LocalizationBase<cc.SpriteF
         this.sprite = this.node.getComponent(cc.Sprite);
     }
 
-    protected onLangChange() {
+    protected onLangChanged() {
         if (this.sprite) this.sprite.spriteFrame = this.get();
     }
+
 }

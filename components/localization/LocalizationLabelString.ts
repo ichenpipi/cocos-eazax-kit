@@ -20,7 +20,8 @@ export default class LocalizationLabelString extends LocalizationBase<string> {
         this.label = this.node.getComponent(cc.Label);
     }
 
-    protected onLangChange() {
+    protected onLangChanged() {
         if (this.label) this.label.string = this.get();
     }
+
 }

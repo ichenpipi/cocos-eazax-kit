@@ -75,8 +75,9 @@ export default class SineWave extends cc.Component {
          */
         if (CC_EDITOR && !this._effect) {
             await new Promise(res => {
-                EditorAsset.load('eazax-ccc/resources/effects/eazax-sine-wave.effect', 'effect', (err: Error, result: cc.EffectAsset) => {
-                    if (err) cc.warn('[SineWave]', '请手动指定组件的 Effect 资源！');
+                const path = 'eazax-ccc/resources/effects/eazax-sine-wave.effect';
+                EditorAsset.load(path, 'effect', (err: Error, result: cc.EffectAsset) => {
+                    if (err) cc.warn(`[${this['__proto__']['__classname__']}]`, '请手动指定组件的 Effect 资源！');
                     else this._effect = result;
                     res();
                 });

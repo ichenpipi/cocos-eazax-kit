@@ -1,5 +1,6 @@
 /**
  * Eazax 全局命名空间
+ * @see eazax.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/extensions/eazax.ts
  */
 namespace eazax {
 
@@ -24,20 +25,45 @@ namespace eazax {
     }
 
     /**
-     * 显示左下角的统计面板
+     * 展示动态图集
+     * @param status 状态
      */
-    export function showStats(): void {
-        cc.debug.setDisplayStats(true);
+    export function showDynamicAtlas(status: boolean = true): cc.Node {
+        return cc.dynamicAtlasManager.showDebug(status);
+    }
+
+    /**
+     * 展示左下角的统计面板
+     * @param status 状态
+     */
+    export function showStats(status: boolean = true): void {
+        cc.debug.setDisplayStats(status);
     }
 
     /**
      * 更改统计面板的文本颜色
-     * @param color 文本颜色
+     * @param font 文本颜色
      */
-    export function setStatsColor(color: cc.Color) {
-        const profilerNode = cc.director.getScene().getChildByName('PROFILER-NODE');
-        if (!profilerNode) return;
-        profilerNode.children.forEach(node => node.color = color);
+    export function setStatsColor(font: cc.Color = cc.Color.WHITE, background: cc.Color = cc.color(0, 0, 0, 150)) {
+        const profiler = cc.find('PROFILER-NODE');
+        if (!profiler) return cc.warn('未找到统计面板节点！');
+
+        // 文字
+        profiler.children.forEach(node => node.color = font);
+
+        // 背景
+        let node = profiler.getChildByName('BACKGROUND');
+        if (!node) {
+            node = new cc.Node('BACKGROUND');
+            profiler.addChild(node, cc.macro.MIN_ZINDEX);
+            node.setContentSize(profiler.getBoundingBoxToWorld());
+            node.setPosition(0, 0);
+        }
+        const graphics = node.getComponent(cc.Graphics) || node.addComponent(cc.Graphics);
+        graphics.clear();
+        graphics.rect(-5, 12.5, node.width + 10, node.height - 10);
+        graphics.fillColor = background;
+        graphics.fill();
     }
 
     /**

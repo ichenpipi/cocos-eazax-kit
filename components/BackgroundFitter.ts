@@ -1,8 +1,12 @@
-import { GameEvent } from "../core/GameEvent";
+import GameEvent from "../core/GameEvent";
 import { VIEW_RESIZE } from "../constants/Events";
 
 const { ccclass } = cc._decorator;
 
+/**
+ * 背景适配组件
+ * @see BackgroundFitter.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/BackgroundFitter.ts
+ */
 @ccclass
 export default class BackgroundFitter extends cc.Component {
 

@@ -1,8 +1,12 @@
-import { GameEvent } from "../core/GameEvent";
+import GameEvent from "../core/GameEvent";
 import { VIEW_RESIZE } from "../constants/Events";
 
 const { ccclass } = cc._decorator;
 
+/**
+ * 屏幕适配组件
+ * @see ScreenAdapter.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/ScreenAdapter.ts
+ */
 @ccclass
 export default class ScreenAdapter extends cc.Component {
 

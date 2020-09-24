@@ -1,4 +1,4 @@
-import { GameEvent } from "../../core/GameEvent";
+import GameEvent from "../../core/GameEvent";
 
 /** 语言更改事件 */
 export const LANG_CHANGED = 'lang-change';
@@ -21,6 +21,10 @@ export enum DefaultLang {
 
 const { ccclass, property } = cc._decorator;
 
+/**
+ * 多语言组件基类
+ * @see LocalizationBase.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/localization/LocalizationBase.ts
+ */
 @ccclass
 export default class LocalizationBase<T> extends cc.Component {
 

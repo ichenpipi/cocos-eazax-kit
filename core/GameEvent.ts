@@ -1,16 +1,8 @@
-interface ISubscription {
-    callback: Function;
-    object: any;
-}
-
-interface IEvents {
-    [event: string]: ISubscription[];
-}
-
 /**
  * 事件系统
+ * @see GameEvent.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/core/GameEvent.ts
  */
-export class GameEvent {
+export default class GameEvent {
 
     private static events: IEvents = {};
 
@@ -105,4 +97,13 @@ export class GameEvent {
         this.onceEvents = {};
     }
 
+}
+
+interface IEvents {
+    [event: string]: ISubscription[];
+}
+
+interface ISubscription {
+    callback: Function;
+    object: any;
 }

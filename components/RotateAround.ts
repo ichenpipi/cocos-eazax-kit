@@ -1,12 +1,21 @@
+/** 轴 */
 export enum Axis {
-    PositiveX,  // 正 X 轴
-    PositiveY,  // 正 Y 轴
-    NegativeX,  // 负 X 轴
-    NegativeY,  // 负 Y 轴
+    /** 正 X 轴 */
+    PositiveX,
+    /** 正 Y 轴 */
+    PositiveY,
+    /** 负 X 轴 */
+    NegativeX,
+    /** 负 Y 轴 */
+    NegativeY
 }
 
 const { ccclass, property } = cc._decorator;
 
+/**
+ * 围绕旋转组件
+ * @see RotateAround.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/RotateAround.ts
+ */
 @ccclass
 export default class RotateAround extends cc.Component {
 
@@ -29,7 +38,7 @@ export default class RotateAround extends cc.Component {
     })
     public faceAxis: Axis = Axis.NegativeY;
 
-    @property({ tooltip: '自动开始旋转' })
+    @property({ tooltip: CC_DEV && '自动开始旋转' })
     public autoStart: boolean = false;
 
     public angle: number = 0; // 角度
@@ -108,7 +117,7 @@ export default class RotateAround extends cc.Component {
      * 获取两点间的角度
      * @param p1 点1
      * @param p2 点2
-     * @see https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/MathUtil.ts
+     * @see MathUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/MathUtil.ts
      */
     public getAngle(p1: cc.Vec2, p2: cc.Vec2): number {
         return Math.atan((p2.y - p1.y) / (p2.x - p1.x));
@@ -118,7 +127,7 @@ export default class RotateAround extends cc.Component {
      * 获取两点间的距离
      * @param p1 点1
      * @param p2 点2
-     * @see https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/MathUtil.ts
+     * @see MathUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/MathUtil.ts
      */
     public getDistance(p1: cc.Vec2, p2: cc.Vec2): number {
         return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));

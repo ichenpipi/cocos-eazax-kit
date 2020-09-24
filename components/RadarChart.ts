@@ -1,5 +1,9 @@
 const { ccclass, property, executeInEditMode, executionOrder } = cc._decorator;
 
+/**
+ * 雷达图组件
+ * @see RadarChart.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/RadarChart.ts
+ */
 @ccclass
 @executeInEditMode
 @executionOrder(-10)

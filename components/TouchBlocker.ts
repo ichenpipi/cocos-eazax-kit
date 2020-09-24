@@ -1,5 +1,9 @@
 const { ccclass, property } = cc._decorator;
 
+/**
+ * 点击屏蔽组件
+ * @see TouchBlocker.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/TouchBlocker.ts
+ */
 @ccclass
 export default class TouchBlocker extends cc.Component {
 

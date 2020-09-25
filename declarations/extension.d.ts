@@ -1,9 +1,7 @@
-interface String {
+// 类型扩展声明
+// @see extension.d.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/declarations/extension.d.ts
 
-    /**
-     * 翻译
-     */
-    // translate(): string;
+interface String {
 
     /**
      * 截断字符串，未超出限制则不作处理
@@ -12,5 +10,10 @@ interface String {
      * @param suffix 截断后缀
      */
     clamp(start: number, threshold: number, suffix?: string): string;
+
+    /**
+     * 翻译
+     */
+    // translate(): string;
 
 }

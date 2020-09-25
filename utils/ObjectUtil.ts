@@ -1,7 +1,16 @@
 /**
  * 对象工具
+ * @see ObjectUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/ObjectUtil.ts
  */
 export default class ObjectUtil {
+
+    /**
+     * 判断指定的值是否为对象
+     * @param value 值
+     */
+    public static isObject(value: any): boolean {
+        return Object.prototype.toString.call(value) === '[object Object]';
+    }
 
     /**
     * 深拷贝

@@ -1,5 +1,6 @@
 /**
  * 图像工具
+ * @see ImageUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/ImageUtil.ts
  */
 export default class ImageUtil {
 

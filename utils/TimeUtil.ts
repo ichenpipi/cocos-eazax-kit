@@ -44,4 +44,5 @@ export default class TimeUtil {
 
 }
 
-window.eazax['TimeUtil'] = TimeUtil;
+window['eazax'] && (window['eazax']['TimeUtil'] = TimeUtil);
+

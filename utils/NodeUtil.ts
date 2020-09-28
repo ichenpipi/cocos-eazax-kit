@@ -1,5 +1,6 @@
 /**
  * 节点工具
+ * @see NodeUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/NodeUtil.ts
  */
 export default class NodeUtil {
 

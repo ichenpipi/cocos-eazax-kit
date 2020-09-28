@@ -23,14 +23,16 @@ export default class TimeUtil {
      * 将毫秒转为时分秒的格式（最小单位为秒，如：”00:01:59“）
      * @param time 毫秒数
      * @param separator 分隔符
+     * @param keepHours 当小时数为 0 时依然展示小时数
      * @example 
      * const HMS = TimeUtil.msToHMS(119000); // "00:01:59"
      */
-    public static msToHMS(time: number, separator: string = ':'): string {
+    public static msToHMS(time: number, separator: string = ':', keepHours: boolean = true): string {
         const hours = Math.floor(time / 3600000);
         const minutes = Math.floor((time - (hours * 3600000)) / 60000);
         const seconds = Math.floor((time - (hours * 3600000) - (minutes * 60000)) / 1000);
-        return `${hours.toString().padStart(2, '0')}${separator}${minutes.toString().padStart(2, '0')}${separator}${seconds.toString().padStart(2, '0')}`;
+        const hoursString = (hours === 0 && !keepHours) ? '' : hours.toString().padStart(2, '0');
+        return `${hoursString}${separator}${minutes.toString().padStart(2, '0')}${separator}${seconds.toString().padStart(2, '0')}`;
     }
 
     /**

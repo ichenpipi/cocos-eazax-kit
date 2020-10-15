@@ -1,4 +1,4 @@
-import PopupBase from "../components/popup/PopupBase";
+import PopupBase from "../components/popups/PopupBase";
 
 /**
  * 弹窗管理器
@@ -31,17 +31,17 @@ export default class PopupManager {
      * @param path 弹窗预制体相对路径（如：prefabs/popup）
      * @param options 弹窗选项
      * @param mode 回收模式
+     * @param priority 是否优先展示
      */
-    public static async show(path: string, options: any = null, mode: PopupRecycleMode = PopupRecycleMode.Temporary): Promise<boolean> {
-        const request = { path, options, mode };
+    public static async show(path: string, options: any = null, mode: PopupRecycleMode = PopupRecycleMode.Temporary, priority: boolean = false): Promise<boolean> {
         if (this._curPopup) {
-            this._queue.push(request);
+            this.push(path, options, mode, priority);
             cc.log('[PopupManager]', '弹窗已加入等待队列', this._queue);
             return false;
         }
 
         return new Promise(async res => {
-            this._curPopup = request;
+            this._curPopup = { path, options, mode };
 
             let node: cc.Node = null;
             // let curMode: PopupRecycleMode = null;
@@ -140,9 +140,29 @@ export default class PopupManager {
     }
 
     /**
-     * 释放弹窗以及资源
-     * @param path 弹窗路径
+     * 添加一个弹窗请求到等待队列中，如果当前没有展示中的弹窗则直接展示该弹窗。
+     * @param path 弹窗预制体相对路径（如：prefabs/popup）
+     * @param options 弹窗选项
+     * @param mode 回收模式
+     * @param priority 是否优先展示
      */
+    public static push(path: string, options: any = null, mode: PopupRecycleMode = PopupRecycleMode.Temporary, priority: boolean = false) {
+        if (!this._curPopup) {
+            this.show(path, options, mode);
+            return;
+        }
+
+        if (priority) {
+            this._queue.unshift({ path, options, mode });
+        } else {
+            this._queue.push({ path, options, mode });
+        }
+    }
+
+    // /**
+    //  * 释放弹窗以及资源
+    //  * @param path 弹窗路径
+    //  */
     // private release(path: string) {
     //     // TODO
     // }
@@ -150,7 +170,7 @@ export default class PopupManager {
 }
 
 /** 弹窗请求 */
-interface PopupRequest {
+export interface PopupRequest {
     /** 弹窗预制体相对路径 */
     path: string;
     /** 弹窗选项 */
@@ -164,7 +184,7 @@ export enum PopupRecycleMode {
     /** 一次性（立即销毁，不保留预制体） */
     OneTime = 1,
     /** 偶尔（立即销毁，保留预制体） */
-    Temporary,
+    Temporary = 2,
     /** 频繁（关闭节点，保留预制体） */
-    Frequent
+    Frequent = 3
 }

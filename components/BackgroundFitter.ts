@@ -1,4 +1,4 @@
-import GameEvent from "../core/GameEvent";
+import EventManager from "../core/EventManager";
 import { VIEW_RESIZE } from "../constants/Events";
 
 const { ccclass } = cc._decorator;
@@ -11,7 +11,7 @@ const { ccclass } = cc._decorator;
 export default class BackgroundFitter extends cc.Component {
 
     protected onLoad() {
-        GameEvent.on(VIEW_RESIZE, this.adapt, this);
+        EventManager.on(VIEW_RESIZE, this.adapt, this);
     }
 
     protected start() {
@@ -19,7 +19,7 @@ export default class BackgroundFitter extends cc.Component {
     }
 
     protected onDestroy() {
-        GameEvent.off(VIEW_RESIZE, this.adapt, this);
+        EventManager.off(VIEW_RESIZE, this.adapt, this);
     }
 
     /**

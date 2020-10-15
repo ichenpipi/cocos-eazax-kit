@@ -1,4 +1,4 @@
-import GameEvent from "../../core/GameEvent";
+import EventManager from "../../core/EventManager";
 
 /** 语言更改事件 */
 export const LANG_CHANGED = 'lang-change';
@@ -39,11 +39,11 @@ export default class LocalizationBase<T> extends cc.Component {
     }
 
     protected onLoad() {
-        GameEvent.on(LANG_CHANGED, this.langChanged, this);
+        EventManager.on(LANG_CHANGED, this.langChanged, this);
     }
 
     protected onDestroy() {
-        GameEvent.off(LANG_CHANGED, this.langChanged, this);
+        EventManager.off(LANG_CHANGED, this.langChanged, this);
     }
 
     /**

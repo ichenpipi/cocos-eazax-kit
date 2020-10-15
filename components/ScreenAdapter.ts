@@ -1,4 +1,4 @@
-import GameEvent from "../core/GameEvent";
+import EventManager from "../core/EventManager";
 import { VIEW_RESIZE } from "../constants/Events";
 
 const { ccclass } = cc._decorator;
@@ -26,7 +26,7 @@ export default class ScreenAdapter extends cc.Component {
     private onResize() {
         // 由于 setResizeCallback 只能设置一个回调
         // 使用事件系统发送一个特定事件，让其他组件也可以监听到窗口变化
-        GameEvent.emit(VIEW_RESIZE);
+        EventManager.emit(VIEW_RESIZE);
         // 适配
         this.adapt();
     }

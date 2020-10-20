@@ -6,10 +6,12 @@ export default class PromiseUtil {
 
     /**
      * 等待
-     * @param time 时间（单位：秒）
+     * @param time 时长（秒）
+     * @example
+     * await PromiseUtil.wait(1);
      */
-    public static delay(time: number): Promise<void> {
-        return new Promise(res => setTimeout(res, time * 1000));
+    public static wait(time: number): Promise<void> {
+        return new Promise(res => cc.Canvas.instance.scheduleOnce(res, time));
     }
 
 }

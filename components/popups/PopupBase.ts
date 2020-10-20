@@ -16,7 +16,7 @@ export default class PopupBase<Options> extends cc.Component {
     /** 用于拦截点击的节点 */
     private blocker: cc.Node = null;
 
-    /** 动画时长 */
+    /** 展示和隐藏动画的时长 */
     public animTime: number = 0.3;
 
     /** 弹窗选项 */
@@ -61,7 +61,7 @@ export default class PopupBase<Options> extends cc.Component {
             .to(this.animTime, { scale: 1 }, { easing: 'backOut' })
             .call(() => {
                 // 弹窗已完全展示（动画完毕）
-                this.onShow();
+                this.onShow && this.onShow();
             })
             .start();
     }
@@ -96,13 +96,10 @@ export default class PopupBase<Options> extends cc.Component {
                 this.main.active = false;
                 this.node.active = false;
                 // 弹窗已完全隐藏（动画完毕）
-                this.onHide();
+                this.onHide && this.onHide();
                 // 弹窗完成回调（该回调为 PopupManager 专用）
                 // 注意：重写 hide 函数时记得调用该回调
-                if (this.finishCallback) {
-                    this.finishCallback();
-                    this.finishCallback = null;
-                }
+                this.finishCallback && this.finishCallback();
             })
             .start();
     }
@@ -123,9 +120,6 @@ export default class PopupBase<Options> extends cc.Component {
      * @param callback 回调
      */
     public setFinishCallback(callback: Function): void {
-        if (this.finishCallback) {
-            return cc.warn('[PopupBase]', '无法重复指定完成回调！');
-        }
         this.finishCallback = callback;
     }
 

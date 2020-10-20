@@ -42,13 +42,12 @@ export default class PopupManager {
      * @param mode 缓存模式
      * @param priority 是否优先展示
      */
-    public static show<Options>(path: string, options: Options = null, mode: PopupCacheMode = PopupCacheMode.Occasionally, priority: boolean = false): Promise<boolean> {
+    public static show<Options>(path: string, options: Options = null, mode: PopupCacheMode = PopupCacheMode.Occasionally, priority: boolean = false): Promise<PopupShowResult> {
         return new Promise(async res => {
             // 当前已有弹窗在展示中则加入等待队列
             if (this._curPopup || this.locked) {
                 this.push(path, options, mode, priority);
-                res(false);
-                return;
+                return res(PopupShowResult.Wait);
             }
 
             // 保存为当前弹窗，阻止新的弹窗请求
@@ -86,7 +85,7 @@ export default class PopupManager {
             if (!cc.isValid(node)) {
                 cc.warn('[PopupManager]', '弹窗加载失败', path);
                 this._curPopup = null;
-                return res(false);
+                return res(PopupShowResult.Fail);
             }
 
             // 记录缓存模式
@@ -105,7 +104,7 @@ export default class PopupManager {
                     this.recycle(path, node, mode);
                     this.locked = (this._queue.length > 0);
                     this._curPopup = null;
-                    res(true);
+                    res(PopupShowResult.Done);
                     // 延迟
                     await new Promise(res => {
                         cc.Canvas.instance.scheduleOnce(res, this.interval);
@@ -117,7 +116,7 @@ export default class PopupManager {
             } else {
                 // 没有 PopupBase 组件则直接打开节点
                 node.active = true;
-                res(true);
+                res(PopupShowResult.Dirty);
             }
         });
     }
@@ -234,6 +233,18 @@ export interface PopupRequest {
     options: any;
     /** 缓存模式 */
     mode: PopupCacheMode,
+}
+
+/** 弹窗请求结果 */
+export enum PopupShowResult {
+    /** 展示成功（已关闭） */
+    Done = 1,
+    /** 展示失败（加载失败） */
+    Fail = 2,
+    /** 等待中（已加入等待队列） */
+    Wait = 3,
+    /** 直接展示（未找到弹窗组件） */
+    Dirty = 4
 }
 
 /** 弹窗缓存模式 */

@@ -1,6 +1,8 @@
 # Eazax-CCC
 
-![cocos creator](https://img.shields.io/badge/cocos%20creator-2.0.0%2B-blue) ![typescript](https://img.shields.io/badge/typescript-4.0.3-blue)
+![cocos creator](https://img.shields.io/badge/cocos%20creator-2.4.3-blue) ![typescript](https://img.shields.io/badge/typescript-4.0.3-blue)
+
+
 
 ## 介绍
 
@@ -27,9 +29,7 @@
 
 ## 使用说明
 
-**⚠️注意：本项目（eazax-ccc）不是独立的 Cocos Creator 项目，无法直接启动！**
-
-
+**⚠️ 注意：本项目（eazax-ccc）不是独立的 Cocos Creator 项目，无法直接启动！**
 
 你可以：
 
@@ -62,42 +62,24 @@
   - ScreenAdapter.ts - 屏幕适配
   - Subtitle.ts - 字幕
   - TouchBlocker.ts - 点击控制
-
-
-
 - constants - 内置常量
   - Events.ts - 事件常量
-
-
-
 - core - 核心脚本
   - AudioPlayer.ts - 音频播放器
   - EventManager.ts - 事件管理器
   - PopupManager.ts - 弹窗管理器
   - SceneNavigator.ts - 场景导航器
-
-
-
 - declarations - 声明文件
   - cc.d.ts - 扩展 cc 声明文件
   - editor.d.ts - 编辑器声明文件
   - extension.d.ts - 基础类型扩展声明文件
   - jsb.d.ts - jsb 声明文件
   - wx.d.ts - 微信声明文件
-
-
-
 - extensions - 扩展实现
   - eazax.ts - Eazax 封装
   - extension.ts - 基础类型扩展实现
-
-
-
 - misc - 杂项
   - EditorAsset.ts - 编辑器资源类
-
-
-
 - resources - 资源文件
   - effects -  Shader 文件
     - eazax-avatar.effect - 头像 Shader
@@ -108,9 +90,6 @@
     - eazax-hollowout-circle.effect - 镂空（圆形） Shader
     - eazax-hollowout-rect.effect - 镂空（矩形） Shader
     - eazax-silhouette.effect - 剪影 Shader
-
-
-
 - utils - 工具
   - ArrayUtil.ts - 数组工具
   - BrowserUtil.ts - 浏览器工具
@@ -126,7 +105,7 @@
 
 ## 环境
 
-引擎：Cocos Creator 2.0.0+
+引擎：Cocos Creator 2.4.3
 
 编程语言：TypeScript 4.0.3
 
@@ -135,11 +114,12 @@
 ---
 
 
+
 # 公众号
 
 ## 菜鸟小栈
 
-😺我是陈皮皮，一个不断学习的游戏开发者，一个热爱分享的 Cocos Star Writer。
+😺我是陈皮皮，一个还在不断学习的游戏开发者，一个热爱分享的 Cocos Star Writer。
 
 🎨这是我的个人公众号，专注但不仅限于游戏开发和前端技术分享。
 

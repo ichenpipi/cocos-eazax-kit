@@ -8,6 +8,20 @@
 
 一个 Cocos Creator 游戏开发脚手架，目前持续更新维护中...
 
+包含但不仅限于以下内容：
+
+- 开箱即用的组件
+- Shader 效果文件
+- 各种实用小工具
+- 各种 d.ts 声明文件
+- 弹窗管理方案
+- 音频播放方案
+- 等等等等等...
+
+
+
+这里有一个示例项目：
+
 - 示例项目仓库：[https://gitee.com/ifaswind/eazax-cases](https://gitee.com/ifaswind/eazax-cases)
 - 示例在线预览：[https://ifaswind.gitee.io/eazax-cases](https://ifaswind.gitee.io/eazax-cases)
 

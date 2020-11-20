@@ -5,7 +5,7 @@ const { ccclass, property } = cc._decorator;
  * @see PopupBase.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/popups/PopupBase.ts
  */
 @ccclass
-export default class PopupBase<Options> extends cc.Component {
+export default class PopupBase<Options = any> extends cc.Component {
 
     @property({ type: cc.Node, tooltip: CC_DEV && '背景遮罩' })
     public background: cc.Node = null;

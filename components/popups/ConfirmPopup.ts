@@ -6,38 +6,52 @@ const { ccclass, property } = cc._decorator;
  * 确认弹窗（PopupBase 使用示例）
  */
 @ccclass
-export default class ConfirmPopup extends PopupBase<Options> {
+export default class ConfirmPopup extends PopupBase<ConfirmPopupOptions> {
+
+    @property(cc.Label)
+    private titleLabel: cc.Label = null;
+
+    @property(cc.Label)
+    private contentLabel: cc.Label = null;
 
     @property(cc.Node)
     private confirmBtn: cc.Node = null;
 
     protected onLoad() {
-        this.registerEvents();
+        this.registerEvent();
     }
 
     protected onDestroy() {
-        this.unregisterEvents();
+        this.unregisterEvent();
     }
 
-    private registerEvents() {
+    private registerEvent() {
         this.confirmBtn.on(cc.Node.EventType.TOUCH_END, this.onConfirmBtnClick, this);
     }
 
-    private unregisterEvents() {
-        this.confirmBtn.off(cc.Node.EventType.TOUCH_END, this.onConfirmBtnClick, this);
+    private unregisterEvent() {
+        this.confirmBtn.targetOff(this);
     }
 
-    protected updateDisplay(options: Options): void {
+    protected init() {
 
     }
 
-    public onConfirmBtnClick() {
+    protected updateDisplay(options: ConfirmPopupOptions): void {
+        this.titleLabel.string = options.title;
+        this.contentLabel.string = options.content;
+    }
+
+    protected onConfirmBtnClick() {
         this.options.confirmCallback && this.options.confirmCallback();
         this.hide();
     }
 
 }
 
-interface Options {
+/** 确认弹窗选项 */
+export interface ConfirmPopupOptions {
+    title: string;
+    content: string;
     confirmCallback: Function;
 }

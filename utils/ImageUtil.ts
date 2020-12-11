@@ -5,6 +5,32 @@
 export default class ImageUtil {
 
     /**
+     * 获取纹理中指定像素的颜色，原点为左上角，从像素 (1, 1) 开始。
+     * @param texture 纹理
+     * @param x x 坐标
+     * @param y y 坐标
+     * @example
+     * // 获取纹理左上角第一个像素的颜色
+     * const color = ImageUtil.getPixelColor(texture, 1, 1);
+     * // cc.color(50, 100, 123, 255);
+     */
+    public static getPixelColor(texture: cc.Texture2D, x: number, y: number): cc.Color {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = texture.width;
+        canvas.height = texture.height;
+        const image = texture.getHtmlElementObj();
+        ctx.drawImage(image, 0, 0, texture.width, texture.height);
+        const imageData = ctx.getImageData(0, 0, texture.width, texture.height);
+        const pixelIndex = ((y - 1) * texture.width * 4) + (x - 1) * 4;
+        const pixelData = imageData.data.slice(pixelIndex, pixelIndex + 4);
+        const color = cc.color(pixelData[0], pixelData[1], pixelData[2], pixelData[3]);
+        image.remove();
+        canvas.remove();
+        return color;
+    }
+
+    /**
      * 将图像转为 Base64 字符（仅 png、jpg 或 jpeg 格式资源）
      * @param url 图像地址
      * @param callback 完成回调
@@ -13,7 +39,7 @@ export default class ImageUtil {
         return new Promise(res => {
             let extname = /\.png|\.jpg|\.jpeg/.exec(url)?.[0];
             if (['.png', '.jpg', '.jpeg'].includes(extname)) {
-                let canvas = document.createElement('canvas');
+                const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 const image = new Image();
                 image.src = url;
@@ -25,7 +51,8 @@ export default class ImageUtil {
                     const dataURL = canvas.toDataURL(`image/${extname}`);
                     callback && callback(dataURL);
                     res(dataURL);
-                    canvas = null;
+                    image.remove();
+                    canvas.remove();
                 }
             } else {
                 console.warn('Not a jpg/jpeg or png resource!');
@@ -40,11 +67,11 @@ export default class ImageUtil {
      * @param base64 Base64 字符
      */
     public static base64ToTexture(base64: string): cc.Texture2D {
-        let image = document.createElement('img');
+        const image = document.createElement('img');
         image.src = base64;
         const texture = new cc.Texture2D();
         texture.initWithElement(image);
-        image = null;
+        image.remove();
         return texture;
     }
 

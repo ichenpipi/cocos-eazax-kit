@@ -1,13 +1,13 @@
 const { ccclass, property } = cc._decorator;
 
 /**
- * 点击屏蔽组件
+ * 点击屏蔽器组件
  * @see TouchBlocker.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/TouchBlocker.ts
  */
 @ccclass
 export default class TouchBlocker extends cc.Component {
 
-    @property({ type: cc.Node, tooltip: CC_DEV && '可点击的节点' })
+    @property({ type: cc.Node, tooltip: CC_DEV && '可被点击的节点' })
     public target: cc.Node = null;
 
     private isBlockAll: boolean = false;
@@ -15,30 +15,46 @@ export default class TouchBlocker extends cc.Component {
     private isPassAll: boolean = false;
 
     protected onLoad() {
-        this.node.on('touchstart', this.onTouchStart, this);
-    }
-
-    protected start() {
-        this.setSwallowTouches(false);
+        this.registerEvent();
     }
 
     protected onDestroy() {
-        this.node.off('touchstart', this.onTouchStart, this);
+        this.unregisterEvent();
     }
 
     /**
-     * touchstart 回调
+     * 订阅事件
+     */
+    protected registerEvent() {
+        this.node.on(cc.Node.EventType.TOUCH_START, this.onEvent, this);
+        this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onEvent, this);
+        this.node.on(cc.Node.EventType.TOUCH_END, this.onEvent, this);
+        // 取消吞噬事件
+        this.setSwallowTouches(false);
+    }
+
+    /**
+     * 移除订阅事件
+     */
+    protected unregisterEvent() {
+        this.node.targetOff(this);
+    }
+
+    /**
+     * 事件回调
      * @param event 事件
      */
-    private onTouchStart(event: cc.Event.EventTouch) {
+    private onEvent(event: cc.Event.EventTouch) {
         if (this.isPassAll) return;
         if (this.isBlockAll || !this.target) {
             event.stopPropagationImmediate();
             return;
         }
-        let targetRect = this.target.getBoundingBoxToWorld();
-        let isContains = targetRect.contains(event.getLocation());
-        if (!isContains) event.stopPropagationImmediate();
+        const targetRect = this.target.getBoundingBoxToWorld();
+        const isContains = targetRect.contains(event.getLocation());
+        if (!isContains) {
+            event.stopPropagationImmediate();
+        }
     }
 
     /**

@@ -14,9 +14,9 @@ export default class ObjectUtil {
 
     /**
      * 深拷贝
-     * @param target 目标对象
+     * @param target 目标
      */
-    public static deepCopy(target: object): any {
+    public static deepCopy(target: any): any {
         if (target == null || typeof target !== 'object') {
             return target;
         }
@@ -46,25 +46,16 @@ export default class ObjectUtil {
             }
             return result;
         }
+
+        console.warn(`不支持的类型：${result}`);
     }
 
     /**
-     * 返回目标对象的拷贝（仅基本类型）
-     * @param target 目标对象
+     * 拷贝对象
+     * @param target 目标
      */
     public static copy(target: object): object {
-        // 1
-        // let result = {...target};
-
-        // 2
-        // let result = JSON.parse(JSON.stringify(target));
-
-        // 3
-        const result = {};
-        for (let name in target) {
-            result[name] = target[name];
-        }
-        return result;
+        return JSON.parse(JSON.stringify(target));
     }
 
 }

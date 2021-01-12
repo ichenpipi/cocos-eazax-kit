@@ -7,11 +7,11 @@ export default class NodeUtil {
     /**
      * 获取节点在目标节点（容器）下的相对位置
      * @param node 节点
-     * @param target 目标节点（容器）
+     * @param container 目标节点（容器）
      */
-    public static getRelativePosition(node: cc.Node, target: cc.Node): cc.Vec2 {
+    public static getRelativePosition(node: cc.Node, container: cc.Node): cc.Vec2 {
         const worldPos = (node.getParent() || node).convertToWorldSpaceAR(node.getPosition());
-        return target.convertToNodeSpaceAR(worldPos);
+        return container.convertToNodeSpaceAR(worldPos);
     }
 
     /**

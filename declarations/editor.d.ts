@@ -1,10 +1,10 @@
 /**
- * Cocos Creator 编辑器命名空间
+ * Cocos Creator 编辑器模块
  * @author 陈皮皮（ifaswind）
- * @version 20200804
+ * @version 20210117
  * @see https://gitee.com/ifaswind/eazax-ccc/blob/master/declarations/editor.d.ts
  */
-declare namespace Editor {
+declare module Editor {
 
     /**
      * Log the normal message and show on the console. The method will send ipc message editor:console-log to all windows.
@@ -51,15 +51,18 @@ declare namespace Editor {
 
 }
 
-declare namespace Editor {
+declare module Editor {
 
     export const versions: { CocosCreator: string, 'editor-framework': string, 'asset-db': string, cocos2d: string };
 
 }
 
-declare namespace Editor {
+declare module Editor {
 
-    namespace RendererProcess {
+    /**
+     * 渲染线程
+     */
+    module RendererProcess {
 
         /**
         * AssetDB singleton class in renderer process, you can access the instance with `Editor.assetdb`.
@@ -210,7 +213,10 @@ declare namespace Editor {
 
     }
 
-    namespace MainProcess {
+    /**
+     * 主线程
+     */
+    module MainProcess {
 
         /**
          * AssetDB singleton class in main process, you can access the instance with `Editor.assetdb`.
@@ -876,7 +882,7 @@ declare module Editor.Ipc {
 
 declare module Editor.UI {
 
-    export module Setting {
+    module Setting {
 
         /**
          * Control the default step for float point input element. Default is 0.1.
@@ -898,7 +904,7 @@ declare module Editor.UI {
 
     }
 
-    export module DragDrop {
+    module DragDrop {
 
         export function start(e: any, t: any): void;
 
@@ -919,6 +925,62 @@ declare module Editor.UI {
         export function getLength(e: any): number;
 
         export const dragging: boolean;
+
+    }
+
+}
+
+/**
+ * 线框工具
+ */
+declare module Editor.GizmosUtils {
+
+    export function addMoveHandles(e, n, t);
+
+    export function getCenter(e);
+
+    export function getCenterWorldPos(n);
+
+    export function getCenterWorldPos3D(e);
+
+    export function getRecursiveNodes(e, t);
+
+    export function getRecursiveWorldBounds3D(e);
+
+    export function getWorldBounds3D(n);
+
+    export function snapPixel(e);
+
+    export function snapPixelWihVec2(e);
+
+}
+
+/**
+ * 工具
+ */
+declare module Editor.Utils {
+
+    /**
+     * Uuid 工具
+     */
+    module UuidUtils {
+
+        /**
+         * 压缩后的 uuid 可以减小保存时的尺寸，但不能做为文件名（因为无法区分大小写并且包含非法字符）。
+         * 默认将 uuid 的后面 27 位压缩成 18 位，前 5 位保留下来，方便调试。
+         * 如果启用 min 则将 uuid 的后面 30 位压缩成 20 位，前 2 位保留不变。
+         * @param uuid 
+         * @param min 
+         */
+        export function compressUuid(uuid: string, min?: boolean): string;
+
+        export function compressHex(hexString: string, reservedHeadLength?: number): string;
+
+        export function decompressUuid(str: string): string;
+
+        export function isUuid(str: string): boolean;
+
+        export function uuid(): string;
 
     }
 
@@ -982,6 +1044,7 @@ declare interface BuildOptions {
 
     /**
      * 从 v2.4 开始，options 中不再提供 buildResults，而是提供了一个 bundles 数组。
+     * @deprecated
      */
     buildResults: BuildResults;
 
@@ -1093,30 +1156,5 @@ interface bundle {
      * bundle 是否是远程包
      */
     isRemote: boolean;
-
-}
-
-declare module Editor.Utils {
-
-    module UuidUtils {
-
-        /**
-         * 压缩后的 uuid 可以减小保存时的尺寸，但不能做为文件名（因为无法区分大小写并且包含非法字符）。
-         * 默认将 uuid 的后面 27 位压缩成 18 位，前 5 位保留下来，方便调试。
-         * 如果启用 min 则将 uuid 的后面 30 位压缩成 20 位，前 2 位保留不变。
-         * @param uuid 
-         * @param min 
-         */
-        export function compressUuid(uuid: string, min?: boolean): string;
-
-        export function compressHex(hexString: string, reservedHeadLength?: number): string;
-
-        export function decompressUuid(str: string): string;
-
-        export function isUuid(str: string): boolean;
-
-        export function uuid(): string;
-
-    }
 
 }

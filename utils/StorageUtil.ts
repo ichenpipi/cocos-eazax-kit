@@ -10,8 +10,8 @@ export default class StorageUtil {
      * @param value 值
      */
     public static set(key: string, value: any): void {
-        const dataString = (typeof value === 'object') ? JSON.stringify(value) : value;
-        cc.sys.localStorage.setItem(key, dataString);
+        const data = (typeof value === 'object') ? JSON.stringify(value) : value;
+        cc.sys.localStorage.setItem(key, data);
     }
 
     /**
@@ -20,16 +20,16 @@ export default class StorageUtil {
      * @param parse 解析
      */
     public static get(key: string, parse: boolean = true): any {
-        const dataString = cc.sys.localStorage.getItem(key);
-        if (dataString) {
+        const data: string = cc.sys.localStorage.getItem(key);
+        if (data !== null) {
             if (parse) {
                 try {
-                    return JSON.parse(dataString);
+                    return JSON.parse(data);
                 } catch {
-                    return dataString;
+                    return data;
                 }
             }
-            return dataString;
+            return data;
         }
         return null;
     }

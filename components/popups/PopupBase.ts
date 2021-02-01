@@ -3,6 +3,7 @@ const { ccclass, property } = cc._decorator;
 /**
  * 弹窗基类
  * @see PopupBase.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/popups/PopupBase.ts
+ * @see PopupManager.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/core/PopupManager.ts
  */
 @ccclass
 export default class PopupBase<Options = any> extends cc.Component {
@@ -32,76 +33,115 @@ export default class PopupBase<Options = any> extends cc.Component {
 
     /**
      * 弹窗已完全隐藏（子类请重写此函数以实现自定义逻辑）
+     * @param force 是否被强制隐藏
      */
-    protected onHide(): void { }
+    protected onHide(force: boolean = false): void { }
 
     /**
      * 展示弹窗
      * @param options 弹窗选项
+     * @param time 动画时长
      */
-    public show(options?: Options): void {
-        // 储存选项
-        this.options = options;
-        // 重置节点
-        this.background.opacity = 0;
-        this.background.active = true;
-        this.main.scale = 0;
-        this.main.active = true;
-        this.node.active = true;
-        // 初始化
-        this.init(this.options);
-        // 更新样式
-        this.updateDisplay(this.options);
-        // 播放背景动画
-        cc.tween(this.background)
-            .to(this.animTime * 0.8, { opacity: 200 })
-            .start();
-        // 播放主体动画
-        cc.tween(this.main)
-            .to(this.animTime, { scale: 1 }, { easing: 'backOut' })
-            .call(() => {
-                // 弹窗已完全展示（动画完毕）
+    public show(options?: Options, time: number = this.animTime): Promise<void> {
+        return new Promise<void>(res => {
+            // 储存选项
+            this.options = options || Object.create(null);
+            // 开启节点
+            const background = this.background, main = this.main;
+            this.node.active = true;
+            background.active = true;
+            main.active = true;
+            // 重置节点
+            background.opacity = 0;
+            main.scale = 0.5;
+            main.opacity = 0;
+            // 初始化
+            this.init(this.options);
+            // 更新样式
+            this.updateDisplay(this.options);
+            // 动画时长为 0 时直接展示
+            if (time === 0) {
+                background.opacity = 200;
+                main.scale = 1;
+                main.opacity = 255;
+                // 弹窗已完全展示
+                res();
                 this.onShow && this.onShow();
-            })
-            .start();
+                return;
+            }
+            // 播放背景遮罩动画
+            cc.tween(background)
+                .to(time * 0.8, { opacity: 200 })
+                .start();
+            // 播放弹窗主体动画
+            cc.tween(main)
+                .to(time, {
+                    scale: 1,
+                    opacity: 255
+                }, {
+                    easing: 'backOut'
+                })
+                .call(() => {
+                    // 弹窗已完全展示
+                    res();
+                    this.onShow && this.onShow();
+                })
+                .start();
+        });
     }
 
     /**
      * 隐藏弹窗
+     * @param time 动画时长
+     * @param force 强制隐藏
      */
-    public hide(): void {
-        // 拦截点击事件
-        if (!this.blocker) {
-            this.blocker = new cc.Node('blocker');
-            this.blocker.addComponent(cc.BlockInputEvents);
-            this.blocker.setParent(this.node);
-            this.blocker.setContentSize(this.node.getContentSize());
-        }
-        this.blocker.active = true;
-        // 播放背景动画
-        cc.tween(this.background)
-            .delay(this.animTime * 0.2)
-            .to(this.animTime * 0.8, { opacity: 0 })
-            .call(() => {
-                this.background.active = false;
-            })
-            .start();
-        // 播放主体动画
-        cc.tween(this.main)
-            .to(this.animTime, { scale: 0 }, { easing: 'backIn' })
-            .call(() => {
-                // 取消拦截
-                this.blocker.active = false;
-                // 关闭节点
-                this.main.active = false;
+    public hide(time: number = this.animTime, force: boolean = false): Promise<void> {
+        return new Promise<void>(res => {
+            // 动画时长为 0 时直接关闭
+            if (time === 0) {
                 this.node.active = false;
-                // 弹窗已完全隐藏（动画完毕）
-                this.onHide && this.onHide();
-                // 弹窗完成回调（该回调为 PopupManager 专用）
-                // 注意：重写 hide 函数时记得调用该回调
-                this.finishCallback && this.finishCallback();
-            })
-            .start();
+                // 弹窗已完全隐藏
+                this.onHide && this.onHide(force);
+                res();
+                this.finishCallback && this.finishCallback(force);
+                return;
+            }
+            // 拦截点击事件（避免误操作）
+            let blocker = this.blocker;
+            if (!blocker) {
+                blocker = this.blocker = new cc.Node('blocker');
+                blocker.addComponent(cc.BlockInputEvents);
+                blocker.setParent(this.node);
+                blocker.setContentSize(this.node.getContentSize());
+            }
+            blocker.active = true;
+            // 播放背景遮罩动画
+            cc.tween(this.background)
+                .delay(time * 0.2)
+                .to(time * 0.8, { opacity: 0 })
+                .start();
+            // 播放弹窗主体动画
+            cc.tween(this.main)
+                .to(time, {
+                    scale: 0.5,
+                    opacity: 0
+                }, {
+                    easing: 'backIn'
+                })
+                .call(() => {
+                    // 取消拦截
+                    blocker.active = false;
+                    // 关闭节点
+                    this.node.active = false;
+                    // 弹窗已完全隐藏（动画完毕）
+                    this.onHide && this.onHide(force);
+                    res();
+                    // 弹窗完成回调（该回调为 PopupManager 专用）
+                    // 注意：重写 hide 函数时记得调用该回调
+                    this.finishCallback && this.finishCallback(force);
+                })
+                .start();
+        });
     }
 
     /**

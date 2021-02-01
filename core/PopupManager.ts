@@ -3,6 +3,7 @@ import PopupBase from "../components/popups/PopupBase";
 /**
  * 弹窗管理器
  * @see PopupManager.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/core/PopupManager.ts
+ * @see PopupBase.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/popups/PopupBase.ts
  */
 export default class PopupManager {
 
@@ -55,7 +56,8 @@ export default class PopupManager {
             // 当前已有弹窗在展示中则加入等待队列
             if (this._current || this.lockedForNext) {
                 this.push(path, options, mode, priority);
-                return res(PopupShowResult.Wait);
+                res(PopupShowResult.Wait);
+                return;
             }
 
             // 保存为当前弹窗，阻止新的弹窗请求
@@ -85,7 +87,8 @@ export default class PopupManager {
                 if (!cc.isValid(prefab)) {
                     cc.warn('[PopupManager]', '弹窗加载失败', path);
                     this._current = null;
-                    return res(PopupShowResult.Fail);
+                    res(PopupShowResult.Fail);
+                    return;
                 }
 
                 // 实例化节点

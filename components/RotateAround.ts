@@ -41,47 +41,56 @@ export default class RotateAround extends cc.Component {
     @property({ tooltip: CC_DEV && '自动开始旋转' })
     public autoStart: boolean = false;
 
-    public angle: number = 0; // 角度
+    /** 相对于目标的角度 */
+    public angle: number = 0;
 
-    public radius: number = 0; // 半径
+    /** 半径 */
+    public radius: number = 0;
 
-    private isRotating: boolean = false; // 标志位，是否正在旋转
+    /** 标志位，是否正在旋转 */
+    protected isRotating: boolean = false;
 
     protected start() {
-        if (this.autoStart) this.run();
+        this.autoStart && this.run();
     }
 
     protected update(dt: number) {
         if (!this.isRotating || !this.target) return;
         // 将角度转换为弧度
-        let radian = (Math.PI / 180) * this.angle;
+        const angle = this.angle,
+            radian = (Math.PI / 180) * angle;
         // 更新节点的位置
-        this.node.x = this.target.x + this.radius * Math.cos(radian);
-        this.node.y = this.target.y + this.radius * Math.sin(radian);
+        const node = this.node,
+            target = this.target,
+            radius = this.radius;
+        node.x = target.x + radius * Math.cos(radian);
+        node.y = target.y + radius * Math.sin(radian);
         // 更新节点的角度
         if (this.faceToTarget) {
             switch (this.faceAxis) {
                 case Axis.PositiveX:
-                    this.node.angle = this.angle + 180;
+                    node.angle = angle + 180;
                     break;
                 case Axis.PositiveY:
-                    this.node.angle = this.angle + 90;
+                    node.angle = angle + 90;
                     break;
                 case Axis.NegativeX:
-                    this.node.angle = this.angle;
+                    node.angle = angle;
                     break;
                 case Axis.NegativeY:
-                    this.node.angle = this.angle - 90;
+                    node.angle = angle - 90;
                     break;
             }
         }
         // 计算下一帧的角度
-        let anglePerFrame = dt * (360 / this.timePerRound);
-        if (this.clockwise) this.angle -= anglePerFrame;
-        else this.angle += anglePerFrame;
+        const anglePerFrame = dt * (360 / this.timePerRound);
+        this.angle += (this.clockwise ? -anglePerFrame : anglePerFrame);
         // 重置角度，避免数值过大
-        if (this.angle >= 360) this.angle %= 360;
-        else if (this.angle <= -360) this.angle %= -360;
+        if (this.angle >= 720) {
+            this.angle %= 360;
+        } else if (this.angle <= -720) {
+            this.angle %= -360;
+        }
     }
 
     /**

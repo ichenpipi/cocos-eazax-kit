@@ -1,5 +1,5 @@
-// Eazax-CCC 彩虹画笔 1.0.0-20201202
-// https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-rainbow-brush.effect
+// Eazax-CCC 彩色画笔 1.0.0-20201202
+// https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-color-brush.effect
 
 CCEffect %{
   techniques:

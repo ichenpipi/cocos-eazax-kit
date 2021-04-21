@@ -1,6 +1,6 @@
 # Eazax-CCC
 
-![cocos creator](https://img.shields.io/badge/cocos%20creator-2.4.3-blue) ![typescript](https://img.shields.io/badge/typescript-4.0.3-blue)
+![cocos creator](https://img.shields.io/badge/cocos%20creator-2.4.4-blue) ![typescript](https://img.shields.io/badge/typescript-4.2.3-blue)
 
 
 
@@ -119,9 +119,9 @@
 
 ## 环境
 
-引擎：Cocos Creator 2.4.3
+引擎：Cocos Creator 2.4.4
 
-编程语言：TypeScript 4.0.3
+编程语言：TypeScript 4.2.3
 
 
 

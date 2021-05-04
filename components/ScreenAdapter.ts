@@ -1,32 +1,36 @@
 import EventManager from "../core/EventManager";
-import { VIEW_RESIZE } from "../constants/Events";
 
-const { ccclass } = cc._decorator;
+const { ccclass, executionOrder } = cc._decorator;
 
 /**
  * 屏幕适配组件
  * @see ScreenAdapter.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/ScreenAdapter.ts
+ * @version 20210504
  */
 @ccclass
+@executionOrder(-999)
 export default class ScreenAdapter extends cc.Component {
 
     protected onLoad() {
-        // 设置游戏窗口变化的回调
-        cc.view.setResizeCallback(() => this.onResize());
+        this.init();
     }
 
-    protected start() {
-        // 主动调用一次
+    protected onEnable() {
         this.adapt();
     }
 
+    protected init() {
+        // 设置游戏窗口变化的回调（仅 Web 平台有效）
+        cc.view.setResizeCallback(() => this.onResize());
+    }
+
     /**
-     * 游戏窗口变化
+     * 窗口变化回调
      */
-    private onResize() {
+    protected onResize() {
         // 由于 setResizeCallback 只能设置一个回调
         // 使用事件系统发送一个特定事件，让其他组件也可以监听到窗口变化
-        EventManager.emit(VIEW_RESIZE);
+        EventManager.emit('view-resize');
         // 适配
         this.adapt();
     }
@@ -34,11 +38,13 @@ export default class ScreenAdapter extends cc.Component {
     /**
      * 适配
      */
-    private adapt() {
+    protected adapt() {
         // 实际屏幕比例
-        let screenRatio = cc.winSize.width / cc.winSize.height;
+        const winSize = cc.winSize,
+            screenRatio = winSize.width / winSize.height;
         // 设计比例
-        let designRatio = cc.Canvas.instance.designResolution.width / cc.Canvas.instance.designResolution.height;
+        const designResolution = cc.Canvas.instance.designResolution,
+            designRatio = designResolution.width / designResolution.height;
         // 判断实际屏幕宽高比
         if (screenRatio <= 1) {
             // 此时屏幕高度大于宽度
@@ -58,17 +64,19 @@ export default class ScreenAdapter extends cc.Component {
     /**
      * 适配高度模式
      */
-    private setFitHeight() {
-        cc.Canvas.instance.fitHeight = true;
-        cc.Canvas.instance.fitWidth = false;
+    protected setFitHeight() {
+        const canvas = cc.Canvas.instance;
+        canvas.fitHeight = true;
+        canvas.fitWidth = false;
     }
 
     /**
      * 适配宽度模式
      */
-    private setFitWidth() {
-        cc.Canvas.instance.fitHeight = false;
-        cc.Canvas.instance.fitWidth = true;
+    protected setFitWidth() {
+        const canvas = cc.Canvas.instance;
+        canvas.fitHeight = false;
+        canvas.fitWidth = true;
     }
 
 }

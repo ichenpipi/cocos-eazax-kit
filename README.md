@@ -1,14 +1,14 @@
-# Eazax-CCC
+# Eazax-CCC (Cocos 游戏开发工具包)
 
-![cocos creator](https://img.shields.io/badge/cocos%20creator-2.4.4-blue) ![typescript](https://img.shields.io/badge/typescript-4.2.3-blue)
+![cocos creator](https://img.shields.io/badge/cocos%20creator-2.4+-blue) ![typescript](https://img.shields.io/badge/typescript-4.2+-blue)
 
 
 
 ## 介绍
 
-Eazax-CCC 是一个 Cocos Creator 游戏开发工具包，目前持续更新维护中...
+**Eazax-CCC 是一个 Cocos Creator 游戏开发工具包，目前持续更新维护中...**
 
-包含但不仅限于以下内容：
+📦 包含但不仅限于以下内容：
 
 - 开箱即用的组件
 - Shader 效果文件
@@ -20,7 +20,7 @@ Eazax-CCC 是一个 Cocos Creator 游戏开发工具包，目前持续更新维�
 
 
 
-这里有一个示例项目：
+🌰 这里有一个示例项目：
 
 - 示例项目仓库：[https://gitee.com/ifaswind/eazax-cases](https://gitee.com/ifaswind/eazax-cases)
 - 示例在线预览：[https://ifaswind.gitee.io/eazax-cases](https://ifaswind.gitee.io/eazax-cases)
@@ -76,8 +76,6 @@ Eazax-CCC 是一个 Cocos Creator 游戏开发工具包，目前持续更新维�
   - ScreenAdapter.ts - 屏幕适配
   - Subtitle.ts - 字幕
   - TouchBlocker.ts - 点击控制
-- constants - 内置常量
-  - Events.ts - 事件常量
 - core - 核心脚本
   - AudioPlayer.ts - 音频播放器
   - EventManager.ts - 事件管理器
@@ -98,15 +96,20 @@ Eazax-CCC 是一个 Cocos Creator 游戏开发工具包，目前持续更新维�
   - effects -  Shader 文件
     - eazax-avatar.effect - 头像 Shader
     - eazax-avatar-circle.effect - 头像（圆形） Shader
+    - eazax-color-brush.effect - 彩色画笔 Shader
     - eazax-gaussian-blur.effect - 高斯模糊 Shader
     - eazax-gaussian-blur-adjustable.effect - 高斯模糊（可调整） Shader
     - eazax-hollowout.effect - 镂空 Shader
     - eazax-hollowout-circle.effect - 镂空（圆形） Shader
     - eazax-hollowout-rect.effect - 镂空（矩形） Shader
-    - eazax-silhouette.effect - 剪影 Shader
+    - eazax-sine-wave.effect - 正弦波浪 Shader
+    - eazax-single-color.effect - 单色（剪影） Shader
 - utils - 工具
   - ArrayUtil.ts - 数组工具
   - BrowserUtil.ts - 浏览器工具
+  - DebugUtil.ts - 调试工具
+  - DeviceUtil.ts - 设备工具
+  - ImageUtil.ts - 图像工具
   - MathUtil.ts - 数学工具
   - NodeUtil.ts - 节点工具
   - ObjectUtil.ts - 对象工具
@@ -114,14 +117,15 @@ Eazax-CCC 是一个 Cocos Creator 游戏开发工具包，目前持续更新维�
   - RegexUtil.ts - 正则工具
   - StorageUtil.ts - 本地储存工具
   - TimeUtil.ts - 时间工具
+  - TweenUtil.ts - 缓动工具
 
 
 
 ## 环境
 
-引擎：Cocos Creator 2.4.4
+引擎：Cocos Creator 2.4+
 
-编程语言：TypeScript 4.2.3
+编程语言：TypeScript 4.2+
 
 
 

@@ -4,7 +4,7 @@ import PopupBase from "../components/popups/PopupBase";
  * 弹窗管理器
  * @see PopupManager.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/core/PopupManager.ts
  * @see PopupBase.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/popups/PopupBase.ts
- * @version 20210409
+ * @version 20210507
  */
 export default class PopupManager {
 
@@ -42,7 +42,7 @@ export default class PopupManager {
      * @example
      * PopupManager.loadStartCallback = () => {
      *     LoadingTip.show();
-     * }
+     * };
      */
     public static loadStartCallback: () => void = null;
 
@@ -51,7 +51,7 @@ export default class PopupManager {
      * @example
      * PopupManager.loadFinishCallback = () => {
      *     LoadingTip.hide();
-     * }
+     * };
      */
     public static loadFinishCallback: () => void = null;
 
@@ -64,10 +64,10 @@ export default class PopupManager {
      * const options = {
      *     title: 'Hello',
      *     content: 'This is a popup!'
-     * }
+     * };
      * const params = {
      *     mode: PopupCacheMode.Normal
-     * }
+     * };
      * PopupManager.show('prefabs/MyPopup', options, params);
      */
     public static show<Options>(path: string, options?: Options, params?: PopupParams): Promise<PopupShowResult> {
@@ -135,12 +135,16 @@ export default class PopupManager {
                 if (suspended) {
                     return;
                 }
+                // 是否需要锁定
                 this.locked = (this._suspended.length > 0 || this._queue.length > 0);
+                // 回收
                 this.recycle(path, node, params.mode);
                 this._current = null;
                 res(PopupShowResult.Done);
-                // 延迟
-                await new Promise(_res => cc.Canvas.instance.scheduleOnce(_res, this.interval));
+                // 延迟一会儿
+                await new Promise(_res => {
+                    cc.Canvas.instance.scheduleOnce(_res, this.interval);
+                });
                 // 下一个弹窗
                 this.next();
             }
@@ -191,7 +195,6 @@ export default class PopupManager {
      * 展示等待队列中的下一个弹窗
      */
     private static next() {
-        this.locked = false;
         if (this._current ||
             (this._suspended.length === 0 && this._queue.length === 0)) {
             return;
@@ -205,7 +208,14 @@ export default class PopupManager {
             // 等待队列
             request = this._queue.shift();
         }
-        // 展示
+        // 解除锁定
+        this.locked = false;
+        // 已有实例，直接展示
+        if (request.popup) {
+            request.popup.show(request.options);
+            return;
+        }
+        // 重新加载并展示
         this.show(request.path, request.options, request.params);
     }
 
@@ -287,6 +297,9 @@ export default class PopupManager {
                 if (cc.isValid(prefab)) {
                     res(prefab);
                     return;
+                } else {
+                    // 删除无效引用
+                    prefabMap.delete(path);
                 }
             }
             // 动态加载
@@ -295,8 +308,10 @@ export default class PopupManager {
                     res(null);
                     return;
                 }
-                prefabMap.set(path, prefab);  // 缓存预制体
-                prefab.addRef();              // 增加引用计数
+                // 缓存预制体
+                prefabMap.set(path, prefab);
+                // 增加引用计数
+                prefab.addRef();
                 res(prefab);
             });
         });

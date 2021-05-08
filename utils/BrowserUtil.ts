@@ -1,6 +1,7 @@
 /**
  * 浏览器工具
  * @see BrowserUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/BrowserUtil.ts
+ * @version 20210508
  */
 export default class BrowserUtil {
 
@@ -8,7 +9,9 @@ export default class BrowserUtil {
      * 清除当前 URL 的参数（修改历史记录，不会刷新当前网页）
      */
     public static clearUrlParam(): void {
-        if (!window || !window.history) return;
+        if (!window || !window.history) {
+            return;
+        }
         window.history.replaceState({}, null, '.');
     }
 
@@ -17,7 +20,9 @@ export default class BrowserUtil {
      * @param param 参数
      */
     public static setUrlParam(param: string): void {
-        if (!window || !window.history) return;
+        if (!window || !window.history) {
+            return;
+        }
         window.history.replaceState({}, null, `?${param}`);
     }
 
@@ -26,13 +31,19 @@ export default class BrowserUtil {
      * @param key 键
      */
     public static getUrlParam(key: string): string {
-        if (!window || !window.location) return;
+        if (!window || !window.location) {
+            return;
+        }
         const query = window.location.search.replace('?', '');
-        if (query === '') return null;
+        if (query === '') {
+            return null;
+        }
         const keyValues = query.split('&');
         for (let i = 0; i < keyValues.length; i++) {
             const strings = keyValues[i].split('=');
-            if (decodeURIComponent(strings[0]) === key) return decodeURIComponent(strings[1]);
+            if (decodeURIComponent(strings[0]) === key) {
+                return decodeURIComponent(strings[1]);
+            }
         }
         return null;
     }
@@ -42,9 +53,11 @@ export default class BrowserUtil {
      * @param value 文本内容
      */
     public static copy(value: string): boolean {
-        if (!document) return false;
+        if (!document) {
+            return false;
+        }
         // 创建输入元素
-        let element = document.createElement('textarea');
+        const element = document.createElement('textarea');
         element.readOnly = true;
         element.style.opacity = '0';
         element.value = value;
@@ -52,13 +65,13 @@ export default class BrowserUtil {
         // 选择元素
         element.select();
         // 兼容低版本 iOS 的特殊处理
-        let range = document.createRange();
+        const range = document.createRange();
         range.selectNodeContents(element);
-        let selection = getSelection();
+        const selection = getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
         // 复制
-        let result = document.execCommand('copy');
+        const result = document.execCommand('copy');
         element.remove();
         return result;
     }

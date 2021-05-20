@@ -32,17 +32,17 @@ export default class BrowserUtil {
      */
     public static getUrlParam(key: string): string {
         if (!window || !window.location) {
-            return;
+            return null;
         }
         const query = window.location.search.replace('?', '');
         if (query === '') {
             return null;
         }
-        const keyValues = query.split('&');
-        for (let i = 0; i < keyValues.length; i++) {
-            const strings = keyValues[i].split('=');
-            if (decodeURIComponent(strings[0]) === key) {
-                return decodeURIComponent(strings[1]);
+        const substrings = query.split('&');
+        for (let i = 0; i < substrings.length; i++) {
+            const keyValue = substrings[i].split('=');
+            if (decodeURIComponent(keyValue[0]) === key) {
+                return decodeURIComponent(keyValue[1]);
             }
         }
         return null;

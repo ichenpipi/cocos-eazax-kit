@@ -294,6 +294,7 @@ export default class PopupManager {
             // 一次性
             case PopupCacheMode.Once:
                 node.destroy();
+                this._nodeCache.delete(path);
                 this.release(path);
                 break;
             // 正常

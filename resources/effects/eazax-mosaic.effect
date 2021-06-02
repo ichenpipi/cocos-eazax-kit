@@ -1,0 +1,75 @@
+// Eazax-CCC
+// 马赛克
+// 1.0.0.20210603
+// https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-mosaic.effect
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        nodeSize: { value: [500.0, 500.0], editor: { tooltip: '节点尺寸' } }
+        tileSize: { value: [5, 5], editor: { tooltip: '马赛克尺寸' } }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+
+  void main () {
+    gl_Position = cc_matViewProj * vec4(a_position, 1);
+    
+    v_color = a_color;
+
+    v_uv0 = a_uv0;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+  
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+
+  uniform Properties {
+    vec2 nodeSize;
+    vec2 tileSize;
+  };
+
+  void main () {
+    vec4 o = vec4(1, 1, 1, 1);
+
+    vec2 uv = ceil(v_uv0 * nodeSize / tileSize) / (nodeSize / tileSize);
+
+    CCTexture(texture, uv, o);
+
+    o *= v_color;
+
+    ALPHA_TEST(o);
+
+    gl_FragColor = o;
+  }
+}%

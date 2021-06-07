@@ -1,6 +1,6 @@
 // Eazax-CCC
 // 马赛克
-// 1.0.0.20210603
+// 20210607
 // https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-mosaic.effect
 
 CCEffect %{
@@ -62,7 +62,11 @@ CCProgram fs %{
   void main () {
     vec4 o = vec4(1, 1, 1, 1);
 
-    vec2 uv = ceil(v_uv0 * nodeSize / tileSize) / (nodeSize / tileSize);
+    vec2 uv = v_uv0;
+    if (tileSize.x != .0 && tileSize.y != .0) {
+      vec2 ratio = nodeSize / tileSize;
+      uv = ceil(v_uv0 * ratio) / ratio;
+    }
 
     CCTexture(texture, uv, o);
 

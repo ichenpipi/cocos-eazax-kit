@@ -6,7 +6,7 @@ const { ccclass, property, requireComponent, executeInEditMode, disallowMultiple
  * 马赛克 Shader 组件，该组件需要对应的 Effect 才能正常使用！
  * @see Mosaic.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/effects/Mosaic.ts
  * @see eazax-mosaic.effect https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-mosaic.effect
- * @version 20210603
+ * @version 20210607
  */
 @ccclass
 @requireComponent(cc.Sprite)
@@ -26,13 +26,24 @@ export default class Mosaic extends cc.Component {
     }
 
     @property
-    protected _tileSize: cc.Vec2 = new cc.Vec2(5, 5);
-    @property({ tooltip: CC_DEV && '马赛克尺寸' })
-    public get tileSize() {
-        return this._tileSize;
+    protected _width: number = 5;
+    @property({ tooltip: CC_DEV && '马赛克宽度' })
+    public get width() {
+        return this._width;
     }
-    public set tileSize(value: cc.Vec2) {
-        this._tileSize = value;
+    public set width(value: number) {
+        this._width = value;
+        this.updateProperties();
+    }
+
+    @property
+    protected _height: number = 5;
+    @property({ tooltip: CC_DEV && '马赛克高度' })
+    public get height() {
+        return this._height;
+    }
+    public set height(value: number) {
+        this._height = value;
         this.updateProperties();
     }
 
@@ -92,15 +103,48 @@ export default class Mosaic extends cc.Component {
      */
     public updateProperties() {
         if (!this.material) return
-        this.material.setProperty('nodeSize', this.getNodeSize());
-        this.material.setProperty('tileSize', this._tileSize);
+        this.material.setProperty('nodeSize', this.nodeSize);
+        this.material.setProperty('tileSize', this.tileSize);
     }
 
     /**
-     * 获取节点尺寸
+     * 设置马赛克尺寸
+     * @param width 宽
+     * @param height 高
      */
-    public getNodeSize() {
-        return cc.v2(this.node.width, this.node.height)
+    public set(width: number, height?: number) {
+        this._width = width;
+        this._height = height || width;
+        this.updateProperties();
+    }
+
+    /**
+     * 缓动至目标尺寸
+     * @param width 宽
+     * @param height 高
+     * @param duration 时长
+     */
+    public to(width: number, height: number, duration: number) {
+        return new Promise<void>(res => {
+            cc.tween<Mosaic>(this)
+                .to(duration, { width: width, height: height })
+                .call(res)
+                .start();
+        });
+    }
+
+    /**
+     * 节点尺寸
+     */
+    public get nodeSize() {
+        return cc.v2(this.node.width, this.node.height);
+    }
+
+    /**
+     * 马赛克尺寸
+     */
+    public get tileSize() {
+        return cc.v2(this._width, this._height);
     }
 
 }

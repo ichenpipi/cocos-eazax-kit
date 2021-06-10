@@ -15,6 +15,7 @@ const { ccclass, property } = cc._decorator;
 /**
  * 围绕旋转组件
  * @see RotateAround.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/RotateAround.ts
+ * @version 20210611
  */
 @ccclass
 export default class RotateAround extends cc.Component {
@@ -55,10 +56,12 @@ export default class RotateAround extends cc.Component {
     }
 
     protected update(dt: number) {
-        if (!this.isRotating || !this.target) return;
+        if (!this.isRotating || !this.target) {
+            return;
+        }
         // 将角度转换为弧度
-        const angle = this.angle,
-            radian = (Math.PI / 180) * angle;
+        let angle = this.angle;
+        const radian = (Math.PI / 180) * angle;
         // 更新节点的位置
         const node = this.node,
             target = this.target,
@@ -84,11 +87,11 @@ export default class RotateAround extends cc.Component {
         }
         // 计算下一帧的角度
         const anglePerFrame = dt * (360 / this.timePerRound);
-        this.angle += (this.clockwise ? -anglePerFrame : anglePerFrame);
+        angle = this.angle += (this.clockwise ? -anglePerFrame : anglePerFrame);
         // 重置角度，避免数值过大
-        if (this.angle >= 720) {
+        if (angle >= 720) {
             this.angle %= 360;
-        } else if (this.angle <= -720) {
+        } else if (angle <= -720) {
             this.angle %= -360;
         }
     }
@@ -102,15 +105,20 @@ export default class RotateAround extends cc.Component {
      * @param faceAxis 面向目标节点的轴
      */
     public run(target?: cc.Node, clockwise?: boolean, timePerRound?: number, faceToTarget?: boolean, faceAxis?: Axis) {
-        if (target) this.target = target;
-        if (clockwise) this.clockwise = clockwise;
-        if (timePerRound) this.timePerRound = timePerRound;
-        if (faceToTarget) this.faceToTarget = faceToTarget;
-        if (faceAxis) this.faceAxis = faceAxis;
-        if (!this.target) return cc.log('No target!');
+        if (target != undefined) this.target = target;
+        if (clockwise != undefined) this.clockwise = clockwise;
+        if (timePerRound != undefined) this.timePerRound = timePerRound;
+        if (faceToTarget != undefined) this.faceToTarget = faceToTarget;
+        if (faceAxis != undefined) this.faceAxis = faceAxis;
+        if (!this.target) {
+            cc.warn('[RotateAround]', 'No target!');
+            return;
+        }
         // 计算初始角度和半径
-        this.angle = this.getAngle(this.target.getPosition(), this.node.getPosition());
-        this.radius = this.getDistance(this.target.getPosition(), this.node.getPosition());
+        const p1 = this.target.getPosition(),
+            p2 = this.node.getPosition();
+        this.angle = this.getAngle(p1, p2);
+        this.radius = this.getDistance(p1, p2);
         // 开始
         this.isRotating = true;
     }

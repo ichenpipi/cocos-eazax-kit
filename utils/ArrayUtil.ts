@@ -1,5 +1,8 @@
 /**
  * 数组工具
+ * @author 陈皮皮 (ifaswind)
+ * @version 20200812
+ * @see ArrayUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/ArrayUtil.ts
  */
 export default class ArrayUtil {
 

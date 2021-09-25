@@ -1,7 +1,7 @@
 import PopupBase from "../components/popups/PopupBase";
 
 /** 弹窗缓存模式 */
-export enum PopupCacheMode {
+enum CacheMode {
     /** 一次性的（立即销毁节点，预制体资源随即释放） */
     Once = 1,
     /** 正常的（立即销毁节点，但是缓存预制体资源） */
@@ -11,7 +11,7 @@ export enum PopupCacheMode {
 }
 
 /** 弹窗请求结果 */
-export enum PopupShowResult {
+enum ShowResult {
     /** 展示成功（已关闭） */
     Done = 1,
     /** 展示失败（加载失败） */
@@ -22,9 +22,10 @@ export enum PopupShowResult {
 
 /**
  * 弹窗管理器
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210918
  * @see PopupManager.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/core/PopupManager.ts
  * @see PopupBase.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/popups/PopupBase.ts
- * @version 20210524
  */
 export default class PopupManager {
 
@@ -38,15 +39,15 @@ export default class PopupManager {
 
     /** 当前弹窗请求 */
     public static get current() { return this._current; }
-    private static _current: PopupRequest = null;
+    private static _current: PopupRequestType = null;
 
     /** 等待队列 */
     public static get queue() { return this._queue; }
-    private static _queue: PopupRequest[] = [];
+    private static _queue: PopupRequestType[] = [];
 
     /** 被挂起的弹窗队列 */
     public static get suspended() { return this._suspended; }
-    private static _suspended: PopupRequest[] = [];
+    private static _suspended: PopupRequestType[] = [];
 
     /** 锁定状态 */
     private static locked: boolean = false;
@@ -58,10 +59,14 @@ export default class PopupManager {
     public static interval: number = 0.05;
 
     /** 弹窗缓存模式 */
-    public static get CacheMode() { return PopupCacheMode; }
+    public static get CacheMode() {
+        return CacheMode;
+    }
 
-    /** 弹窗请求结果 */
-    public static get ShowResult() { return PopupShowResult; }
+    /** 弹窗请求结果类型 */
+    public static get ShowResult() {
+        return ShowResult;
+    }
 
     /**
      * 弹窗动态加载开始回调
@@ -96,7 +101,7 @@ export default class PopupManager {
      * };
      * PopupManager.show('prefabs/MyPopup', options, params);
      */
-    public static show<Options>(path: string, options?: Options, params?: PopupParams): Promise<PopupShowResult> {
+    public static show<Options>(path: string, options?: Options, params?: PopupParamsType): Promise<ShowResult> {
         return new Promise(async res => {
             // 解析处理参数
             params = this.parseParams(params);
@@ -110,7 +115,7 @@ export default class PopupManager {
                 } else {
                     // 将请求推入等待队列
                     this.push(path, options, params);
-                    res(PopupShowResult.Waiting);
+                    res(ShowResult.Waiting);
                     return;
                 }
             }
@@ -134,7 +139,7 @@ export default class PopupManager {
                 if (!cc.isValid(prefab)) {
                     cc.warn('[PopupManager]', '弹窗加载失败', path);
                     this._current = null;
-                    res(PopupShowResult.Failed);
+                    res(ShowResult.Failed);
                     return;
                 }
                 // 实例化节点
@@ -145,7 +150,7 @@ export default class PopupManager {
             if (!popup) {
                 cc.warn('[PopupManager]', '未找到弹窗组件', path);
                 this._current = null;
-                res(PopupShowResult.Failed);
+                res(ShowResult.Failed);
                 return;
             }
             // 保存组件引用
@@ -166,7 +171,7 @@ export default class PopupManager {
                 // 回收
                 this.recycle(path, node, params.mode);
                 this._current = null;
-                res(PopupShowResult.Done);
+                res(ShowResult.Done);
                 // 延迟一会儿
                 await new Promise(_res => {
                     cc.Canvas.instance.scheduleOnce(_res, this.interval);
@@ -209,6 +214,9 @@ export default class PopupManager {
         if (prefabCache.has(path)) {
             const prefab = prefabCache.get(path);
             if (cc.isValid(prefab)) {
+                // 增加引用计数
+                prefab.addRef();
+                // 实例化并返回
                 return cc.instantiate(prefab);
             }
             // 删除无效引用
@@ -222,12 +230,11 @@ export default class PopupManager {
      * 展示挂起或等待队列中的下一个弹窗
      */
     private static next() {
-        if (this._current ||
-            (this._suspended.length === 0 && this._queue.length === 0)) {
+        if (this._current || (this._suspended.length === 0 && this._queue.length === 0)) {
             return;
         }
         // 取出一个请求
-        let request: PopupRequest = null;
+        let request: PopupRequestType = null;
         if (this._suspended.length > 0) {
             // 挂起队列
             request = this._suspended.shift();
@@ -242,6 +249,7 @@ export default class PopupManager {
             // 设为当前弹窗
             this._current = request;
             // 直接展示
+            request.node.setParent(this.container);
             request.popup.show(request.options);
             return;
         }
@@ -255,7 +263,7 @@ export default class PopupManager {
      * @param options 弹窗选项
      * @param params 弹窗展示参数
      */
-    private static push<Options>(path: string, options?: Options, params?: PopupParams) {
+    private static push<Options>(path: string, options?: Options, params?: PopupParamsType) {
         // 直接展示
         if (!this._current && !this.locked) {
             this.show(path, options, params);
@@ -289,24 +297,28 @@ export default class PopupManager {
      * @param node 弹窗节点
      * @param mode 缓存模式
      */
-    private static recycle(path: string, node: cc.Node, mode: PopupCacheMode) {
+    private static recycle(path: string, node: cc.Node, mode: CacheMode) {
         switch (mode) {
             // 一次性
-            case PopupCacheMode.Once:
-                node.destroy();
+            case CacheMode.Once: {
                 this._nodeCache.delete(path);
+                node.destroy();
+                // 释放
                 this.release(path);
                 break;
+            }
             // 正常
-            case PopupCacheMode.Normal:
-                node.destroy();
+            case CacheMode.Normal: {
                 this._nodeCache.delete(path);
+                node.destroy();
                 break;
+            }
             // 频繁
-            case PopupCacheMode.Frequent:
+            case CacheMode.Frequent: {
                 node.removeFromParent(false);
                 this._nodeCache.set(path, node);
                 break;
+            }
         }
     }
 
@@ -337,8 +349,7 @@ export default class PopupManager {
                 }
                 // 缓存预制体
                 prefabMap.set(path, prefab);
-                // 增加引用计数
-                prefab.addRef();
+                // 返回
                 res(prefab);
             });
         });
@@ -363,7 +374,11 @@ export default class PopupManager {
         const prefabCache = this._prefabCache;
         let prefab = prefabCache.get(path);
         if (prefab) {
-            prefabCache.delete(path);
+            // 删除缓存
+            if (prefab.refCount <= 1) {
+                prefabCache.delete(path);
+            }
+            // 减少引用
             prefab.decRef();
             prefab = null;
         }
@@ -373,18 +388,18 @@ export default class PopupManager {
      * 解析参数
      * @param params 参数
      */
-    private static parseParams(params: PopupParams) {
+    private static parseParams(params: PopupParamsType) {
         if (params == undefined) {
-            return new PopupParams();
+            return new PopupParamsType();
         }
         // 是否为对象
         if (Object.prototype.toString.call(params) !== '[object Object]') {
             cc.warn('[PopupManager]', '弹窗参数无效，使用默认参数');
-            return new PopupParams();
+            return new PopupParamsType();
         }
         // 缓存模式
         if (params.mode == undefined) {
-            params.mode = PopupCacheMode.Normal;
+            params.mode = CacheMode.Normal;
         }
         // 优先级
         if (params.priority == undefined) {
@@ -400,9 +415,9 @@ export default class PopupManager {
 }
 
 /** 弹窗展示参数 */
-export class PopupParams {
+class PopupParamsType {
     /** 缓存模式 */
-    mode?: PopupCacheMode = PopupCacheMode.Normal;
+    mode?: CacheMode = CacheMode.Normal;
     /** 优先级（优先级大的优先展示） */
     priority?: number = 0;
     /** 立刻展示（将会挂起当前展示中的弹窗） */
@@ -410,15 +425,15 @@ export class PopupParams {
 }
 
 /** 弹窗展示请求 */
-export interface PopupRequest {
+class PopupRequestType {
     /** 弹窗预制体相对路径 */
     path: string;
     /** 弹窗选项 */
     options: any;
     /** 缓存模式 */
-    params: PopupParams,
+    params: PopupParamsType;
     /** 弹窗组件 */
-    popup?: PopupBase,
+    popup?: PopupBase;
     /** 弹窗节点 */
-    node?: cc.Node
+    node?: cc.Node;
 }

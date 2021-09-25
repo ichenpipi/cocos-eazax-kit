@@ -1,5 +1,7 @@
 /**
  * 正则工具
+ * @author 陈皮皮 (ifaswind)
+ * @version 20200928
  * @see RegexUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/RegexUtil.ts
  */
 export default class RegexUtil {

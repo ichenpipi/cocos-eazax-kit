@@ -1,5 +1,7 @@
 /**
  * 本地储存工具
+ * @author 陈皮皮 (ifaswind)
+ * @version 20201206
  * @see StorageUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/StorageUtil.ts
  */
 export default class StorageUtil {
@@ -10,8 +12,8 @@ export default class StorageUtil {
      * @param value 值
      */
     public static set(key: string, value: any): void {
-        const data = (typeof value === 'object') ? JSON.stringify(value) : value;
-        cc.sys.localStorage.setItem(key, data);
+        const dataString = (typeof value === 'object') ? JSON.stringify(value) : value;
+        cc.sys.localStorage.setItem(key, dataString);
     }
 
     /**
@@ -20,16 +22,16 @@ export default class StorageUtil {
      * @param parse 解析
      */
     public static get(key: string, parse: boolean = true): any {
-        const data: string = cc.sys.localStorage.getItem(key);
-        if (data !== null) {
+        const dataString = cc.sys.localStorage.getItem(key);
+        if (dataString) {
             if (parse) {
                 try {
-                    return JSON.parse(data);
+                    return JSON.parse(dataString);
                 } catch {
-                    return data;
+                    return dataString;
                 }
             }
-            return data;
+            return dataString;
         }
         return null;
     }

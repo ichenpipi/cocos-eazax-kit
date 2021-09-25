@@ -2,9 +2,10 @@ const { ccclass, property, executeInEditMode, executionOrder } = cc._decorator;
 
 /**
  * 雷达图组件（cc.Graphics）
- * @see RadarChart.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/RadarChart.ts
- * @see Example https://ifaswind.gitee.io/eazax-cases/?case=radarChart
+ * @author 陈皮皮 (ifaswind)
  * @version 20210521
+ * @see RadarChart.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/chart/RadarChart.ts
+ * @see Example https://ifaswind.gitee.io/eazax-cases/?case=radarChart
  */
 @ccclass
 @executeInEditMode

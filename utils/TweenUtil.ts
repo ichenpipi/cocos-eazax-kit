@@ -1,7 +1,8 @@
 /**
  * Tween 工具
- * @see TweenUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/TweenUtil.ts
+ * @author 陈皮皮 (ifaswind)
  * @version 20210320
+ * @see TweenUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/TweenUtil.ts
  */
 export default class TweenUtil {
 

@@ -1,5 +1,7 @@
 /**
  * 图像工具
+ * @author 陈皮皮 (ifaswind)
+ * @version 20201211
  * @see ImageUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/ImageUtil.ts
  */
 export default class ImageUtil {

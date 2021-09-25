@@ -46,7 +46,7 @@ export default class GaussianBlur extends cc.Component {
          * @see EditorAsset.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/misc/EditorAsset.ts
          */
         if (CC_EDITOR && !this._effect) {
-            await new Promise(res => {
+            await new Promise<void>(res => {
                 const path = 'eazax-ccc/resources/effects/eazax-gaussian-blur-adjustable.effect';
                 EditorAsset.load(path, 'effect', (err: Error, result: cc.EffectAsset) => {
                     if (err) cc.warn(`[${this['__proto__']['__classname__']}]`, '请手动指定组件的 Effect 资源！');

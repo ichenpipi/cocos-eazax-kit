@@ -1,5 +1,7 @@
 /**
  * 对象工具
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210116
  * @see ObjectUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/ObjectUtil.ts
  */
 export default class ObjectUtil {

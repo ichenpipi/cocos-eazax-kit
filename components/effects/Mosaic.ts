@@ -4,9 +4,10 @@ const { ccclass, property, requireComponent, executeInEditMode, disallowMultiple
 
 /**
  * 马赛克 Shader 组件，该组件需要对应的 Effect 才能正常使用！
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210607
  * @see Mosaic.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/effects/Mosaic.ts
  * @see eazax-mosaic.effect https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-mosaic.effect
- * @version 20210607
  */
 @ccclass
 @requireComponent(cc.Sprite)

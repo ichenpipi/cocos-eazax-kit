@@ -1,5 +1,7 @@
 /**
  * 时间工具
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210317
  * @see TimeUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/TimeUtil.ts
  */
 export default class TimeUtil {

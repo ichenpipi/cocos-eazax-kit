@@ -2,6 +2,8 @@ const { ccclass, property, requireComponent, disallowMultiple, executeInEditMode
 
 /**
  * 渐变颜色，支持 Sprite（SIMPLE 和 FILLED）和 Label，注意这会覆盖默认的节点颜色设置
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210125
  * @see GradientColor.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/renderers/GradientColor.ts
  */
 @ccclass

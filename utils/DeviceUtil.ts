@@ -1,5 +1,7 @@
 /**
  * 设备工具
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210120
  * @see DeviceUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/DeviceUtil.ts
  */
 export default class DeviceUtil {

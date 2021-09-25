@@ -1,5 +1,7 @@
 /**
  * 调试工具
+ * @author 陈皮皮 (ifaswind)
+ * @version 20200928
  * @see DebugUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/TimeUtil.ts
  */
 export default class DebugUtil {

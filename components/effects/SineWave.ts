@@ -12,6 +12,8 @@ export enum SineWaveDirection {
 
 /**
  * 正弦波浪 Shader 组件，该组件需要对应的 Effect 才能正常使用！
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210909
  * @see SineWave.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/effects/SineWave.ts
  * @see eazax-sine-wave.effect https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-sine-wave.effect
  */
@@ -74,7 +76,7 @@ export default class SineWave extends cc.Component {
          * @see EditorAsset.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/misc/EditorAsset.ts
          */
         if (CC_EDITOR && !this._effect) {
-            await new Promise(res => {
+            await new Promise<void>(res => {
                 const path = 'eazax-ccc/resources/effects/eazax-sine-wave.effect';
                 EditorAsset.load(path, 'effect', (err: Error, result: cc.EffectAsset) => {
                     if (err) cc.warn(`[${this['__proto__']['__classname__']}]`, '请手动指定组件的 Effect 资源！');

@@ -2,9 +2,10 @@ const { ccclass, property } = cc._decorator;
 
 /**
  * 彩色画笔（多彩 Graphics，需搭配 eazax-color-brush.effect 使用）
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210317
  * @see ColorBrush.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/effects/ColorBrush.ts
  * @see eazax-color-brush.effect https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-color-brush.effect
- * @version 20210317
  */
 @ccclass
 export default class ColorBrush extends cc.Component {

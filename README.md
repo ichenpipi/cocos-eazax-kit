@@ -1,8 +1,6 @@
 # Eazax-CCC (Cocos 游戏开发工具包)
 
-![cocos creator](https://img.shields.io/badge/cocos%20creator-2.4+-blue) ![typescript](https://img.shields.io/badge/typescript-4.2+-blue)
-
-
+![cocos-creator](https://img.shields.io/badge/cocos%20creator-2.4+-blue) ![typescript](https://img.shields.io/badge/typescript-4.2+-blue)
 
 ## 介绍
 
@@ -18,28 +16,20 @@
 - 各种 d.ts 声明文件
 - 等等等等等...
 
-
-
 🌰 这里有一个示例项目：
 
 - 示例项目仓库：[https://gitee.com/ifaswind/eazax-cases](https://gitee.com/ifaswind/eazax-cases)
 - 示例在线预览：[https://ifaswind.gitee.io/eazax-cases](https://ifaswind.gitee.io/eazax-cases)
 
-
-
 如果此项目对你有帮助，请不要忘记 [![star](https://gitee.com/ifaswind/eazax-ccc/badge/star.svg?theme=dark)](https://gitee.com/ifaswind/eazax-ccc/stargazers)
 
 如有使用上的问题，可以在 gitee 上提 issue 或者添加我的微信 `im_chenpipi` 并留言。
-
-
 
 > 👨‍💻 **开发交流群**
 > 
 > 皮皮创建了一个开发交流群，供小伙伴们交流开发经验、问题求助和摸鱼（划掉）。
 > 
 > 感兴趣的小伙伴可以添加我微信 `im_chenpipi` 并留言 `加群`。
-
-
 
 ## 使用说明
 
@@ -50,11 +40,11 @@
 - 下载完整项目放在你的项目中即可使用内置的功能与模块。
 - 只下载或复制你需要的代码（项目中的组件都是开箱即用）。
 
-
-
 ## 目录结构
 
 - components - 常用组件
+  - charts - 图表组件
+    - RadarChart.ts - 雷达图
   - effects - Shader 配套组件
     - ColorBrush.ts - 彩色画笔效果
     - GaussianBlur.ts - 高斯模糊效果
@@ -67,15 +57,19 @@
     - LocalizationSpriteFrame.ts - 多语言精灵图像
   - popups - 弹窗组件
     - PopupBase.ts - 弹窗基类（配合 PopupManager 使用）
+  - remotes - 远程组件
+    - RemoteAsset.ts - 远程资源组件基类
+    - RemoteLoader.ts - 远程资源加载器
+    - RemoteTexture.ts - 远程图像
   - renderers - 渲染组件
     - GradientColor - 渐变色（Sprite）
   - tweens - 缓动效果组件
     - JellyTween.ts - 果冻效果
+  - ArcProgressBar.ts - 弧形进度条
   - BackgroundFitter.ts - 背景适配
   - Counter.ts - 数值滚动
   - LongPress.ts - 节点长按
   - Marquee.ts - 文本跑马灯
-  - RadarChart.ts - 雷达图
   - RotateAround.ts - 围绕旋转
   - ScreenAdapter.ts - 屏幕适配
   - Subtitle.ts - 字幕
@@ -83,6 +77,7 @@
 - core - 核心脚本
   - AudioPlayer.ts - 音频播放器
   - EventManager.ts - 事件管理器
+  - InstanceEvent.ts - 实例事件
   - PopupManager.ts - 弹窗管理器
   - SceneNavigator.ts - 场景导航器
 - declarations - 声明文件
@@ -101,8 +96,8 @@
     - eazax-avatar.effect - 头像 Shader
     - eazax-avatar-circle.effect - 头像（圆形） Shader
     - eazax-color-brush.effect - 彩色画笔 Shader
-    - eazax-gaussian-blur.effect - 高斯模糊 Shader
-    - eazax-gaussian-blur-adjustable.effect - 高斯模糊（可调整） Shader
+    - eazax-gaussian-blur.effect - 高斯模糊 Shader（性能爆炸，慎用）
+    - eazax-gray.effect - 灰色 Shader
     - eazax-hollowout.effect - 镂空 Shader
     - eazax-hollowout-circle.effect - 镂空（圆形） Shader
     - eazax-hollowout-rect.effect - 镂空（矩形） Shader
@@ -124,19 +119,13 @@
   - TimeUtil.ts - 时间工具
   - TweenUtil.ts - 缓动工具
 
-
-
 ## 环境
 
 引擎：Cocos Creator 2.4+
 
 编程语言：TypeScript 4.2+
 
-
-
 ---
-
-
 
 # 公众号
 

@@ -1,5 +1,7 @@
 /**
  * 节点工具
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210116
  * @see NodeUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/NodeUtil.ts
  */
 export default class NodeUtil {

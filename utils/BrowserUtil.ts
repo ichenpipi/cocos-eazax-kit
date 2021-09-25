@@ -1,7 +1,8 @@
 /**
  * 浏览器工具
+ * @author 陈皮皮 (ifaswind)
+ * @version 20210925
  * @see BrowserUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/BrowserUtil.ts
- * @version 20210508
  */
 export default class BrowserUtil {
 
@@ -19,9 +20,12 @@ export default class BrowserUtil {
      * 设置当前 URL 的参数（修改历史记录，不会刷新当前网页）
      * @param param 参数
      */
-    public static setUrlParam(param: string): void {
+    public static setUrlParam(param: string | { key: string, value: string }[]): void {
         if (!window || !window.history) {
             return;
+        }
+        if (Array.isArray(param)) {
+            param = param.map(v => `${v.key}=${v.value}`).join('&');
         }
         window.history.replaceState({}, null, `?${param}`);
     }
@@ -46,6 +50,29 @@ export default class BrowserUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取当前 URL 的所有参数
+     */
+    public static getUrlParams() {
+        if (!window || !window.location) {
+            return [];
+        }
+        const query = window.location.search.replace('?', '');
+        if (query === '') {
+            return [];
+        }
+        const substrings = query.split('&'),
+            params: { key: string, value: string }[] = [];
+        for (let i = 0; i < substrings.length; i++) {
+            const keyValue = substrings[i].split('=');
+            params.push({
+                key: keyValue[0],
+                value: keyValue[1],
+            });
+        }
+        return params;
     }
 
     /**

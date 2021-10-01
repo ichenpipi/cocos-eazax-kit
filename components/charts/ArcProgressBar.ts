@@ -4,12 +4,12 @@ const { ccclass, property, requireComponent, executeInEditMode, help } = cc._dec
  * 弧形进度条
  * @author 陈皮皮 (ifaswind)
  * @version 20210908
- * @see ArcProgressBar.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/ArcProgressBar.ts
+ * @see ArcProgressBar.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/charts/ArcProgressBar.ts
  */
 @ccclass
 @requireComponent(cc.Graphics)
 @executeInEditMode
-@help('https://gitee.com/ifaswind/eazax-ccc/blob/master/components/ArcProgressBar.ts')
+@help('https://gitee.com/ifaswind/eazax-ccc/blob/master/components/charts/ArcProgressBar.ts')
 export default class ArcProgressBar extends cc.Component {
 
     @property(cc.Graphics)

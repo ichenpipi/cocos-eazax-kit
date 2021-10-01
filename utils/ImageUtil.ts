@@ -1,7 +1,7 @@
 /**
  * 图像工具
  * @author 陈皮皮 (ifaswind)
- * @version 20201211
+ * @version 20211001
  * @see ImageUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/ImageUtil.ts
  */
 export default class ImageUtil {
@@ -68,8 +68,11 @@ export default class ImageUtil {
      * 将 Base64 字符转为 cc.Texture2D 资源
      * @param base64 Base64 字符
      */
-    public static base64ToTexture(base64: string): cc.Texture2D {
-        const image = document.createElement('img');
+    public static base64ToCCTexture(base64: string): cc.Texture2D {
+        if (!window || !window.document) {
+            return null;
+        }
+        const image = new Image();
         image.src = base64;
         const texture = new cc.Texture2D();
         texture.initWithElement(image);
@@ -82,6 +85,9 @@ export default class ImageUtil {
      * @param base64 Base64 字符
      */
     public static base64ToBlob(base64: string): Blob {
+        if (!window || !window.atob) {
+            return null;
+        }
         const strings = base64.split(',');
         const type = /image\/\w+|;/.exec(strings[0])[0];
         const data = window.atob(strings[1]);

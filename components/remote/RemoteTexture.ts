@@ -1,14 +1,15 @@
+import RemoteLoader from "../../core/remote/RemoteLoader";
 import RemoteAsset from "./RemoteAsset";
-import RemoteLoader from "./RemoteLoader";
 
 const { ccclass, property, executeInEditMode, help } = cc._decorator;
 
 /**
  * 远程图像
  * @author 陈皮皮 (ifaswind)
- * @version 20210924
+ * @version 20211001
  * @see RemoteTexture.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/remote/RemoteTexture.ts
  * @see RemoteAsset.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/remote/RemoteAsset.ts
+ * @see RemoteLoader.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/core/remote/RemoteLoader.ts
  */
 @ccclass
 @executeInEditMode
@@ -40,8 +41,19 @@ export default class RemoteTexture extends RemoteAsset {
     @property({ tooltip: CC_DEV && '加载失败后的重试次数' })
     protected retryTimes: number = 2;
 
+    @property()
+    protected _previewInEditor: boolean = true;
+    @property({ tooltip: CC_DEV && '在编辑器内预览' })
+    public get previewInEditor() {
+        return this._previewInEditor;
+    }
+    public set previewInEditor(value) {
+        this._previewInEditor = value;
+        this.onPropertyUpdated();
+    }
+
     /**
-     * 最后一个请求 ID（用来处理并发加载，仅保留最后一个请求）
+     * 最后一个请求 ID（用来处理短时间内的重复加载，仅保留最后一个请求）
      */
     protected lastRequestId: number = 0;
 
@@ -68,7 +80,7 @@ export default class RemoteTexture extends RemoteAsset {
      */
     public onPropertyUpdated() {
         if (CC_EDITOR) {
-            this.preview();
+            this.updatePreview();
         } else {
             this.load();
         }
@@ -80,7 +92,7 @@ export default class RemoteTexture extends RemoteAsset {
      */
     public async load(url: string = this._url): Promise<LoadResult> {
         if (!cc.isValid(this._sprite)) {
-            cc.warn('[RemoteTexture]', 'load', '->', '缺少 Sprite 组件');
+            cc.warn('[RemoteTexture]', 'load', '->', '缺少 cc.Sprite 组件');
             return { url, loaded: false, interrupted: false, component: this };
         }
         // 保存地址
@@ -106,7 +118,7 @@ export default class RemoteTexture extends RemoteAsset {
         }
         // 加载失败？
         if (!texture) {
-            cc.warn('[RemoteTexture]', 'load', '->', '远程资源加载失败', url);
+            cc.warn('[RemoteTexture]', 'load', '->', '资源加载失败', url);
             return { url, loaded: false, interrupted: false, component: this };
         }
         // 加载成功
@@ -128,9 +140,9 @@ export default class RemoteTexture extends RemoteAsset {
     }
 
     /**
-     * 在编辑器中预览
+     * 更新编辑器预览
      */
-    protected async preview() {
+    protected async updatePreview() {
         if (!CC_EDITOR || !this._sprite) {
             return;
         }
@@ -141,24 +153,28 @@ export default class RemoteTexture extends RemoteAsset {
             if (node.name === 'temporary-preview-node')
                 node.removeFromParent(true);
         });
+        // 是否开启预览
+        if (!this._previewInEditor) {
+            return;
+        }
+        // 链接是否有效
         if (!this._url || this._url === '') {
             return;
         }
         // 生成临时预览节点
-        // let previewNode = new cc.Node('temporary-preview-node');
-        let previewNode = new cc.PrivateNode('temporary-preview-node');
-        previewNode['_objFlags'] |= cc.Object['Flags'].DontSave;        // 不保存
-        // previewNode['_objFlags'] |= cc.Object['Flags'].HideInHierarchy; // 在层级管理器中隐藏
+        // const previewNode = new cc.Node('temporary-preview-node');
+        // previewNode['_objFlags'] |= cc.Object['Flags'].HideInHierarchy;
+        const previewNode = new cc.PrivateNode('temporary-preview-node');
+        previewNode['_objFlags'] |= cc.Object['Flags'].DontSave;
         previewNode.setParent(actualNode);
         previewNode.setContentSize(actualNode.getContentSize());
-        // 加载纹理
+        // 加载资源
         const texture = await RemoteLoader.loadTexture(this._url);
         if (!cc.isValid(previewNode) || !texture) {
             previewNode.removeFromParent(true);
-            previewNode = null;
             return;
         }
-        // 设置图像
+        // 设置资源
         const previewSprite = previewNode.addComponent(cc.Sprite);
         previewSprite.type = actualSprite.type;
         previewSprite.sizeMode = actualSprite.sizeMode;

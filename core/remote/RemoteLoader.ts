@@ -1,8 +1,8 @@
 /**
  * 远程加载器
  * @author 陈皮皮 (ifaswind)
- * @version 20210924
- * @see RemoteLoader.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/remote/RemoteLoader.ts
+ * @version 20210930
+ * @see RemoteLoader.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/core/remote/RemoteLoader.ts
  */
 export default class RemoteLoader {
 

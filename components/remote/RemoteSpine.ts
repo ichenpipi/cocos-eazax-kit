@@ -6,7 +6,7 @@ const { ccclass, property, executeInEditMode, help } = cc._decorator;
 /**
  * 远程 Spine
  * @author 陈皮皮 (ifaswind)
- * @version 20211001
+ * @version 20211009
  * @see RemoteSpine.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/remote/RemoteSpine.ts
  * @see RemoteAsset.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/remote/RemoteAsset.ts
  * @see SpineLoader.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/core/remote/SpineLoader.ts
@@ -63,6 +63,17 @@ export default class RemoteSpine extends RemoteAsset {
     @property({ tooltip: CC_DEV && '加载失败后的重试次数' })
     protected retryTimes: number = 2;
 
+    @property()
+    protected _previewInEditor: boolean = true;
+    @property({ tooltip: CC_DEV && '在编辑器内预览' })
+    public get previewInEditor() {
+        return this._previewInEditor;
+    }
+    public set previewInEditor(value) {
+        this._previewInEditor = value;
+        this.onPropertyUpdated();
+    }
+
     /**
      * 最后一个请求 ID（用来处理短时间内的重复加载，仅保留最后一个请求）
      */
@@ -91,9 +102,9 @@ export default class RemoteSpine extends RemoteAsset {
      */
     public onPropertyUpdated() {
         if (CC_EDITOR) {
-            // this.updatePreview();
+            this.updatePreview();
         } else {
-            this.load();
+            this.load(this._url);
         }
     }
 
@@ -172,6 +183,11 @@ export default class RemoteSpine extends RemoteAsset {
             if (node.name === 'temporary-preview-node')
                 node.removeFromParent(true);
         });
+        // 是否开启预览
+        if (!this._previewInEditor) {
+            return;
+        }
+        // 链接是否有效
         if (!this._url || this._url === '') {
             return;
         }
@@ -179,7 +195,6 @@ export default class RemoteSpine extends RemoteAsset {
         // const previewNode = new cc.Node('temporary-preview-node');
         // previewNode['_objFlags'] |= cc.Object['Flags'].HideInHierarchy;
         const previewNode = new cc.PrivateNode('temporary-preview-node');
-        previewNode['_objFlags'] |= cc.Object['Flags'].DontDestroy;
         previewNode['_objFlags'] |= cc.Object['Flags'].DontSave;
         previewNode.setParent(actualNode);
         previewNode.setContentSize(actualNode.getContentSize());
@@ -211,5 +226,3 @@ interface LoadResult {
     interrupted: boolean;
     component: RemoteSpine;
 };
-
-'https://chenpipi-storage.oss-cn-shenzhen.aliyuncs.com/spines/3.6/coin.zip'

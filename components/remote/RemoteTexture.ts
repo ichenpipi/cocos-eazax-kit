@@ -6,7 +6,7 @@ const { ccclass, property, executeInEditMode, help } = cc._decorator;
 /**
  * 远程图像
  * @author 陈皮皮 (ifaswind)
- * @version 20211001
+ * @version 20211009
  * @see RemoteTexture.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/remote/RemoteTexture.ts
  * @see RemoteAsset.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/remote/RemoteAsset.ts
  * @see RemoteLoader.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/core/remote/RemoteLoader.ts
@@ -82,7 +82,7 @@ export default class RemoteTexture extends RemoteAsset {
         if (CC_EDITOR) {
             this.updatePreview();
         } else {
-            this.load();
+            this.load(this._url);
         }
     }
 

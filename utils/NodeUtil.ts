@@ -1,5 +1,3 @@
-import ImageUtil from "./ImageUtil";
-
 /**
  * 节点工具
  * @author 陈皮皮 (ifaswind)

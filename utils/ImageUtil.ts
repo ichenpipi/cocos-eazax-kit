@@ -39,7 +39,7 @@ export default class ImageUtil {
     }
 
     /**
-     * 获取图像的透明裁剪尺寸数据（结果基于左上角）
+     * 获取图像的透明剪裁尺寸数据（结果基于左上角）
      * @param data 图像数据
      * @param width 图像宽度
      * @param height 图像高度

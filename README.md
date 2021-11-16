@@ -44,6 +44,7 @@
 
 - components - 常用组件
   - charts - 图表组件
+    - ArcProgressBar.ts - 弧形进度条
     - RadarChart.ts - 雷达图
   - effects - Shader 配套组件
     - ColorBrush.ts - 彩色画笔效果
@@ -56,16 +57,16 @@
     - LocalizationLabelString.ts - 多语言文本
     - LocalizationSpriteFrame.ts - 多语言精灵图像
   - popups - 弹窗组件
+    - ConfirmPopup.ts - 确认弹窗（弹窗组件示例）
     - PopupBase.ts - 弹窗基类（配合 PopupManager 使用）
   - remotes - 远程组件
-    - RemoteAsset.ts - 远程资源组件基类
-    - RemoteLoader.ts - 远程资源加载器
-    - RemoteTexture.ts - 远程图像
+    - RemoteAsset.ts - 远程资源基类
+    - RemoteSpine.ts - 远程 Spine
+    - RemoteTexture.ts - 远程纹理（图像）
   - renderers - 渲染组件
     - GradientColor - 渐变色（Sprite）
   - tweens - 缓动效果组件
     - JellyTween.ts - 果冻效果
-  - ArcProgressBar.ts - 弧形进度条
   - BackgroundFitter.ts - 背景适配
   - Counter.ts - 数值滚动
   - LongPress.ts - 节点长按
@@ -73,8 +74,12 @@
   - RotateAround.ts - 围绕旋转
   - ScreenAdapter.ts - 屏幕适配
   - Subtitle.ts - 字幕
-  - TouchBlocker.ts - 点击控制
+  - TouchBlocker.ts - 点击阻挡（控制）
 - core - 核心脚本
+  - remotes - 远程
+    - RemoteLoader.ts - 远程资源加载器
+    - SpineLoader.ts - 远程 Spine 加载器
+    - ZipLoader.ts - 远程 Zip 加载器
   - AudioPlayer.ts - 音频播放器
   - EventManager.ts - 事件管理器
   - InstanceEvent.ts - 实例事件
@@ -92,21 +97,24 @@
 - misc - 杂项
   - EditorAsset.ts - 编辑器资源类
 - resources - 资源文件
-  - effects -  Shader 文件
+  - effects - Shader 文件
+    - eazax-avatar-circle-adjustable - 头像 Shader（可调整）
+    - eazax-avatar-circle.effect - 头像 Shader（圆形）
     - eazax-avatar.effect - 头像 Shader
-    - eazax-avatar-circle.effect - 头像（圆形） Shader
     - eazax-color-brush.effect - 彩色画笔 Shader
     - eazax-gaussian-blur.effect - 高斯模糊 Shader（性能爆炸，慎用）
     - eazax-gray.effect - 灰色 Shader
     - eazax-hollowout.effect - 镂空 Shader
-    - eazax-hollowout-circle.effect - 镂空（圆形） Shader
-    - eazax-hollowout-rect.effect - 镂空（矩形） Shader
+    - eazax-hollowout-circle.effect - 镂空（圆形）Shader
+    - eazax-hollowout-rect.effect - 镂空（矩形）Shader
     - eazax-mosaic.effect - 马赛克 Shader
     - eazax-sine-wave.effect - 正弦波浪 Shader
-    - eazax-single-color.effect - 单色（剪影） Shader
+    - eazax-single-color.effect - 单色（剪影）Shader
+- third-party - 第三方库
 - utils - 工具
   - ArrayUtil.ts - 数组工具
   - BrowserUtil.ts - 浏览器工具
+  - ColorUtil.ts - 颜色工具
   - DebugUtil.ts - 调试工具
   - DeviceUtil.ts - 设备工具
   - ImageUtil.ts - 图像工具

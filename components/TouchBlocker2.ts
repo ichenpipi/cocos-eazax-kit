@@ -22,11 +22,17 @@ export default class TouchBlocker2 extends cc.Component {
     /** 实例 */
     private static instance: TouchBlocker2 = null;
 
+    /**
+     * 生命周期：节点加载
+     */
     protected onLoad() {
         this.init();
         this.registerEvent();
     }
 
+    /**
+     * 生命周期：节点销毁
+     */
     protected onDestroy() {
         this.unregisterEvent();
         TouchBlocker2.instance = null;
@@ -47,7 +53,7 @@ export default class TouchBlocker2 extends cc.Component {
     }
 
     /**
-     * 订阅事件
+     * 注册事件
      */
     protected registerEvent() {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onEvent, this);
@@ -58,7 +64,7 @@ export default class TouchBlocker2 extends cc.Component {
     }
 
     /**
-     * 移除订阅事件
+     * 反注册事件
      */
     protected unregisterEvent() {
         this.node.targetOff(this);

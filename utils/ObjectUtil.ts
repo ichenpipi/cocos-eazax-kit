@@ -1,10 +1,10 @@
 /**
  * 对象工具
  * @author 陈皮皮 (ifaswind)
- * @version 20210116
+ * @version 20211125
  * @see ObjectUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/ObjectUtil.ts
  */
-export default class ObjectUtil {
+ export default class ObjectUtil {
 
     /**
      * 判断指定的值是否为对象
@@ -23,33 +23,30 @@ export default class ObjectUtil {
             return target;
         }
 
-        let result = null;
-
-        if (target instanceof Date) {
-            result = new Date();
-            result.setTime(target.getTime());
-            return result;
-        }
-
         if (target instanceof Array) {
-            result = [];
+            const result = [];
             for (let i = 0, length = target.length; i < length; i++) {
-                result[i] = this.deepCopy(target[i]);
+                result[i] = ObjectUtil.deepCopy(target[i]);
             }
             return result;
         }
 
         if (target instanceof Object) {
-            result = {};
+            const result = {};
             for (const key in target) {
                 if (target.hasOwnProperty(key)) {
-                    result[key] = this.deepCopy(target[key]);
+                    result[key] = ObjectUtil.deepCopy(target[key]);
                 }
             }
             return result;
         }
 
-        console.warn(`不支持的类型：${result}`);
+        if (target instanceof Date) {
+            return (new Date()).setTime(target.getTime());
+        }
+
+        console.warn(`不支持的类型：${target}`);
+        return null;
     }
 
     /**

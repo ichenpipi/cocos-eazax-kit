@@ -10,17 +10,27 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class ColorBrush extends cc.Component {
 
-    /** Graphics 组件 */
+    /**
+     * 绘图组件
+     */
     protected graphics: cc.Graphics = null;
 
-    /** 材质 */
+    /**
+     * 材质
+     */
     protected material: cc.Material = null;
 
+    /**
+     * 生命周期：节点加载
+     */
     protected onLoad() {
         this.init();
         this.registerEvent();
     }
 
+    /**
+     * 生命周期：节点销毁
+     */
     protected onDestroy() {
         this.unregisterEvent();
     }
@@ -42,7 +52,7 @@ export default class ColorBrush extends cc.Component {
     }
 
     /**
-     * 订阅事件
+     * 注册事件
      */
     protected registerEvent() {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
@@ -50,7 +60,7 @@ export default class ColorBrush extends cc.Component {
     }
 
     /**
-     * 取消事件订阅
+     * 反注册事件
      */
     protected unregisterEvent() {
         this.node.targetOff(this);

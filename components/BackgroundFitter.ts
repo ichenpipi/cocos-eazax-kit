@@ -11,27 +11,36 @@ const { ccclass, executionOrder } = cc._decorator;
 @executionOrder(-99)
 export default class BackgroundFitter extends cc.Component {
 
+    /**
+     * 生命周期：节点加载
+     */
     protected onLoad() {
         this.registerEvent();
     }
 
+    /**
+     * 生命周期：组件启用
+     */
     protected onEnable() {
         this.adapt();
     }
 
+    /**
+     * 生命周期：节点销毁
+     */
     protected onDestroy() {
         this.unregisterEvent();
     }
 
     /**
-     * 订阅事件
+     * 注册事件
      */
     protected registerEvent() {
         EventManager.on('view-resize', this.adapt, this);
     }
 
     /**
-     * 取消事件订阅
+     * 反注册事件
      */
     protected unregisterEvent() {
         EventManager.off('view-resize', this.adapt, this);
@@ -47,7 +56,7 @@ export default class BackgroundFitter extends cc.Component {
         // 设计比例
         const designResolution = cc.Canvas.instance.designResolution,
             designRatio = designResolution.height / designResolution.width;
-
+        // 缩放
         let scale = 1;
         if (screenRatio >= designRatio) {
             scale = winSize.height / designResolution.height;

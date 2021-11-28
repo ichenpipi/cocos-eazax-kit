@@ -1,25 +1,31 @@
 # Eazax-CCC (Cocos 游戏开发工具包)
 
-![cocos-creator](https://img.shields.io/badge/cocos%20creator-2.4+-blue) ![typescript](https://img.shields.io/badge/typescript-4.2+-blue)
+![cocos-creator](https://img.shields.io/badge/cocos--creator-2.4%2B-blue) ![typescript](https://img.shields.io/badge/typescript-4.2+-blue)
 
 ## 介绍
 
-**Eazax-CCC 是一个 Cocos Creator 游戏开发工具包，目前持续更新维护中...**
+Eazax-CCC 是一个 Cocos Creator 游戏开发工具包，目前持续更新维护中...
+
+### 内容
 
 📦 包含但不仅限于以下内容：
 
 - 开箱即用的组件
 - Shader 效果
-- 各种实用小工具
+- 实用工具类
 - 弹窗管理方案
 - 音频播放方案
-- 各种 d.ts 声明文件
-- 等等等等等...
+- 一些声明文件
+- 等等等等...
+
+### 示例
 
 🌰 这里有一个示例项目：
 
 - 示例项目仓库：[https://gitee.com/ifaswind/eazax-cases](https://gitee.com/ifaswind/eazax-cases)
-- 示例在线预览：[https://ifaswind.gitee.io/eazax-cases](https://ifaswind.gitee.io/eazax-cases)
+- 示例项目在线预览：[https://ifaswind.gitee.io/eazax-cases](https://ifaswind.gitee.io/eazax-cases)
+
+### 开源
 
 如果此项目对你有帮助，请不要忘记 [![star](https://gitee.com/ifaswind/eazax-ccc/badge/star.svg?theme=dark)](https://gitee.com/ifaswind/eazax-ccc/stargazers)
 
@@ -33,7 +39,7 @@
 
 ## 使用说明
 
-⚠️ **注意：本项目（eazax-ccc）不是独立的 Cocos Creator 项目，无法直接启动！**
+⚠️ 注意：本项目（eazax-ccc）不是独立的 Cocos Creator 项目，无法直接启动！
 
 ✅ 你可以：
 
@@ -47,6 +53,7 @@
     - ArcProgressBar.ts - 弧形进度条
     - RadarChart.ts - 雷达图
   - effects - Shader 配套组件
+    - AfterEffect.ts - 后期效果
     - ColorBrush.ts - 彩色画笔效果
     - GaussianBlur.ts - 高斯模糊效果
     - HollowOut.ts - 镂空效果

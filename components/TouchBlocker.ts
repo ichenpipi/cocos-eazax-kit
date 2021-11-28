@@ -11,26 +11,39 @@ export default class TouchBlocker extends cc.Component {
     @property({ type: cc.Node, tooltip: CC_DEV && '可被点击的节点' })
     public target: cc.Node = null;
 
-    /** 拦截状态 */
+    /**
+     * 拦截状态
+     */
     protected isBlockAll: boolean = false;
 
-    /** 放行状态 */
+    /**
+     * 放行状态
+     */
     protected isPassAll: boolean = false;
 
+    /**
+     * 生命周期：节点加载
+     */
     protected onLoad() {
         this.registerEvent();
     }
 
+    /**
+     * 生命周期：节点开始
+     */
     protected start() {
         this.reset();
     }
 
+    /**
+     * 生命周期：节点销毁
+     */
     protected onDestroy() {
         this.unregisterEvent();
     }
 
     /**
-     * 订阅事件
+     * 注册事件
      */
     protected registerEvent() {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchEvent, this);
@@ -39,7 +52,7 @@ export default class TouchBlocker extends cc.Component {
     }
 
     /**
-     * 移除订阅事件
+     * 反注册事件
      */
     protected unregisterEvent() {
         this.node.targetOff(this);

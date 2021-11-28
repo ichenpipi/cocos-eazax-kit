@@ -5,7 +5,7 @@ const { ccclass, property, requireComponent, executeInEditMode, disallowMultiple
 /**
  * 马赛克 Shader 组件，该组件需要对应的 Effect 才能正常使用！
  * @author 陈皮皮 (ifaswind)
- * @version 20210607
+ * @version 20211128
  * @see Mosaic.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/effects/Mosaic.ts
  * @see eazax-mosaic.effect https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-mosaic.effect
  */
@@ -15,9 +15,9 @@ const { ccclass, property, requireComponent, executeInEditMode, disallowMultiple
 @disallowMultiple
 export default class Mosaic extends cc.Component {
 
-    @property
+    @property()
     protected _effect: cc.EffectAsset = null;
-    @property({ type: cc.EffectAsset, tooltip: CC_DEV && 'Effect 资源' })
+    @property({ type: cc.EffectAsset, tooltip: CC_DEV && 'Effect 资源 (eazax-mosaic.effect)' })
     public get effect() {
         return this._effect;
     }
@@ -26,36 +26,37 @@ export default class Mosaic extends cc.Component {
         this.init();
     }
 
-    @property
-    protected _width: number = 5;
-    @property({ tooltip: CC_DEV && '马赛克宽度' })
-    public get width() {
-        return this._width;
+    @property()
+    protected _size: cc.Size = new cc.Size(20, 20);
+    @property({ tooltip: CC_DEV && '马赛克尺寸' })
+    public get size() {
+        return this._size;
     }
-    public set width(value: number) {
-        this._width = value;
+    public set size(value) {
+        this._size = value;
         this.updateProperties();
     }
 
-    @property
-    protected _height: number = 5;
-    @property({ tooltip: CC_DEV && '马赛克高度' })
-    public get height() {
-        return this._height;
-    }
-    public set height(value: number) {
-        this._height = value;
-        this.updateProperties();
-    }
-
+    /**
+     * 输出精灵
+     */
     protected sprite: cc.Sprite = null;
 
+    /**
+     * 材质
+     */
     protected material: cc.Material = null;
 
+    /**
+     * 生命周期：组件启用
+     */
     protected onEnable() {
         this.init();
     }
 
+    /**
+     * 编辑器回调：重置
+     */
     protected resetInEditor() {
         this.init();
     }
@@ -104,7 +105,7 @@ export default class Mosaic extends cc.Component {
      */
     public updateProperties() {
         if (!this.material) return
-        this.material.setProperty('nodeSize', this.nodeSize);
+        this.material.setProperty('resolution', this.resolution);
         this.material.setProperty('tileSize', this.tileSize);
     }
 
@@ -114,8 +115,8 @@ export default class Mosaic extends cc.Component {
      * @param height 高
      */
     public set(width: number, height?: number) {
-        this._width = width;
-        this._height = height || width;
+        this.size.width = width;
+        this.size.height = height ?? width;
         this.updateProperties();
     }
 
@@ -128,16 +129,16 @@ export default class Mosaic extends cc.Component {
     public to(width: number, height: number, duration: number) {
         return new Promise<void>(res => {
             cc.tween<Mosaic>(this)
-                .to(duration, { width: width, height: height })
+                .to(duration, { size: cc.size(width, height) })
                 .call(res)
                 .start();
         });
     }
 
     /**
-     * 节点尺寸
+     * 分辨率
      */
-    public get nodeSize() {
+    public get resolution() {
         return cc.v2(this.node.width, this.node.height);
     }
 
@@ -145,7 +146,7 @@ export default class Mosaic extends cc.Component {
      * 马赛克尺寸
      */
     public get tileSize() {
-        return cc.v2(this._width, this._height);
+        return cc.v2(this._size.width, this._size.height);
     }
 
 }

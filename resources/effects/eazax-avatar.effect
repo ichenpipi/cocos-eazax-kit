@@ -12,6 +12,7 @@ CCEffect %{
       rasterizerState:
         cullMode: none
       properties:
+        texture: { value: white }
         round: { value: 0.1, editor: { tooltip: '圆角半径（百分比）' } }
         feather: { value: 0.01, editor: { tooltip: '边缘虚化（百分比）' } }
 }%

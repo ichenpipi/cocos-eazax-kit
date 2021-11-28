@@ -1,6 +1,6 @@
 // Eazax-CCC
 // 马赛克
-// 20210607
+// 20211128
 // https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-mosaic.effect
 
 CCEffect %{
@@ -15,7 +15,7 @@ CCEffect %{
         cullMode: none
       properties:
         texture: { value: white }
-        nodeSize: { value: [500.0, 500.0], editor: { tooltip: '节点尺寸' } }
+        resolution: { value: [500.0, 500.0], editor: { tooltip: '分辨率' } }
         tileSize: { value: [5, 5], editor: { tooltip: '马赛克尺寸' } }
 }%
 
@@ -30,50 +30,73 @@ CCProgram vs %{
   in vec4 a_color;
   out vec4 v_color;
 
+  #if USE_TEXTURE
   in vec2 a_uv0;
   out vec2 v_uv0;
+  #endif
 
   void main () {
-    gl_Position = cc_matViewProj * vec4(a_position, 1);
-    
+    vec4 pos = vec4(a_position, 1);
+
+    #if CC_USE_MODEL
+    pos = cc_matViewProj * cc_matWorld * pos;
+    #else
+    pos = cc_matViewProj * pos;
+    #endif
+
+    #if USE_TEXTURE
+    v_uv0 = a_uv0;
+    #endif
+
     v_color = a_color;
 
-    v_uv0 = a_uv0;
+    gl_Position = pos;
   }
 }%
 
 
 CCProgram fs %{
   precision highp float;
-  
-  #include <alpha-test>
+
   #include <texture>
 
   in vec4 v_color;
 
+  #if USE_TEXTURE
   in vec2 v_uv0;
   uniform sampler2D texture;
+  #endif
 
   uniform Properties {
-    vec2 nodeSize;
+    vec2 resolution;
     vec2 tileSize;
   };
 
   void main () {
     vec4 o = vec4(1, 1, 1, 1);
 
+    #if USE_TEXTURE
+
     vec2 uv = v_uv0;
     if (tileSize.x != .0 && tileSize.y != .0) {
-      vec2 ratio = nodeSize / tileSize;
-      uv = ceil(v_uv0 * ratio) / ratio;
+      // 计算像素比例
+      vec2 ratio = resolution / tileSize;
+      // 丢掉一些精度，再偏移半个格子，取格子中间的颜色
+      uv = (floor(v_uv0 * ratio) / ratio) + ((tileSize * .5) / resolution);
+      // uv = floor(v_uv0 * ratio) / ratio;
+      // uv += (tileSize * .5) / resolution;
     }
 
     CCTexture(texture, uv, o);
 
+    #endif
+
     o *= v_color;
 
-    ALPHA_TEST(o);
-
-    gl_FragColor = o;
+    #if USE_BGRA
+      gl_FragColor = o.bgra;
+    #else
+      gl_FragColor = o.rgba;
+    #endif
   }
 }%

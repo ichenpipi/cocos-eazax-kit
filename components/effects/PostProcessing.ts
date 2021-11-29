@@ -1,14 +1,14 @@
 const { ccclass, property, executionOrder } = cc._decorator;
 
 /**
- * 后期效果
+ * 后期处理
  * @author 陈皮皮 (ifaswind)
  * @version 20211128
- * @see AfterEffect.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/effects/AfterEffect.ts
+ * @see PostProcessing.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/effects/PostProcessing.ts
  */
 @ccclass
 @executionOrder(-1)
-export default class AfterEffect extends cc.Component {
+export default class PostProcessing extends cc.Component {
 
     @property({ type: cc.Camera, tooltip: CC_DEV && '输入摄像机' })
     protected camera: cc.Camera = null;
@@ -76,6 +76,7 @@ export default class AfterEffect extends cc.Component {
      * 释放
      */
     protected release() {
+        this.camera.destroy();
         this.texture.destroy();
     }
 

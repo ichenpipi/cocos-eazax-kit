@@ -1,4 +1,5 @@
-// Eazax-CCC 镂空 1.0.1.20200604
+// 镂空（挖洞）
+// 20210429
 // https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-hollowout.effect
 
 CCEffect %{
@@ -62,41 +63,43 @@ CCProgram fs %{
     vec4 color = v_color;
     color *= texture(texture, v_uv0);
     
-    // 边缘
+    // 边缘处理
+    float x = v_uv0.x;
+    float y = v_uv0.y;
     float ratio = size.x / size.y;
     float minX = center.x - (width / 2.0);
     float maxX = center.x + (width / 2.0);
     float minY = center.y - (height * ratio / 2.0);
     float maxY = center.y + (height * ratio / 2.0);
-    if (v_uv0.x >= minX && v_uv0.x <= maxX && v_uv0.y >= minY && v_uv0.y <= maxY) {
+    if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
       if (round == 0.0) discard; // 没有圆角则直接丢弃
       // 圆角处理
       float roundY = round * ratio;
       vec2 vertex;
-      if (v_uv0.x <= minX + round) {
-        if (v_uv0.y <= minY + roundY) {
+      if (x <= minX + round) {
+        if (y <= minY + roundY) {
           vertex = vec2(minX + round, (minY + roundY) / ratio); // 左上角
-        } else if (v_uv0.y >= maxY - roundY) {
+        } else if (y >= maxY - roundY) {
           vertex = vec2(minX + round, (maxY - roundY) / ratio); // 左下角
         } else {
-          vertex = vec2(minX + round, v_uv0.y / ratio); // 左中
+          vertex = vec2(minX + round, y / ratio); // 左中
         }
-      } else if (v_uv0.x >= maxX - round) {
-        if (v_uv0.y <= minY + roundY){
+      } else if (x >= maxX - round) {
+        if (y <= minY + roundY){
           vertex = vec2(maxX - round, (minY + roundY) / ratio); // 右上角
-        } else if (v_uv0.y >= maxY - roundY) {
+        } else if (y >= maxY - roundY) {
           vertex = vec2(maxX - round, (maxY - roundY) / ratio); // 右下角
         } else {
-          vertex = vec2(maxX - round, v_uv0.y / ratio); // 右中
+          vertex = vec2(maxX - round, y / ratio); // 右中
         }
-      } else if (v_uv0.y <= minY + roundY) {
-        vertex = vec2(v_uv0.x, (minY + roundY) / ratio); // 上中
-      } else if (v_uv0.y >= maxY - roundY) {
-        vertex = vec2(v_uv0.x, (maxY - roundY) / ratio); // 下中
+      } else if (y <= minY + roundY) {
+        vertex = vec2(x, (minY + roundY) / ratio); // 上中
+      } else if (y >= maxY - roundY) {
+        vertex = vec2(x, (maxY - roundY) / ratio); // 下中
       } else {
         discard; // 中间
       }
-      float dis = distance(vec2(v_uv0.x, v_uv0.y / ratio), vertex);
+      float dis = distance(vec2(x, y / ratio), vertex);
       color.a = smoothstep(round - feather, round, dis) * color.a;
     }
     

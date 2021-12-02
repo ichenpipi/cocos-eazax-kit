@@ -5,7 +5,7 @@ const { ccclass, property, requireComponent, executeInEditMode, disallowMultiple
 /**
  * 马赛克 Shader 组件，该组件需要对应的 Effect 才能正常使用！
  * @author 陈皮皮 (ifaswind)
- * @version 20211128
+ * @version 20211202
  * @see Mosaic.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/effects/Mosaic.ts
  * @see eazax-mosaic.effect https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-mosaic.effect
  */
@@ -126,8 +126,12 @@ export default class Mosaic extends cc.Component {
      * @param height 高
      * @param duration 时长
      */
-    public to(width: number, height: number, duration: number) {
+    public to(width: number, height: number, duration?: number) {
         return new Promise<void>(res => {
+            if (duration == undefined) {
+                duration = height;
+                height = width;
+            }
             cc.tween<Mosaic>(this)
                 .to(duration, { size: cc.size(width, height) })
                 .call(res)

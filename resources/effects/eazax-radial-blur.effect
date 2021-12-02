@@ -1,6 +1,6 @@
-// 反相
-// 20211129
-// https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-inversion.effect
+// 径向模糊
+// 20211202
+// https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-radial-blur.effect
 
 CCEffect %{
   techniques:
@@ -13,7 +13,10 @@ CCEffect %{
       rasterizerState:
         cullMode: none
       properties:
+        center: { value: [0.5, 0.5], editor: { tooltip: '模糊中心点' } }
+        strength: { value: 0.5, editor: { tooltip: '模糊强度' } }
         texture: { value: white }
+        alphaThreshold: { value: 0.5 }
 }%
 
 
@@ -55,6 +58,7 @@ CCProgram vs %{
 CCProgram fs %{
   precision highp float;
 
+  #include <alpha-test>
   #include <texture>
 
   in vec4 v_color;
@@ -64,16 +68,42 @@ CCProgram fs %{
   uniform sampler2D texture;
   #endif
 
+  uniform Properties {
+    vec2 center;
+    float strength;
+  };
+
+  #if USE_TEXTURE
+  // 获取径向模糊颜色
+  vec4 getRadialBlurColor(vec2 coord) {
+      // 偏移
+	    vec2 offset = coord.xy - center;
+      // 采样次数
+      const int samples = 10;
+      // 强度
+      float perStrength = strength / float(samples - 1);
+      // 采样
+      vec4 color = vec4(0.0);
+      for(int i = 0; i < samples; i++) {
+          vec2 uv = offset * (1.0 + (float(i) * perStrength)) + center;
+          color += texture2D(texture, uv);
+      }
+      color /= float(samples);
+      // 完成
+      return color;
+  }
+  #endif
+
   void main () {
     vec4 o = vec4(1, 1, 1, 1);
 
     #if USE_TEXTURE
-    CCTexture(texture, v_uv0, o);
+      o *= getRadialBlurColor(v_uv0);
     #endif
 
     o *= v_color;
 
-    o = vec4(vec3(1. - o.rgb), o.a);
+    ALPHA_TEST(o);
 
     #if USE_BGRA
       gl_FragColor = o.bgra;

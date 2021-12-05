@@ -5,7 +5,7 @@ const { ccclass, property, requireComponent, executeInEditMode, disallowMultiple
 /**
  * 马赛克 Shader 组件，该组件需要对应的 Effect 才能正常使用！
  * @author 陈皮皮 (ifaswind)
- * @version 20211202
+ * @version 20211205
  * @see Mosaic.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/effects/Mosaic.ts
  * @see eazax-mosaic.effect https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-mosaic.effect
  */
@@ -17,7 +17,7 @@ export default class Mosaic extends cc.Component {
 
     @property()
     protected _effect: cc.EffectAsset = null;
-    @property({ type: cc.EffectAsset, tooltip: CC_DEV && 'Effect 资源 (eazax-mosaic.effect)' })
+    @property({ type: cc.EffectAsset, tooltip: CC_DEV && 'Effect 资源' })
     public get effect() {
         return this._effect;
     }
@@ -64,38 +64,32 @@ export default class Mosaic extends cc.Component {
     /**
      * 初始化
      */
-    public async init() {
+    protected async init() {
         /**
          * 编辑器环境下自动绑定 Effect 资源
          * 依赖于 EditorAsset 模块，没有该模块请将此代码块以及顶部导入语句去除
          * @see EditorAsset.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/misc/EditorAsset.ts
          */
         if (CC_EDITOR && !this._effect) {
-            await new Promise<void>(res => {
-                const path = 'eazax-ccc/resources/effects/eazax-mosaic.effect';
-                EditorAsset.load(path, 'effect', (err: Error, result: cc.EffectAsset) => {
-                    if (err) {
-                        cc.warn(`[${this['__proto__']['__classname__']}]`, '请手动指定组件的 Effect 资源！');
-                    } else {
-                        this._effect = result;
-                    }
-                    res();
-                });
-            });
+            const path = 'eazax-ccc/resources/effects/eazax-mosaic.effect';
+            this._effect = await EditorAsset.load(path, 'effect');
         }
-        if (!this._effect) return;
+        if (!this._effect) {
+            cc.warn(`[${this['__proto__']['__classname__']}]`, '请手动指定组件的 Effect 资源！');
+            return;
+        }
 
         // 使用自定义 Effect 需禁用纹理的 packable 属性（因为动态合图之后无法正确获取纹理 UV 坐标）
         // 详情请看：https://docs.cocos.com/creator/manual/zh/asset-workflow/sprite.html#packable
-        const sprite = this.sprite = this.node.getComponent(cc.Sprite);
-        if (sprite.spriteFrame) {
-            sprite.spriteFrame.getTexture().packable = false;
+        this.sprite = this.node.getComponent(cc.Sprite);
+        if (this.sprite.spriteFrame) {
+            this.sprite.spriteFrame.getTexture().packable = false;
         }
         // 生成并应用材质
         if (!this.material) {
             this.material = cc.Material.create(this._effect);
         }
-        sprite.setMaterial(0, this.material);
+        this.sprite.setMaterial(0, this.material);
         // 更新材质属性
         this.updateProperties();
     }

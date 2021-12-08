@@ -114,6 +114,7 @@ Eazax-CCC 是一个 Cocos Creator 游戏开发工具包，目前持续更新维�
     - eazax-hollowout.effect - 镂空 Shader
     - eazax-hollowout-circle.effect - 镂空（圆形）Shader
     - eazax-hollowout-rect.effect - 镂空（矩形）Shader
+    - eazax-kawase-blur.effect - Kawase 模糊 Shader
     - eazax-mosaic.effect - 马赛克 Shader
     - eazax-sine-wave.effect - 正弦波浪 Shader
     - eazax-single-color.effect - 单色（剪影）Shader
@@ -130,6 +131,7 @@ Eazax-CCC 是一个 Cocos Creator 游戏开发工具包，目前持续更新维�
   - ObjectUtil.ts - 对象工具
   - PromiseUtil.ts - Promise 工具
   - RegexUtil.ts - 正则工具
+  - RenderUtil.ts - 渲染工具
   - StorageUtil.ts - 本地储存工具
   - TimeUtil.ts - 时间工具
   - TweenUtil.ts - 缓动工具

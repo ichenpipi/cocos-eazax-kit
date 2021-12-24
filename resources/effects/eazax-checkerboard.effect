@@ -1,0 +1,108 @@
+// 棋盘格
+// 20211224
+// https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-checkerboard.effect
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        resolution: { value: [500.0, 500.0], editor: { tooltip: '分辨率' } }
+        gridSize: { value: [50.0, 50.0], editor: { tooltip: '格子尺寸' } }
+        colorA: { value: [0.3569, 0.3569, 0.3569, 1.0], editor: { type: color, tooltip: '颜色 A' } }
+        colorB: { value: [0.2432, 0.2432, 0.2432, 1.0], editor: { type: color, tooltip: '颜色 B' } }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  #if USE_TEXTURE
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+  #endif
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+
+    #if CC_USE_MODEL
+    pos = cc_matViewProj * cc_matWorld * pos;
+    #else
+    pos = cc_matViewProj * pos;
+    #endif
+
+    #if USE_TEXTURE
+    v_uv0 = a_uv0;
+    #endif
+
+    v_color = a_color;
+
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+
+  #include <texture>
+
+  in vec4 v_color;
+
+  #if USE_TEXTURE
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+  #endif
+
+  // 自定义属性
+  uniform Properties {
+    vec2 resolution;  // 分辨率
+    vec2 gridSize;    // 格子尺寸
+    vec4 colorA;      // 颜色 A
+    vec4 colorB;      // 颜色 B
+  };
+
+  // 获取棋盘格颜色
+  vec4 getColor(vec2 uv) {
+    // 计算偏移，让不完整的格子部分均匀分布到四周
+    vec2 offset = mod(resolution, gridSize) / 2.0 / resolution;
+    // 计算格子尺寸
+    vec2 size = resolution / gridSize;
+    // 计算位置
+    vec2 pos = floor((uv - offset) * size) / 2.0;
+    // 黑格还是白格
+    return (-fract(pos.x + pos.y) < 0.0) ? colorA : colorB;
+  }
+
+  void main () {
+    vec4 color = v_color;
+
+    // 纹理颜色
+    #if USE_TEXTURE
+    CCTexture(texture, v_uv0, color);
+    #endif
+    
+    // 棋盘格颜色
+    color *= getColor(v_uv0);
+
+    #if USE_BGRA
+    gl_FragColor = color.bgra;
+    #else
+    gl_FragColor = color.rgba;
+    #endif
+  }
+}%

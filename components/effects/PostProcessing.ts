@@ -3,7 +3,7 @@ const { ccclass, property, executionOrder } = cc._decorator;
 /**
  * 后期处理
  * @author 陈皮皮 (ifaswind)
- * @version 20211128
+ * @version 20211224
  * @see PostProcessing.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/effects/PostProcessing.ts
  */
 @ccclass
@@ -11,18 +11,18 @@ const { ccclass, property, executionOrder } = cc._decorator;
 export default class PostProcessing extends cc.Component {
 
     @property({ type: cc.Camera, tooltip: CC_DEV && '输入摄像机' })
-    protected camera: cc.Camera = null;
+    protected inputCamera: cc.Camera = null;
 
-    @property({ type: cc.Sprite, tooltip: CC_DEV && '输出目标精灵' })
-    protected targetSprite: cc.Sprite = null;
+    @property({ type: cc.Sprite, tooltip: CC_DEV && '输出精灵' })
+    protected outputSprite: cc.Sprite = null;
 
     /**
      * 输出纹理
      */
-    protected texture: cc.RenderTexture = null;
+    protected renderTexture: cc.RenderTexture = null;
 
     /**
-     * 生命周期：节点加载
+     * 生命周期：加载
      */
     protected onLoad() {
         this.init();
@@ -30,7 +30,7 @@ export default class PostProcessing extends cc.Component {
     }
 
     /**
-     * 生命周期：节点销毁
+     * 生命周期：销毁
      */
     protected onDestroy() {
         this.unregisterEvent();
@@ -56,28 +56,26 @@ export default class PostProcessing extends cc.Component {
      */
     protected init() {
         // 创建并初始化 RenderTexture
-        const texture = this.texture = new cc.RenderTexture(),
+        const renderTexture = this.renderTexture = new cc.RenderTexture(),
             screenSize = cc.view.getVisibleSizeInPixel();
-        texture.initWithSize(screenSize.width, screenSize.height);
+        renderTexture.initWithSize(screenSize.width, screenSize.height);
 
         // 将摄像机的内容渲染到目标纹理上
-        this.camera.targetTexture = texture;
+        this.inputCamera.targetTexture = renderTexture;
 
         // 使用目标纹理生成精灵帧并设置到精灵上
-        const sprite = this.targetSprite;
-        sprite.spriteFrame = new cc.SpriteFrame(texture);
+        this.outputSprite.spriteFrame = new cc.SpriteFrame(renderTexture);
 
         // 设置 Y 轴翻转
-        // texture.setFlipY(true);  // not working
-        sprite.node.scaleY = -Math.abs(sprite.node.scaleY);
+        // renderTexture.setFlipY(true);  // not working
+        this.outputSprite.node.scaleY = -Math.abs(this.outputSprite.node.scaleY);
     }
 
     /**
      * 释放
      */
     protected release() {
-        this.camera.destroy();
-        this.texture.destroy();
+        this.renderTexture.destroy();
     }
 
     /**
@@ -85,7 +83,7 @@ export default class PostProcessing extends cc.Component {
      */
     protected onCanvasSizeChanged() {
         const screenSize = cc.view.getVisibleSizeInPixel();
-        this.texture.updateSize(screenSize.width, screenSize.height);
+        this.renderTexture.updateSize(screenSize.width, screenSize.height);
     }
 
 }

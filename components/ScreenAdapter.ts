@@ -1,24 +1,36 @@
 import EventManager from "../core/EventManager";
 
-const { ccclass, executionOrder } = cc._decorator;
+const { ccclass, executionOrder, help, menu } = cc._decorator;
 
 /**
  * 屏幕适配组件
- * @see ScreenAdapter.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/ScreenAdapter.ts
+ * @author 陈皮皮 (ifaswind)
  * @version 20210504
+ * @see ScreenAdapter.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/ScreenAdapter.ts
  */
 @ccclass
-@executionOrder(-999)
+@executionOrder(-1)
+@help('https://gitee.com/ifaswind/eazax-ccc/blob/master/components/ScreenAdapter.ts')
+@menu('eazax/其他组件/ScreenAdapter')
 export default class ScreenAdapter extends cc.Component {
 
+    /**
+     * 生命周期：加载
+     */
     protected onLoad() {
         this.init();
     }
 
+    /**
+     * 生命周期：组件启用
+     */
     protected onEnable() {
         this.adapt();
     }
 
+    /**
+     * 初始化
+     */
     protected init() {
         // 设置游戏窗口变化的回调（仅 Web 平台有效）
         cc.view.setResizeCallback(() => this.onResize());

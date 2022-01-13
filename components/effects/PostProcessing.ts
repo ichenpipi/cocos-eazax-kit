@@ -1,4 +1,4 @@
-const { ccclass, property, executionOrder } = cc._decorator;
+const { ccclass, property, executionOrder, help, menu } = cc._decorator;
 
 /**
  * 后期处理
@@ -8,6 +8,8 @@ const { ccclass, property, executionOrder } = cc._decorator;
  */
 @ccclass
 @executionOrder(-1)
+@help('https://gitee.com/ifaswind/eazax-ccc/blob/master/components/effects/PostProcessing.ts')
+@menu('eazax/效果组件/PostProcessing')
 export default class PostProcessing extends cc.Component {
 
     @property({ type: cc.Camera, tooltip: CC_DEV && '输入摄像机' })

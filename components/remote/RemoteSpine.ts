@@ -1,7 +1,7 @@
 import SpineLoader from "../../core/remote/SpineLoader";
 import RemoteAsset from "./RemoteAsset";
 
-const { ccclass, property, executeInEditMode, help } = cc._decorator;
+const { ccclass, property, executeInEditMode, help, menu } = cc._decorator;
 
 /**
  * 远程 Spine
@@ -14,6 +14,7 @@ const { ccclass, property, executeInEditMode, help } = cc._decorator;
 @ccclass
 @executeInEditMode
 @help('https://gitee.com/ifaswind/eazax-ccc/blob/master/components/remote/RemoteSpine.ts')
+@menu('eazax/远程组件/RemoteSpine')
 export default class RemoteSpine extends RemoteAsset {
 
     @property()
@@ -191,7 +192,7 @@ export default class RemoteSpine extends RemoteAsset {
             actualNode = actualSkeleton.node;
         // 移除旧的预览节点
         actualNode.children.forEach(node => {
-            if (node.name === 'temporary-preview-node')
+            if (node.name === 'PREVIEW_NODE')
                 node.removeFromParent(true);
         });
         // 是否开启预览
@@ -205,12 +206,13 @@ export default class RemoteSpine extends RemoteAsset {
         // 生成临时预览节点
         let previewNode: cc.Node = null;
         if (this._showPreviewNode) {
-            previewNode = new cc.Node('temporary-preview-node');
+            previewNode = new cc.Node('PREVIEW_NODE');
         } else {
-            previewNode = new cc.PrivateNode('temporary-preview-node');
+            previewNode = new cc.PrivateNode('PREVIEW_NODE');
         }
         // previewNode['_objFlags'] |= cc.Object['Flags'].HideInHierarchy;
         previewNode['_objFlags'] |= cc.Object['Flags'].DontSave;
+        previewNode['_objFlags'] |= cc.Object['Flags'].LockedInEditor;
         previewNode.setParent(actualNode);
         previewNode.setContentSize(actualNode.getContentSize());
         // 加载资源
@@ -229,9 +231,9 @@ export default class RemoteSpine extends RemoteAsset {
             previewSkeleton.setSkin(this._defaultSkin);
         }
         previewSkeleton.animation = this._defaultAnimation;
-
+        // tips
         if (this._showPreviewNode) {
-            cc.log('[RemoteSpine]', 'Preview', '->', '临时预览节点不会被保存，无需手动删除');
+            cc.log('[RemoteSpine]', 'Preview', '->', '预览节点（PREVIEW_NODE）不会被保存，无需手动删除');
         }
         cc.log('[RemoteSpine]', 'Preview', '->', 'skins', Object.keys(skeletonData.skeletonJson.skins));
         cc.log('[RemoteSpine]', 'Preview', '->', 'animations', Object.keys(skeletonData.skeletonJson.animations));

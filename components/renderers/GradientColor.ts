@@ -1,4 +1,4 @@
-const { ccclass, property, requireComponent, disallowMultiple, executeInEditMode } = cc._decorator;
+const { ccclass, property, requireComponent, disallowMultiple, executeInEditMode, help, menu } = cc._decorator;
 
 /**
  * 渐变颜色，支持 Sprite（SIMPLE 和 FILLED）和 Label，注意这会覆盖默认的节点颜色设置
@@ -10,11 +10,16 @@ const { ccclass, property, requireComponent, disallowMultiple, executeInEditMode
 @requireComponent(cc.RenderComponent)
 @disallowMultiple
 @executeInEditMode
+@help('https://gitee.com/ifaswind/eazax-ccc/blob/master/components/renderers/GradientColor.ts')
+@menu('eazax/渲染组件/GradientColor')
 export default class GradientColor extends cc.Component {
 
-    @property protected _colors: cc.Color[] = [cc.Color.RED, cc.Color.BLUE, cc.Color.RED, cc.Color.BLUE];
+    @property()
+    protected _colors: cc.Color[] = [cc.Color.RED, cc.Color.BLUE, cc.Color.RED, cc.Color.BLUE];
     @property({ type: [cc.Color], tooltip: CC_DEV && '支持最多 4 种颜色（左下、右下、左上、右上）' })
-    public get colors() { return this._colors; }
+    public get colors() {
+        return this._colors;
+    }
     public set colors(colors) {
         if (colors.length > 4) {
             colors.length = 4;
@@ -23,14 +28,23 @@ export default class GradientColor extends cc.Component {
         this.markForRender();
     }
 
+    /**
+     * 生命周期：组件启用
+     */
     protected onEnable() {
         this.replaceFunction();
     }
 
+    /**
+     * 生命周期：组件禁用
+     */
     protected onDisable() {
         this.restoreFunction();
     }
 
+    /**
+     * 编辑器回调：重置
+     */
     protected resetInEditor() {
         this.markForRender();
     }

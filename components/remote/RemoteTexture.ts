@@ -1,7 +1,7 @@
 import RemoteLoader from "../../core/remote/RemoteLoader";
 import RemoteAsset from "./RemoteAsset";
 
-const { ccclass, property, executeInEditMode, help } = cc._decorator;
+const { ccclass, property, executeInEditMode, help, menu } = cc._decorator;
 
 /**
  * 远程图像
@@ -14,6 +14,7 @@ const { ccclass, property, executeInEditMode, help } = cc._decorator;
 @ccclass
 @executeInEditMode
 @help('https://gitee.com/ifaswind/eazax-ccc/blob/master/components/remote/RemoteTexture.ts')
+@menu('eazax/远程组件/RemoteTexture')
 export default class RemoteTexture extends RemoteAsset {
 
     @property()
@@ -74,14 +75,14 @@ export default class RemoteTexture extends RemoteAsset {
     protected lastRequestId: number = 0;
 
     /**
-     * 生命周期：节点加载
+     * 生命周期：加载
      */
     protected onLoad() {
         this.init();
     }
 
     /**
-     * 生命周期：节点销毁
+     * 生命周期：销毁
      */
     protected onDestroy() {
         this.release();

@@ -10,14 +10,17 @@ export enum Axis {
     NegativeY
 }
 
-const { ccclass, property } = cc._decorator;
+const { ccclass, property, help, menu } = cc._decorator;
 
 /**
  * 围绕旋转组件
- * @see RotateAround.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/RotateAround.ts
+ * @author 陈皮皮 (ifaswind)
  * @version 20210611
+ * @see RotateAround.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/components/RotateAround.ts
  */
 @ccclass
+@help('https://gitee.com/ifaswind/eazax-ccc/blob/master/components/RotateAround.ts')
+@menu('eazax/其他组件/RotateAround')
 export default class RotateAround extends cc.Component {
 
     @property({ type: cc.Node, tooltip: CC_DEV && '围绕旋转的目标' })
@@ -32,29 +35,37 @@ export default class RotateAround extends cc.Component {
     @property({ tooltip: CC_DEV && '是否始终面向目标节点' })
     public faceToTarget: boolean = false;
 
-    @property({
-        type: cc.Enum(Axis),
-        tooltip: CC_DEV && '面向目标节点的轴：\n- PositiveX：正 X 轴\n- PositiveY：正 Y 轴\n- NegativeX：负 X 轴\n- NegativeY：负 Y 轴',
-        visible() { return this.faceToTarget }
-    })
+    @property({ type: cc.Enum(Axis), visible() { return this.faceToTarget }, tooltip: CC_DEV && '面向目标节点的轴：\n- PositiveX：正 X 轴\n- PositiveY：正 Y 轴\n- NegativeX：负 X 轴\n- NegativeY：负 Y 轴' })
     public faceAxis: Axis = Axis.NegativeY;
 
     @property({ tooltip: CC_DEV && '自动开始旋转' })
     public autoStart: boolean = false;
 
-    /** 相对于目标的角度 */
+    /**
+     * 相对于目标的角度
+     */
     public angle: number = 0;
 
-    /** 半径 */
+    /**
+     * 半径
+     */
     public radius: number = 0;
 
-    /** 标志位，是否正在旋转 */
+    /** 
+     * 是否正在旋转
+     */
     protected isRotating: boolean = false;
 
+    /**
+     * 生命周期：开始
+     */
     protected start() {
         this.autoStart && this.run();
     }
 
+    /**
+     * 生命周期：每帧更新
+     */
     protected update(dt: number) {
         if (!this.isRotating || !this.target) {
             return;
@@ -136,7 +147,7 @@ export default class RotateAround extends cc.Component {
      * @param p2 点2
      * @see MathUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/MathUtil.ts
      */
-    public getAngle(p1: cc.Vec2, p2: cc.Vec2): number {
+    protected getAngle(p1: cc.Vec2, p2: cc.Vec2): number {
         return Math.atan((p2.y - p1.y) / (p2.x - p1.x));
     }
 
@@ -146,7 +157,7 @@ export default class RotateAround extends cc.Component {
      * @param p2 点2
      * @see MathUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/MathUtil.ts
      */
-    public getDistance(p1: cc.Vec2, p2: cc.Vec2): number {
+    protected getDistance(p1: cc.Vec2, p2: cc.Vec2): number {
         return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
     }
 

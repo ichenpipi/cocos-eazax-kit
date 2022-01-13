@@ -1,42 +1,10 @@
 /**
  * 图像工具
  * @author 陈皮皮 (ifaswind)
- * @version 20211019
+ * @version 20220113
  * @see ImageUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/ImageUtil.ts
  */
 export default class ImageUtil {
-
-    /**
-     * 垂直翻转图像数据
-     * @param array 数据
-     * @param width 行宽
-     */
-    public static flipY(array: Uint8Array, width: number) {
-        // const height = Math.floor(array.length / width),
-        //     halfHeight = Math.floor(height / 2),
-        //     maxRowIndex = height - 1;
-        // for (let i = 0; i < halfHeight; i++) {
-        //     const a = i * width,
-        //         b = (maxRowIndex - i) * width;
-        //     for (let k = 0; k < width; k++) {
-        //         [array[a + k], array[b + k]] = [array[b + k], array[a + k]];
-        //     }
-        //     // const block = array.slice(a, a + width);
-        //     // for (let k = 0; k < width; k++) {
-        //     //     array[a + k] = array[b + k];
-        //     //     array[b + k] = block[k]
-        //     // }
-        // }
-        // return array;
-        const length = array.length,
-            flipped = new Uint8Array(length);
-        for (let i = 0, j = length - width; i < length; i += width, j -= width) {
-            for (let k = 0; k < width; k++) {
-                flipped[i + k] = array[j + k];
-            }
-        }
-        return flipped;
-    }
 
     /**
      * 获取图像的透明剪裁尺寸数据（结果基于左上角）
@@ -110,15 +78,22 @@ export default class ImageUtil {
         if (!window || !window.document) {
             return null;
         }
-        const canvas = document.createElement('canvas'),
-            ctx = canvas.getContext('2d');
+        // 获取画布
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        // 调整画布尺寸
         const { width, height } = texture;
         canvas.width = width;
         canvas.height = height;
+        // 将纹理画到画布上
         const image = texture.getHtmlElementObj();
         ctx.drawImage(image, 0, 0, width, height);
+        // 获取像素数据
         const imageData = ctx.getImageData(0, 0, width, height);
+        // 销毁临时对象
+        image.remove();
         canvas.remove();
+        // 返回 Unit8Array 格式的数据
         return new Uint8Array(imageData.data);
     }
 

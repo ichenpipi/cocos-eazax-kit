@@ -23,7 +23,7 @@ export default class TouchBlocker2 extends cc.Component {
     private static instance: TouchBlocker2 = null;
 
     /**
-     * 生命周期：节点加载
+     * 生命周期：加载
      */
     protected onLoad() {
         this.init();
@@ -31,7 +31,7 @@ export default class TouchBlocker2 extends cc.Component {
     }
 
     /**
-     * 生命周期：节点销毁
+     * 生命周期：销毁
      */
     protected onDestroy() {
         this.unregisterEvent();

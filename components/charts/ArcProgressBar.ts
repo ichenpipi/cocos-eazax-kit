@@ -1,4 +1,4 @@
-const { ccclass, property, requireComponent, executeInEditMode, help } = cc._decorator;
+const { ccclass, property, requireComponent, executeInEditMode, help, menu } = cc._decorator;
 
 /**
  * 弧形进度条
@@ -10,6 +10,7 @@ const { ccclass, property, requireComponent, executeInEditMode, help } = cc._dec
 @requireComponent(cc.Graphics)
 @executeInEditMode
 @help('https://gitee.com/ifaswind/eazax-ccc/blob/master/components/charts/ArcProgressBar.ts')
+@menu('eazax/图表组件/ArcProgressBar')
 export default class ArcProgressBar extends cc.Component {
 
     @property(cc.Graphics)
@@ -113,25 +114,41 @@ export default class ArcProgressBar extends cc.Component {
         this.updateProperties();
     }
 
-    /** 预计算的开始角度 */
+    /**
+     * 预计算的开始角度
+     */
     protected curStartAngle: number = 0;
 
-    /** 预计算的开始弧度 */
+    /**
+     * 预计算的开始弧度
+     */
     protected curStartRadians: number = 0;
 
-    /** 预计算的结束弧度 */
+    /**
+     * 预计算的结束弧度
+     */
     protected curEndRadians: number = 0;
 
-    /** 缓动的 Promise resolve */
-    protected tweenRes: Function = null;
+    /**
+     * 当前缓动对象
+     */
+    protected curTween: cc.Tween = null;
 
-    /** 缓动 */
-    protected tween: cc.Tween = null;
+    /**
+     * 当前缓动的 Promise resolve
+     */
+    protected curTweenRes: Function = null;
 
+    /**
+     * 生命周期：加载
+     */
     protected onLoad() {
         this.init();
     }
 
+    /**
+     * 编辑器回调：重置
+     */
     protected resetInEditor() {
         this.init();
     }
@@ -146,6 +163,9 @@ export default class ArcProgressBar extends cc.Component {
         this.updateProperties();
     }
 
+    /**
+     * 展示
+     */
     public show() {
         return new Promise<void>(res => {
             const node = this.graphics.node;
@@ -158,6 +178,9 @@ export default class ArcProgressBar extends cc.Component {
         });
     }
 
+    /**
+     * 隐藏
+     */
     public hide() {
         return new Promise<void>(res => {
             const node = this.graphics.node;
@@ -225,12 +248,12 @@ export default class ArcProgressBar extends cc.Component {
     public to(duration: number, progress: number) {
         return new Promise<void>(res => {
             this.stop();
-            this.tweenRes = res;
-            this.tween = cc.tween<ArcProgressBar>(this)
+            this.curTweenRes = res;
+            this.curTween = cc.tween<ArcProgressBar>(this)
                 .to(duration, { progress })
                 .call(() => {
-                    this.tween = null;
-                    this.tweenRes = null;
+                    this.curTween = null;
+                    this.curTweenRes = null;
                 })
                 .call(res)
                 .start();
@@ -241,13 +264,13 @@ export default class ArcProgressBar extends cc.Component {
      * 停止当前缓动
      */
     public stop() {
-        if (this.tween) {
-            this.tween.stop();
-            this.tween = null;
+        if (this.curTween) {
+            this.curTween.stop();
+            this.curTween = null;
         }
-        if (this.tweenRes) {
-            this.tweenRes();
-            this.tweenRes = null;
+        if (this.curTweenRes) {
+            this.curTweenRes();
+            this.curTweenRes = null;
         }
     }
 

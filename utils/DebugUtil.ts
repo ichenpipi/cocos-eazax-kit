@@ -77,4 +77,6 @@ export default class DebugUtil {
 
 }
 
-window['eazax'] && (window['eazax']['debug'] = DebugUtil);
+if (CC_PREVIEW) {
+    window['DebugUtil'] = DebugUtil;
+}

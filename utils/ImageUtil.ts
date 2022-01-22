@@ -1,7 +1,7 @@
 /**
  * 图像工具
  * @author 陈皮皮 (ifaswind)
- * @version 20220113
+ * @version 20220122
  * @see ImageUtil.ts https://gitee.com/ifaswind/eazax-ccc/blob/master/utils/ImageUtil.ts
  */
 export default class ImageUtil {
@@ -107,7 +107,7 @@ export default class ImageUtil {
      * const color = ImageUtil.getPixelColor(texture, 0, 0);
      * // cc.color(50, 100, 123, 255);
      */
-    public static getPixelColor(texture: cc.Texture2D, x: number, y: number): cc.Color {
+    public static getPixelColor(texture: cc.Texture2D, x: number, y: number) {
         if (!window || !window.document) {
             return null;
         }
@@ -124,7 +124,7 @@ export default class ImageUtil {
      * @param url 图像地址
      * @param callback 完成回调
      */
-    public static imageToBase64(url: string, callback?: (dataURL: string) => void): Promise<string> {
+    public static imageToBase64(url: string, callback?: (dataURL: string) => void) {
         return new Promise(res => {
             let extname = /\.png|\.jpg|\.jpeg/.exec(url)?.[0];
             if (['.png', '.jpg', '.jpeg'].includes(extname)) {
@@ -155,7 +155,7 @@ export default class ImageUtil {
      * (仅 Web 平台下可用) 将 Base64 字符转为 cc.Texture2D 资源
      * @param base64 Base64 字符
      */
-    public static base64ToCCTexture(base64: string): cc.Texture2D {
+    public static base64ToCCTexture(base64: string) {
         if (!window || !window.document) {
             return null;
         }
@@ -165,25 +165,6 @@ export default class ImageUtil {
         texture.initWithElement(image);
         image.remove();
         return texture;
-    }
-
-    /**
-     * (仅 Web 平台下可用) 将 Base64 字符转为二进制数据
-     * @param base64 Base64 字符
-     */
-    public static base64ToBlob(base64: string): Blob {
-        if (!window || !window.atob) {
-            return null;
-        }
-        const strings = base64.split(',');
-        const type = /image\/\w+|;/.exec(strings[0])[0];
-        const data = window.atob(strings[1]);
-        const arrayBuffer = new ArrayBuffer(data.length);
-        const uint8Array = new Uint8Array(arrayBuffer);
-        for (let i = 0; i < data.length; i++) {
-            uint8Array[i] = data.charCodeAt(i) & 0xff;
-        }
-        return new Blob([uint8Array], { type: type });
     }
 
 }

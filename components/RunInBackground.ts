@@ -1,4 +1,4 @@
-const { ccclass, property, executionOrder, help } = cc._decorator;
+const { ccclass, property, executionOrder, help, menu } = cc._decorator;
 
 /**
  * 用于在浏览器后台保持运行
@@ -9,6 +9,7 @@ const { ccclass, property, executionOrder, help } = cc._decorator;
 @ccclass
 @executionOrder(-1)
 @help('https://gitee.com/ifaswind/eazax-ccc/blob/master/components/RunInBackground.ts')
+@menu('eazax/其他组件/RunInBackground')
 export default class RunInBackground extends cc.Component {
 
     @property({ displayName: CC_DEV && '脚本地址', tooltip: CC_DEV && 'Worker 脚本地址' })
@@ -51,9 +52,6 @@ export default class RunInBackground extends cc.Component {
      * 初始化
      */
     private init() {
-        // 设为常驻节点
-        this.node.setParent(cc.director.getScene());
-        cc.game.addPersistRootNode(this.node);
         // 网页调试需要在预览模板目录下放一份 worker.js
         // 如果使用编辑器自带的预览模板，还需要修改脚本地址
         // if (CC_DEBUG) {

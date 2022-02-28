@@ -1,5 +1,5 @@
 // 头像
-// 20211224
+// 20220228
 // https://gitee.com/ifaswind/eazax-ccc/blob/master/resources/effects/eazax-avatar.effect
 
 CCEffect %{
@@ -121,10 +121,6 @@ CCProgram fs %{
       color.a *= getAlpha(v_uv0);
     }
 
-    #if USE_BGRA
-    gl_FragColor = color.bgra;
-    #else
-    gl_FragColor = color.rgba;
-    #endif
+    gl_FragColor = color;
   }
 }%

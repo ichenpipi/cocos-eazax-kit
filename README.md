@@ -1,10 +1,10 @@
-# eazax-cocos
+# cocos-eazax-kit
 
 ![cocos-creator](https://img.shields.io/badge/cocos--creator-2.4%2B-blue) ![typescript](https://img.shields.io/badge/typescript-4.2+-blue)
 
 ## 介绍
 
-eazax-cocos 是一个 Cocos Creator 游戏开发工具包，目前持续更新维护中...
+cocos-eazax-kit 是一个 Cocos Creator 游戏开发工具包，目前持续更新维护中...
 
 ### 内容
 
@@ -22,12 +22,12 @@ eazax-cocos 是一个 Cocos Creator 游戏开发工具包，目前持续更新�
 
 🌰 这里有一个示例项目：
 
-- 示例项目仓库：[https://gitee.com/ichenpipi/eazax-cocos-cases](https://gitee.com/ichenpipi/eazax-cocos-cases)
-- 示例项目在线预览：[https://ichenpipi.gitee.io/eazax-cocos-cases](https://ichenpipi.gitee.io/eazax-cocos-cases)
+- 示例项目仓库：[https://gitee.com/ichenpipi/cocos-eazax-cases](https://gitee.com/ichenpipi/cocos-eazax-cases)
+- 示例项目在线预览：[https://ichenpipi.gitee.io/cocos-eazax-cases](https://ichenpipi.gitee.io/cocos-eazax-cases)
 
 ### 开源
 
-如果此项目对你有帮助，请不要忘记 [![star](https://gitee.com/ichenpipi/eazax-cocos/badge/star.svg?theme=dark)](https://gitee.com/ichenpipi/eazax-cocos/stargazers)
+如果此项目对你有帮助，请不要忘记 [![star](https://gitee.com/ichenpipi/cocos-eazax-kit/badge/star.svg?theme=dark)](https://gitee.com/ichenpipi/cocos-eazax-kit/stargazers)
 
 如有使用上的问题，可以在 Gitee 上提 issue 或者添加我的微信 `im_chenpipi` 并留言。
 
